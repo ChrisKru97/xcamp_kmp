@@ -1,3 +1,4 @@
+@file:OptIn(kotlin.time.ExperimentalTime::class)
 package cz.krutsche.xcamp.shared.data.repository
 
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService

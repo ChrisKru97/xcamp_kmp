@@ -2,9 +2,7 @@ package cz.krutsche.xcamp.shared.data.firebase
 
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.remoteconfig.FirebaseRemoteConfig
-import dev.gitlive.firebase.remoteconfig.get
 import dev.gitlive.firebase.remoteconfig.remoteConfig
-import dev.gitlive.firebase.remoteconfig.remoteConfigSettings
 import kotlinx.coroutines.withTimeout
 import kotlin.time.Duration.Companion.seconds
 
@@ -14,18 +12,16 @@ class RemoteConfigService {
     suspend fun initialize(): Result<Unit> {
         return try {
             withTimeout(10.seconds) {
-                val configSettings = remoteConfigSettings {
+                remoteConfig.settings {
                     minimumFetchIntervalInSeconds = 3600 // 1 hour
                 }
-                remoteConfig.settings = configSettings
 
                 // Set default values
-                val defaults = mapOf(
+                remoteConfig.setDefaults(
                     "showAppData" to false,
                     "startDate" to "2026-07-18",
                     "qrResetPin" to "1234"
                 )
-                remoteConfig.setDefaults(defaults)
 
                 // Fetch and activate
                 remoteConfig.fetchAndActivate()
@@ -38,7 +34,8 @@ class RemoteConfigService {
 
     fun getBoolean(key: String): Boolean {
         return try {
-            remoteConfig[key].asBoolean()
+            val value = remoteConfig.getValue(key)
+            value.asBoolean()
         } catch (e: Exception) {
             getDefaultBoolean(key)
         }
@@ -46,7 +43,8 @@ class RemoteConfigService {
 
     fun getString(key: String): String {
         return try {
-            remoteConfig[key].asString()
+            val value = remoteConfig.getValue(key)
+            value.asString()
         } catch (e: Exception) {
             getDefaultString(key)
         }
@@ -54,7 +52,8 @@ class RemoteConfigService {
 
     fun getLong(key: String): Long {
         return try {
-            remoteConfig[key].asLong()
+            val value = remoteConfig.getValue(key)
+            value.asLong()
         } catch (e: Exception) {
             getDefaultLong(key)
         }
@@ -62,7 +61,8 @@ class RemoteConfigService {
 
     fun getDouble(key: String): Double {
         return try {
-            remoteConfig[key].asDouble()
+            val value = remoteConfig.getValue(key)
+            value.asDouble()
         } catch (e: Exception) {
             getDefaultDouble(key)
         }

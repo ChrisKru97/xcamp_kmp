@@ -75,7 +75,7 @@ class XcampApp(
     }
 
     fun getCurrentUserId(): String? {
-        return authService.getCurrentUserId()
+        return authService.currentUserId
     }
 
     fun logAnalyticsEvent(eventName: String, parameters: Map<String, Any> = emptyMap()) {

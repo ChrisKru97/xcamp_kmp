@@ -1,3 +1,4 @@
+@file:OptIn(kotlin.time.ExperimentalTime::class)
 package cz.krutsche.xcamp.shared.domain.model
 
 import kotlinx.datetime.Instant

@@ -50,15 +50,14 @@ class FirestoreService {
         }
     }
 
-    suspend fun <T> setDocument(
+    suspend fun setDocument(
         collection: String,
         documentId: String,
-        data: T,
-        serializer: SerializationStrategy<T>
+        data: Any
     ): Result<Unit> {
         return try {
             withTimeout(5.seconds) {
-                firestore.collection(collection).document(documentId).set(data, serializer)
+                firestore.collection(collection).document(documentId).set(data)
                 Result.success(Unit)
             }
         } catch (e: Exception) {
@@ -66,14 +65,13 @@ class FirestoreService {
         }
     }
 
-    suspend fun <T> addDocument(
+    suspend fun addDocument(
         collection: String,
-        data: T,
-        serializer: SerializationStrategy<T>
+        data: Any
     ): Result<String> {
         return try {
             withTimeout(5.seconds) {
-                val docRef = firestore.collection(collection).add(data, serializer)
+                val docRef = firestore.collection(collection).add(data)
                 Result.success(docRef.id)
             }
         } catch (e: Exception) {
@@ -95,15 +93,14 @@ class FirestoreService {
         }
     }
 
-    suspend fun <T> updateDocument(
+    suspend fun updateDocument(
         collection: String,
         documentId: String,
-        data: T,
-        serializer: SerializationStrategy<T>
+        data: Any
     ): Result<Unit> {
         return try {
             withTimeout(5.seconds) {
-                firestore.collection(collection).document(documentId).update(data, serializer)
+                firestore.collection(collection).document(documentId).update(data)
                 Result.success(Unit)
             }
         } catch (e: Exception) {

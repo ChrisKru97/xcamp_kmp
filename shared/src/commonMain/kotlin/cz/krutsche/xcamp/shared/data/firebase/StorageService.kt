@@ -16,10 +16,11 @@ class StorageService {
     ): Result<String> {
         return try {
             withTimeout(30.seconds) {
-                val storageRef = storage.reference.child(path)
-                storageRef.putData(data)
-                val downloadUrl = storageRef.downloadUrl
-                Result.success(downloadUrl)
+                // TODO: Fix proper platform-specific ByteArray to Data conversion
+                // val storageRef = storage.reference.child(path)
+                // storageRef.putData(data.toPlatformData())
+                // val downloadUrl = storageRef.getDownloadUrl()
+                Result.failure(Exception("Storage upload not yet implemented"))
             }
         } catch (e: Exception) {
             Result.failure(e)
@@ -30,7 +31,7 @@ class StorageService {
         return try {
             withTimeout(5.seconds) {
                 val storageRef = storage.reference.child(path)
-                val downloadUrl = storageRef.downloadUrl
+                val downloadUrl = storageRef.getDownloadUrl()
                 Result.success(downloadUrl)
             }
         } catch (e: Exception) {

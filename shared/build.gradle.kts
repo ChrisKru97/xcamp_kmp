@@ -10,7 +10,7 @@ plugins {
 kotlin {
     androidTarget {
         compilerOptions {
-            jvmTarget.set(JvmTarget.JVM_1_8)
+            jvmTarget.set(JvmTarget.JVM_17)
         }
     }
 
@@ -99,8 +99,8 @@ android {
         minSdk = libs.versions.android.minSdk.get().toInt()
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
@@ -108,7 +108,6 @@ sqldelight {
     databases {
         create("XcampDatabase") {
             packageName.set("cz.krutsche.xcamp.shared.db")
-            generateAsync.set(true)
         }
     }
 }

@@ -169,3 +169,10 @@ The app uses a **dynamic bottom tab system** controlled by Remote Config:
 - Comprehensive logging via Crashlytics for debugging
 - Dev override system for Remote Config during development
 - **Always reference APP_FEATURES.md, FIREBASE_STRUCTURE.md, and HIDDEN_FEATURES.md for implementation details**
+
+## Critical Development Requirements
+- **ALWAYS use the latest KMP-compatible versions** of all frameworks and dependencies
+- **NEVER use deprecated APIs** - always migrate to current API patterns when encountered
+- When compilation fails, systematically fix all issues until build succeeds completely
+- Use simplest approach and research latest API documentation when needed
+- Ensure full compatibility across Android and iOS targets

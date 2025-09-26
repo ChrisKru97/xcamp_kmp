@@ -5,6 +5,9 @@ import app.cash.sqldelight.driver.native.NativeSqliteDriver
 
 actual class DatabaseDriverFactory {
     actual fun createDriver(): SqlDriver {
-        return NativeSqliteDriver(XcampDatabase.Schema, "xcamp.db")
+        return NativeSqliteDriver(
+            schema = XcampDatabase.Schema,
+            name = "xcamp.db"
+        )
     }
 }

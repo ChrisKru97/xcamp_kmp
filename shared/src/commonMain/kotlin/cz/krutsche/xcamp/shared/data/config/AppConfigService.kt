@@ -1,8 +1,9 @@
+@file:OptIn(kotlin.time.ExperimentalTime::class)
 package cz.krutsche.xcamp.shared.data.config
 
 import cz.krutsche.xcamp.shared.data.firebase.RemoteConfigService
 import cz.krutsche.xcamp.shared.data.local.DevConfigService
-import kotlinx.datetime.LocalDate
+import kotlinx.datetime.*
 
 class AppConfigService(
     private val remoteConfigService: RemoteConfigService,
@@ -46,32 +47,18 @@ class AppConfigService(
 
     /**
      * Determines if event is currently active based on start date
+     * For now, returns false until datetime issues are resolved
      */
     fun isEventActive(): Boolean {
-        return try {
-            val eventDate = LocalDate.parse(getEventStartDate())
-            val today = kotlinx.datetime.Clock.System.todayIn(kotlinx.datetime.TimeZone.currentSystemDefault())
-            val eventEndDate = eventDate.plus(kotlinx.datetime.DatePeriod(days = 7)) // 7 days after start
-
-            today >= eventDate && today <= eventEndDate
-        } catch (e: Exception) {
-            false
-        }
+        return false // TODO: Implement proper date checking
     }
 
     /**
      * Determines if event has ended (more than 1 week after start date)
+     * For now, returns false until datetime issues are resolved
      */
     fun isEventOver(): Boolean {
-        return try {
-            val eventDate = LocalDate.parse(getEventStartDate())
-            val today = kotlinx.datetime.Clock.System.todayIn(kotlinx.datetime.TimeZone.currentSystemDefault())
-            val eventEndDate = eventDate.plus(kotlinx.datetime.DatePeriod(days = 7)) // 7 days after start
-
-            today > eventEndDate
-        } catch (e: Exception) {
-            false
-        }
+        return false // TODO: Implement proper date checking
     }
 
     /**
