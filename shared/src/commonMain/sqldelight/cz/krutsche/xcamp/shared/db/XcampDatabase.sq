@@ -1,0 +1,237 @@
+-- GroupLeader table
+CREATE TABLE IF NOT EXISTS GroupLeader (
+    id INTEGER NOT NULL PRIMARY KEY,
+    uid TEXT NOT NULL,
+    name TEXT NOT NULL,
+    number INTEGER NOT NULL,
+    portrait TEXT,
+    portraitUrl TEXT,
+    congregation TEXT
+);
+
+-- Place table
+CREATE TABLE IF NOT EXISTS Place (
+    id INTEGER NOT NULL PRIMARY KEY,
+    uid TEXT NOT NULL,
+    name TEXT NOT NULL,
+    description TEXT,
+    priority INTEGER NOT NULL,
+    latitude REAL,
+    longitude REAL,
+    image TEXT,
+    imageUrl TEXT
+);
+
+-- Song table
+CREATE TABLE IF NOT EXISTS Song (
+    number INTEGER NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL,
+    text TEXT NOT NULL
+);
+
+-- Speaker table
+CREATE TABLE IF NOT EXISTS Speaker (
+    id INTEGER NOT NULL PRIMARY KEY,
+    uid TEXT NOT NULL,
+    name TEXT NOT NULL,
+    description TEXT,
+    priority INTEGER NOT NULL,
+    image TEXT,
+    imageUrl TEXT
+);
+
+-- News table
+CREATE TABLE IF NOT EXISTS News (
+    id INTEGER NOT NULL PRIMARY KEY,
+    uid TEXT NOT NULL,
+    title TEXT NOT NULL,
+    text TEXT NOT NULL,
+    time INTEGER NOT NULL -- Store as timestamp
+);
+
+-- Section table (Schedule)
+CREATE TABLE IF NOT EXISTS Section (
+    id INTEGER NOT NULL PRIMARY KEY,
+    uid TEXT NOT NULL,
+    name TEXT NOT NULL,
+    description TEXT,
+    startTime INTEGER NOT NULL, -- Store as timestamp
+    endTime INTEGER NOT NULL,   -- Store as timestamp
+    place INTEGER,
+    speakers TEXT, -- Store as JSON array of integers
+    leader TEXT,
+    type TEXT NOT NULL,
+    favorite INTEGER NOT NULL DEFAULT 0, -- SQLite boolean as integer
+    repeatedDates TEXT -- Store as JSON array of strings
+);
+
+-- Rating table
+CREATE TABLE IF NOT EXISTS Rating (
+    id INTEGER NOT NULL PRIMARY KEY,
+    category TEXT NOT NULL,
+    rating INTEGER, -- 1-5 stars, null if not rated
+    comment TEXT,
+    timestamp INTEGER NOT NULL -- Store as timestamp
+);
+
+-- Insert operations
+insertGroupLeader:
+INSERT OR REPLACE INTO GroupLeader(id, uid, name, number, portrait, portraitUrl, congregation)
+VALUES (?, ?, ?, ?, ?, ?, ?);
+
+insertPlace:
+INSERT OR REPLACE INTO Place(id, uid, name, description, priority, latitude, longitude, image, imageUrl)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+insertSong:
+INSERT OR REPLACE INTO Song(number, name, text)
+VALUES (?, ?, ?);
+
+insertSpeaker:
+INSERT OR REPLACE INTO Speaker(id, uid, name, description, priority, image, imageUrl)
+VALUES (?, ?, ?, ?, ?, ?, ?);
+
+insertNews:
+INSERT OR REPLACE INTO News(id, uid, title, text, time)
+VALUES (?, ?, ?, ?, ?);
+
+insertSection:
+INSERT OR REPLACE INTO Section(id, uid, name, description, startTime, endTime, place, speakers, leader, type, favorite, repeatedDates)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+
+insertRating:
+INSERT OR REPLACE INTO Rating(id, category, rating, comment, timestamp)
+VALUES (?, ?, ?, ?, ?);
+
+-- Select operations
+selectAllGroupLeaders:
+SELECT * FROM GroupLeader ORDER BY number;
+
+selectGroupLeadersByNumber:
+SELECT * FROM GroupLeader WHERE number = ?;
+
+selectAllPlaces:
+SELECT * FROM Place ORDER BY priority, name;
+
+selectPlaceById:
+SELECT * FROM Place WHERE id = ?;
+
+selectAllSongs:
+SELECT * FROM Song ORDER BY number;
+
+selectSongByNumber:
+SELECT * FROM Song WHERE number = ?;
+
+searchSongs:
+SELECT * FROM Song WHERE name LIKE ? OR text LIKE ? ORDER BY number;
+
+selectAllSpeakers:
+SELECT * FROM Speaker ORDER BY priority, name;
+
+selectSpeakerById:
+SELECT * FROM Speaker WHERE id = ?;
+
+selectAllNews:
+SELECT * FROM News ORDER BY time DESC;
+
+selectRecentNews:
+SELECT * FROM News ORDER BY time DESC LIMIT ?;
+
+selectAllSections:
+SELECT * FROM Section ORDER BY startTime;
+
+selectSectionById:
+SELECT * FROM Section WHERE id = ?;
+
+selectSectionsByType:
+SELECT * FROM Section WHERE type = ? ORDER BY startTime;
+
+selectFavoriteSections:
+SELECT * FROM Section WHERE favorite = 1 ORDER BY startTime;
+
+selectSectionsByDateRange:
+SELECT * FROM Section WHERE startTime >= ? AND startTime <= ? ORDER BY startTime;
+
+selectAllRatings:
+SELECT * FROM Rating ORDER BY category;
+
+selectRatingsByCategory:
+SELECT * FROM Rating WHERE category = ?;
+
+-- Update operations
+updateSectionFavorite:
+UPDATE Section SET favorite = ? WHERE id = ?;
+
+updateGroupLeaderPortraitUrl:
+UPDATE GroupLeader SET portraitUrl = ? WHERE id = ?;
+
+updatePlaceImageUrl:
+UPDATE Place SET imageUrl = ? WHERE id = ?;
+
+updateSpeakerImageUrl:
+UPDATE Speaker SET imageUrl = ? WHERE id = ?;
+
+-- Delete operations
+deleteAllGroupLeaders:
+DELETE FROM GroupLeader;
+
+deleteAllPlaces:
+DELETE FROM Place;
+
+deleteAllSongs:
+DELETE FROM Song;
+
+deleteAllSpeakers:
+DELETE FROM Speaker;
+
+deleteAllNews:
+DELETE FROM News;
+
+deleteAllSections:
+DELETE FROM Section;
+
+deleteAllRatings:
+DELETE FROM Rating;
+
+deleteGroupLeaderById:
+DELETE FROM GroupLeader WHERE id = ?;
+
+deletePlaceById:
+DELETE FROM Place WHERE id = ?;
+
+deleteSongByNumber:
+DELETE FROM Song WHERE number = ?;
+
+deleteSpeakerById:
+DELETE FROM Speaker WHERE id = ?;
+
+deleteNewsById:
+DELETE FROM News WHERE id = ?;
+
+deleteSectionById:
+DELETE FROM Section WHERE id = ?;
+
+deleteRatingById:
+DELETE FROM Rating WHERE id = ?;
+
+-- Count operations
+countGroupLeaders:
+SELECT COUNT(*) FROM GroupLeader;
+
+countPlaces:
+SELECT COUNT(*) FROM Place;
+
+countSongs:
+SELECT COUNT(*) FROM Song;
+
+countSpeakers:
+SELECT COUNT(*) FROM Speaker;
+
+countNews:
+SELECT COUNT(*) FROM News;
+
+countSections:
+SELECT COUNT(*) FROM Section;
+
+countRatings:
+SELECT COUNT(*) FROM Rating;

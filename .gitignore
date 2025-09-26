@@ -1,0 +1,87 @@
+# Kotlin Multiplatform .gitignore
+
+# Gradle files
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+!**/src/main/**/build/
+!**/src/test/**/build/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Android Studio
+*.iml
+.idea/
+.DS_Store
+
+# Android
+**/android/**/build/
+**/android/captures/
+**/android/.externalNativeBuild/
+**/android/.cxx/
+**/android/local.properties
+
+# iOS
+**/ios/**/*.xcodeproj/xcuserdata/
+**/ios/**/*.xcworkspace/xcuserdata/
+**/ios/**/build/
+**/ios/**/DerivedData/
+**/ios/**/*.hmap
+**/ios/**/*.ipa
+**/ios/**/*.dSYM.zip
+**/ios/**/*.dSYM
+**/ios/**/Pods/
+**/ios/**/Podfile.lock
+
+# Xcode
+**/*.xcodeproj/xcuserdata/
+**/*.xcworkspace/xcuserdata/
+**/xcuserdata/
+**/DerivedData/
+**/*.hmap
+**/*.ipa
+**/*.dSYM.zip
+**/*.dSYM
+
+# SQLDelight
+**/build/generated/sqldelight/
+
+# Firebase
+google-services.json
+GoogleService-Info.plist
+**/google-services.json
+**/GoogleService-Info.plist
+
+# Secrets and API keys
+secrets.properties
+keystore.properties
+*.keystore
+*.jks
+
+# Logs
+*.log
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Kotlin/Native
+*.konan/
