@@ -85,3 +85,5 @@ Thumbs.db
 
 # Kotlin/Native
 *.konan/
+
+.kotlin

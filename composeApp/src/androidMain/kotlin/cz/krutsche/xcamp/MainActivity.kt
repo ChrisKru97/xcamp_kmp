@@ -1,5 +1,6 @@
 package cz.krutsche.xcamp
 
+import Greeting
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
