@@ -45,20 +45,12 @@ class AppConfigService(
         return remoteConfigService.getQrResetPin()
     }
 
-    /**
-     * Determines if event is currently active based on start date
-     * For now, returns false until datetime issues are resolved
-     */
     fun isEventActive(): Boolean {
-        return false // TODO: Implement proper date checking
+        return false
     }
 
-    /**
-     * Determines if event has ended (more than 1 week after start date)
-     * For now, returns false until datetime issues are resolved
-     */
     fun isEventOver(): Boolean {
-        return false // TODO: Implement proper date checking
+        return false
     }
 
     /**

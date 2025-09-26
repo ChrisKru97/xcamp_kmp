@@ -176,3 +176,36 @@ The app uses a **dynamic bottom tab system** controlled by Remote Config:
 - When compilation fails, systematically fix all issues until build succeeds completely
 - Use simplest approach and research latest API documentation when needed
 - Ensure full compatibility across Android and iOS targets
+
+## Development Principles
+
+**ALWAYS follow these core principles when coding:**
+
+### KISS (Keep It Simple, Stupid)
+- Write simple, readable code that's easy to understand
+- Avoid over-engineering and complex solutions
+- Use clear, descriptive names for variables, functions, and classes
+- Break complex functions into smaller, focused functions
+- Prefer explicit code over clever tricks
+
+### DRY (Don't Repeat Yourself)
+- Extract common functionality into shared utilities or base classes
+- Use inheritance and composition to eliminate code duplication
+- Create reusable components for common UI patterns
+- Centralize configuration and constants
+- Example: Use BaseRepository for common repository patterns
+
+### SOLID Principles
+- **S**ingle Responsibility: Each class should have one reason to change
+- **O**pen/Closed: Open for extension, closed for modification
+- **L**iskov Substitution: Subtypes must be substitutable for base types
+- **I**nterface Segregation: Many specific interfaces over one general interface
+- **D**ependency Inversion: Depend on abstractions, not concretions
+
+### Code Quality Standards
+- Use Result<T> pattern for error handling instead of exceptions
+- All network operations must include timeout protection (5-second default)
+- Use suspend functions for async operations with proper coroutine context
+- Apply functional programming patterns where appropriate (map, filter, fold)
+- Write self-documenting code that doesn't require extensive comments
+- Use extension functions to enhance existing APIs rather than utility classes
