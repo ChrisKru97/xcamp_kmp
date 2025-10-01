@@ -89,6 +89,18 @@ open iosApp/iosApp.xcodeproj
 - Android: `cz.krutsche.xcamp`
 - iOS: `com.krutsche.xcamp`
 
+## Platform Minimum Requirements
+- **Android**: Minimum SDK 24 (Android 7.0 Nougat)
+- **iOS**: Deployment target 14.1 (iOS 14.1+)
+- **Kotlin**: 2.2.20
+- **Swift**: 5.0
+
+### Platform Compatibility Notes
+- Always use APIs compatible with the minimum targets above
+- For iOS: Ensure all libraries and APIs support iOS 14.1+
+- For Android: Ensure all libraries and APIs support Android 7.0+
+- When newer APIs are required, use proper availability checks and fallback implementations
+
 ## App State Management & Navigation
 
 ### Dynamic Navigation System (Reference: APP_FEATURES.md)

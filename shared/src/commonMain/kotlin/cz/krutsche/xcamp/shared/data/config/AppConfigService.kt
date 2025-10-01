@@ -45,6 +45,13 @@ class AppConfigService(
         return remoteConfigService.getQrResetPin()
     }
 
+    /**
+     * Returns the main info text for the homepage
+     */
+    fun getMainInfo(): String {
+        return remoteConfigService.getMainInfo()
+    }
+
     fun isEventActive(): Boolean {
         return false
     }

@@ -20,7 +20,8 @@ class RemoteConfigService {
                 remoteConfig.setDefaults(
                     "showAppData" to false,
                     "startDate" to "2026-07-18",
-                    "qrResetPin" to "1234"
+                    "qrResetPin" to "1234",
+                    "mainInfo" to "Welcome to Xcamp!"
                 )
 
                 // Fetch and activate
@@ -75,6 +76,8 @@ class RemoteConfigService {
 
     fun getQrResetPin(): String = getString("qrResetPin")
 
+    fun getMainInfo(): String = getString("mainInfo")
+
     // Default values for fallback
     private fun getDefaultBoolean(key: String): Boolean {
         return when (key) {
@@ -87,6 +90,7 @@ class RemoteConfigService {
         return when (key) {
             "startDate" -> "2026-07-18"
             "qrResetPin" -> "1234"
+            "mainInfo" -> "Welcome to Xcamp!"
             else -> ""
         }
     }
