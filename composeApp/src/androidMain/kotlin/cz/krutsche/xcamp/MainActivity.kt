@@ -1,6 +1,5 @@
 package cz.krutsche.xcamp
 
-import Greeting
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -26,9 +25,8 @@ class MainActivity : ComponentActivity() {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        val greeting = remember { Greeting().greet() }
                         Text(
-                            text = greeting,
+                            text = "Hello from Android!",
                             style = MaterialTheme.typography.headlineMedium,
                             modifier = Modifier.padding(16.dp)
                         )

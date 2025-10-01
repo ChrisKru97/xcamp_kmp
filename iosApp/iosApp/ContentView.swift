@@ -2,24 +2,17 @@ import SwiftUI
 import shared
 
 struct ContentView: View {
-    let greet = Greeting().greet()
+    @EnvironmentObject var appViewModel: AppViewModel
+    @State private var selectedTab = 0
 
     var body: some View {
-        VStack(spacing: 20) {
-            Text(greet)
-                .font(.title)
-                .multilineTextAlignment(.center)
-
-            Text("XcamP Kotlin Multiplatform")
-                .font(.body)
-                .multilineTextAlignment(.center)
+        TabView(selection: $selectedTab) {
+            HomeView()
+            .tabItem {
+                Image(systemName: "house.fill")
+                Text("Domů")
+            }
+            .tag(0)
         }
-        .padding()
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
     }
 }

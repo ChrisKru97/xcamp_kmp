@@ -44,6 +44,25 @@ local.properties
 **/*.dSYM.zip
 **/*.dSYM
 
+# iOS build artifacts (Kotlin Multiplatform)
+**/shared/build/bin/ios*/
+**/shared/build/xcode-frameworks/
+**/build/bin/ios*/
+**/build/xcode-frameworks/
+*.framework
+*.xcframework
+*.a
+*.dylib
+
+# iOS specific build artifacts
+**/iosApp/build/
+**/iosApp/Pods/
+**/iosApp/Carthage/Build/
+**/iosApp/Frameworks/
+**/iosApp/*.xcarchive
+**/iosApp/*.ipa
+**/iosApp/*.dSYM/
+
 # SQLDelight
 **/build/generated/sqldelight/
 

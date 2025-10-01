@@ -267,4 +267,16 @@ This document covers advanced features, hidden behaviors, and non-obvious functi
 - **Animation Coordination**: Smooth reverse → forward animation sequence on tab changes
 - **Provider Sync Integration**: Automatically triggers data sync when switching to relevant tabs
 
+## 🔄 Version Update Enforcement System
+
+### Forced Update Mechanism
+- **Remote Config Control**: App version requirements controlled via Firebase Remote Config
+- **Platform-Specific Version Checking**: Compares current version against Google Play/App Store minimum version
+- **Non-Bypassable Update**: App becomes completely unusable until updated to required version
+- **Smart Update Messaging**: Clear communication about required update and reasons
+- **Startup Version Check**: Version validation occurs immediately after app initialization
+- **Blocking UI**: Full-screen modal prevents app usage when update required
+- **Deep Link Integration**: Direct links to app store for seamless update process
+- **Emergency Update Capability**: Instant forced update for critical security issues
+
 This comprehensive guide reveals the sophisticated architecture and user experience optimizations built into the XcamP app that work seamlessly behind the scenes to provide a premium mobile experience with dynamic feature management and performance optimization.
