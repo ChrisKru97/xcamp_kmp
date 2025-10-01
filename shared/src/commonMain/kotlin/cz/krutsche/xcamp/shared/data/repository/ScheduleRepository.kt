@@ -7,7 +7,7 @@ import cz.krutsche.xcamp.shared.domain.model.Section
 import cz.krutsche.xcamp.shared.domain.model.SectionType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.serialization.json.Json
 
 class ScheduleRepository(

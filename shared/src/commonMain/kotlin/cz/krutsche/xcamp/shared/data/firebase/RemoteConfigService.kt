@@ -13,7 +13,7 @@ class RemoteConfigService {
         return try {
             withTimeout(10.seconds) {
                 remoteConfig.settings {
-                    minimumFetchIntervalInSeconds = 3600 // 1 hour
+                    minimumFetchInterval = 3600.seconds // 1 hour
                 }
 
                 // Set default values

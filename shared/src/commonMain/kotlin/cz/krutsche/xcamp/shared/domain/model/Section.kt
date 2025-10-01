@@ -1,7 +1,7 @@
 @file:OptIn(kotlin.time.ExperimentalTime::class)
 package cz.krutsche.xcamp.shared.domain.model
 
-import kotlinx.datetime.Instant
+import kotlin.time.Instant
 import kotlinx.serialization.Serializable
 
 @Serializable
