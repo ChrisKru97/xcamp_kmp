@@ -31,3 +31,8 @@ struct CountdownView: View {
         }
     }
 }
+
+#Preview {
+    let dateFormatter = DateFormatter()
+    CountdownView(targetDate:  dateFormatter.date(from: "07-18-2026") ?? Date())
+}
