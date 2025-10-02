@@ -1,7 +1,7 @@
 import SwiftUI
 import shared
 
-struct MediView: View {
+struct MediaView: View {
     @EnvironmentObject var appViewModel: AppViewModel
 
     var body: some View {
