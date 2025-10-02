@@ -1,5 +1,10 @@
-interface Platform {
+expect class Platform {
+    val version: String
+    val type: PlatformType
+    val model: String
     val name: String
 }
 
-expect fun getPlatform(): Platform
+enum class PlatformType {
+    ANDROID, IOS
+}

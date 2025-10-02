@@ -8,7 +8,7 @@ class DatabaseManager(driverFactory: DatabaseDriverFactory) {
 
     val queries = database.xcampDatabaseQueries
 
-    suspend fun clearAllData() {
+    suspend fun clearAllData() { // TODO invoke after showAppData turns false and run it once for every year (store last year in settings)
         queries.transaction {
             queries.deleteAllGroupLeaders()
             queries.deleteAllPlaces()
