@@ -7,7 +7,7 @@ struct CountdownView: View {
 
     var body: some View {
         VStack {
-            Text(StringsKt().countdown.title)
+            Text(Strings.Countdown.shared.TITLE)
                 .font(.headline)
             Text(timeRemaining)
                 .font(.largeTitle)

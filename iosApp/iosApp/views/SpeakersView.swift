@@ -7,9 +7,9 @@ struct SpeakersView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                Text(StringsKt().common.infoTodo)
+                Text("TODO")
             }
-            .navigationTitle(StringsKt().titles.speakers)
+            .navigationTitle(Strings.Tabs.shared.SPEAKERS)
         }
     }
 }

@@ -7,9 +7,9 @@ struct MediaView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                Text(StringsKt().common.infoTodo)
+                Text("TODO")
             }
-            .navigationTitle(StringsKt().titles.media)
+            .navigationTitle(Strings.Tabs.shared.MEDIA)
         }
     }
 }

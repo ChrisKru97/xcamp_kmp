@@ -7,9 +7,9 @@ struct RatingView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                Text(StringsKt().common.infoTodo)
+                Text("TODO")
             }
-            .navigationTitle(StringsKt().titles.rating)
+            .navigationTitle(Strings.Tabs.shared.RATING)
         }
     }
 }

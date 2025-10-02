@@ -7,9 +7,9 @@ struct InfoView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                Text(StringsKt().common.infoTodo)
+                Text("TODO")
             }
-            .navigationTitle(StringsKt().titles.info)
+            .navigationTitle(Strings.Tabs.shared.INFO)
         }
     }
 }
