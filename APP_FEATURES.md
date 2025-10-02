@@ -331,16 +331,3 @@ The app uses a **dynamic bottom tab system** that adapts based on event state an
   - Interactive places/locations with map integration
   - Schedule filtering (FAB on Schedule tab)
 
-### Testing Event Mode Switch
-1. **Access Developer Settings**: Tap DEV badge → Enable Development Mode
-2. **Override showAppData**: Toggle `showAppData` override to `true`
-3. **Reload App**: Event mode will activate with full 6-tab navigation
-4. **Verify Features**: Test QR functionality, schedule, speakers, places
-
-## 🔧 Remote Config Override System
-
-### Development Workflow
-- **DevConfig Integration**: Async override system for testing without server changes
-- **Persistent Storage**: Override settings saved locally via SharedPreferences
-- **Production Safety**: All dev features automatically disabled in release builds
-- **Override Precedence**: Dev overrides take priority over Firebase Remote Config values

@@ -179,7 +179,6 @@ The app uses a **dynamic bottom tab system** controlled by Remote Config:
 - Offline-first architecture with local SQLite + Firebase sync
 - Repository pattern with Result<T> return types for error handling
 - Comprehensive logging via Crashlytics for debugging
-- Dev override system for Remote Config during development
 - **Always reference APP_FEATURES.md, FIREBASE_STRUCTURE.md, and HIDDEN_FEATURES.md for implementation details**
 
 ## Critical Development Requirements

@@ -19,8 +19,7 @@ class AppViewModel: ObservableObject {
 
         // Initialize app config service
         appConfigService = AppConfigService(
-            remoteConfigService: RemoteConfigService(),
-            devConfigService: DevConfigService()
+            remoteConfigService: RemoteConfigService()
         )
 
         Task {

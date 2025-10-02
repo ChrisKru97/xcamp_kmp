@@ -39,7 +39,7 @@ xcamp_kmp/
 - **Authentication**: Anonymous authentication with Firebase Auth
 - **Firestore**: Complete database operations with timeout protection
 - **Storage**: File upload/download with Firebase Storage
-- **Remote Config**: Feature flags with dev override system
+- **Remote Config**: Feature flags for dynamic app behavior
 - **Analytics**: Event tracking and user analytics
 - **Crashlytics**: Error reporting and crash analytics
 
@@ -60,7 +60,6 @@ xcamp_kmp/
   - Active Event: Home → Schedule → Speakers → Places → Media → Info
   - Post-Event: Home → Schedule → Rating → Media → Info
 - **Feature Flags**: Remote-controlled app behavior
-- **Dev Overrides**: Development-time configuration overrides
 
 ### 🛠 Architecture Patterns
 - **Repository Pattern**: Clean separation of data sources
@@ -93,7 +92,7 @@ xcamp_kmp/
 - QR code scanning and display with local persistence
 - Multi-photo upload system to Firebase Storage
 - Post-event rating system with multiple categories
-- Firebase Remote Config with dev override system
+- Firebase Remote Config with dynamic feature flags
 - Anonymous authentication and user management
 - Comprehensive analytics and crash reporting
 

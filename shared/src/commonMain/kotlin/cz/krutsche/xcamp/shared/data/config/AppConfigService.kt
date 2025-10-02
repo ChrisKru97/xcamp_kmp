@@ -1,13 +1,11 @@
 @file:OptIn(kotlin.time.ExperimentalTime::class)
+
 package cz.krutsche.xcamp.shared.data.config
 
 import cz.krutsche.xcamp.shared.data.firebase.RemoteConfigService
-import cz.krutsche.xcamp.shared.data.local.DevConfigService
-import kotlinx.datetime.*
 
 class AppConfigService(
-    private val remoteConfigService: RemoteConfigService,
-    private val devConfigService: DevConfigService
+    private val remoteConfigService: RemoteConfigService
 ) {
 
     suspend fun initialize(): Result<Unit> {
@@ -19,10 +17,6 @@ class AppConfigService(
      * Returns false for limited mode (Home, Media, Info only)
      */
     fun shouldShowAppData(): Boolean {
-        // Dev override takes precedence
-        devConfigService.getShowAppDataOverride()?.let { return it }
-
-        // Fall back to remote config
         return remoteConfigService.shouldShowAppData()
     }
 
@@ -38,10 +32,6 @@ class AppConfigService(
      * Returns the QR reset PIN
      */
     fun getQrResetPin(): String {
-        // Dev override takes precedence
-        devConfigService.getQrResetPinOverride()?.let { return it }
-
-        // Fall back to remote config
         return remoteConfigService.getQrResetPin()
     }
 
@@ -78,8 +68,24 @@ class AppConfigService(
     fun getAvailableTabs(): List<AppTab> {
         return when (getAppState()) {
             AppState.LIMITED -> listOf(AppTab.HOME, AppTab.MEDIA, AppTab.INFO)
-            AppState.PRE_EVENT -> listOf(AppTab.HOME, AppTab.SCHEDULE, AppTab.SPEAKERS, AppTab.PLACES, AppTab.MEDIA, AppTab.INFO)
-            AppState.ACTIVE_EVENT -> listOf(AppTab.HOME, AppTab.SCHEDULE, AppTab.SPEAKERS, AppTab.PLACES, AppTab.MEDIA, AppTab.INFO)
+            AppState.PRE_EVENT -> listOf(
+                AppTab.HOME,
+                AppTab.SCHEDULE,
+                AppTab.SPEAKERS,
+                AppTab.PLACES,
+                AppTab.MEDIA,
+                AppTab.INFO
+            )
+
+            AppState.ACTIVE_EVENT -> listOf(
+                AppTab.HOME,
+                AppTab.SCHEDULE,
+                AppTab.SPEAKERS,
+                AppTab.PLACES,
+                AppTab.MEDIA,
+                AppTab.INFO
+            )
+
             AppState.POST_EVENT -> listOf(AppTab.HOME, AppTab.SCHEDULE, AppTab.RATING, AppTab.MEDIA, AppTab.INFO)
         }
     }
