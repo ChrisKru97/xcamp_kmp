@@ -7,9 +7,9 @@ struct PlacesView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                Text("INFO TODO")
+                Text(StringsKt().common.infoTodo)
             }
-            .navigationTitle("Místa")
+            .navigationTitle(StringsKt().titles.places)
         }
     }
 }

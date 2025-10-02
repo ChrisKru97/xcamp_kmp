@@ -22,49 +22,49 @@ struct ContentView: View {
                 HomeView()
                     .tabItem {
                         Image(systemName: "house.fill")
-                        Text("Domů")
+                        Text(StringsKt().tabs.home)
                     }
 
             case .schedule:
                 ScheduleView()
                     .tabItem {
                         Image(systemName: "calendar")
-                        Text("Program")
+                        Text(StringsKt().tabs.schedule)
                     }
 
             case .speakers:
                 SpeakersView()
                     .tabItem {
                         Image(systemName: "person.2.fill")
-                        Text("Řečníci")
+                        Text(StringsKt().tabs.speakers)
                     }
 
             case .places:
                 PlacesView()
                     .tabItem {
                         Image(systemName: "location.fill")
-                        Text("Místa")
+                        Text(StringsKt().tabs.places)
                     }
 
             case .rating:
                 RatingView()
                     .tabItem {
                         Image(systemName: "star.fill")
-                        Text("Hodnocení")
+                        Text(StringsKt().tabs.rating)
                     }
 
             case .media:
                 MediaView()
                     .tabItem {
                         Image(systemName: "photo.fill")
-                        Text("Média")
+                        Text(StringsKt().tabs.media)
                     }
 
             case .info:
                 InfoView()
                     .tabItem {
                         Image(systemName: "info.circle.fill")
-                        Text("Info")
+                        Text(StringsKt().tabs.info)
                     }
             default: EmptyView()
         }

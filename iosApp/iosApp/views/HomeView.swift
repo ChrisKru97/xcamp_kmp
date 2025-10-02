@@ -23,7 +23,7 @@ struct HomeView: View {
                 }
                 .padding()
             }
-            .navigationTitle("XcamP")
+            .navigationTitle(StringsKt().titles.home)
         }
     }
 }

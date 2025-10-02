@@ -7,9 +7,9 @@ struct SpeakersView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                Text("INFO TODO")
+                Text(StringsKt().common.infoTodo)
             }
-            .navigationTitle("Řečníci")
+            .navigationTitle(StringsKt().titles.speakers)
         }
     }
 }

@@ -1,4 +1,5 @@
 import SwiftUI
+import shared
 
 struct CountdownView: View {
     let targetDate: Date
@@ -6,7 +7,7 @@ struct CountdownView: View {
 
     var body: some View {
         VStack {
-            Text("Event Countdown")
+            Text(StringsKt().countdown.title)
                 .font(.headline)
             Text(timeRemaining)
                 .font(.largeTitle)

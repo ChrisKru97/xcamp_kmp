@@ -7,9 +7,9 @@ struct RatingView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                Text("INFO TODO")
+                Text(StringsKt().common.infoTodo)
             }
-            .navigationTitle("Hodnocení")
+            .navigationTitle(StringsKt().titles.rating)
         }
     }
 }

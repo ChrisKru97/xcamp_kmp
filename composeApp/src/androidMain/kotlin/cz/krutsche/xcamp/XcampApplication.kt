@@ -12,7 +12,7 @@ class XcampApplication : Application() {
         startKoin {
             androidLogger()
             androidContext(this@XcampApplication)
-            modules(emptyList()) // Will add modules later
+            modules(emptyList())
         }
     }
 }
