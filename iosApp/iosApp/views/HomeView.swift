@@ -2,7 +2,7 @@ import SwiftUI
 import shared
 
 struct HomeView: View {
-    @StateObject private var viewModel = HomeViewModel()
+    @EnvironmentObject var appViewModel: AppViewModel
 
     var body: some View {
         NavigationView {
@@ -12,8 +12,8 @@ struct HomeView: View {
                         .font(.headline)
                         .foregroundColor(.primary)
 
-                    if viewModel.shouldShowCountdown {
-                        CountdownView(targetDate: viewModel.eventStartDate)
+                    if shouldShowCountdown {
+                        CountdownView(targetDate: eventStartDate)
                     }
                 }
                 .padding()
@@ -21,9 +21,15 @@ struct HomeView: View {
             .navigationTitle(Strings.Tabs.shared.HOME)
         }
     }
-}
 
-@MainActor class HomeViewModel: ObservableObject {
-    @Published var shouldShowCountdown = true
-    @Published var eventStartDate = Date()
+    private var shouldShowCountdown: Bool {
+        appViewModel.appState == .preEvent || appViewModel.appState == .limited
+    }
+
+    private var eventStartDate: Date {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let startDateString = appViewModel.getRemoteConfigService().getStartDate()
+        return formatter.date(from: startDateString) ?? Date()
+    }
 }

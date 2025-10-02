@@ -7,6 +7,7 @@ class AppViewModel: ObservableObject {
     @Published var isLoading: Bool = true
     @Published var errorMessage: String? = nil
     private var appConfigService: AppConfigService?
+    private var remoteConfigService: RemoteConfigService?
 
     func initializeApp() {
         FirebaseConfig.shared.initialize()
@@ -14,7 +15,13 @@ class AppViewModel: ObservableObject {
         let driverFactory = DatabaseDriverFactory()
         let _databaseManager = DatabaseManager(driverFactory: driverFactory)
         let authService = AuthService()
-        let remoteConfigService = RemoteConfigService()
+        remoteConfigService = RemoteConfigService()
+
+        guard let remoteConfigService = remoteConfigService else {
+            errorMessage = "Failed to initialize remote configuration"
+            isLoading = false
+            return
+        }
         appConfigService = AppConfigService(remoteConfigService: remoteConfigService)
 
         guard let appConfigService = appConfigService else {
@@ -44,7 +51,17 @@ class AppViewModel: ObservableObject {
         }
     }
 
-    func getAppConfigService() -> AppConfigService? {
+    func getAppConfigService() -> AppConfigService {
+        guard let appConfigService = appConfigService else {
+            fatalError("AppConfigService not initialized. Call initializeApp() first.")
+        }
         return appConfigService
+    }
+
+    func getRemoteConfigService() -> RemoteConfigService {
+        guard let remoteConfigService = remoteConfigService else {
+            fatalError("RemoteConfigService not initialized. Call initializeApp() first.")
+        }
+        return remoteConfigService
     }
 }
