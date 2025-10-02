@@ -3,10 +3,13 @@ import shared
 
 struct ContentView: View {
     @EnvironmentObject var appViewModel: AppViewModel
-    @State private var selectedTab = 0
 
     var body: some View {
-        TabView(selection: $selectedTab) {
+        var availableTabs = appViewModel.getAppConfigService()?.getAvailableTabs()
+        TabView {
+            availableTabs.map {
+                
+            }
             HomeView()
             .tabItem {
                 Image(systemName: "house.fill")
