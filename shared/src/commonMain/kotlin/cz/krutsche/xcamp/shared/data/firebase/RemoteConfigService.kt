@@ -13,18 +13,9 @@ class RemoteConfigService {
         return try {
             withTimeout(10.seconds) {
                 remoteConfig.settings {
-                    minimumFetchInterval = 3600.seconds // 1 hour
+                    minimumFetchInterval = 3600.seconds
                 }
 
-                // Set default values
-                remoteConfig.setDefaults(
-                    "showAppData" to false,
-                    "startDate" to "2026-07-18",
-                    "qrResetPin" to "1234",
-                    "mainInfo" to "Welcome to Xcamp!"
-                )
-
-                // Fetch and activate
                 remoteConfig.fetchAndActivate()
                 Result.success(Unit)
             }
@@ -33,88 +24,30 @@ class RemoteConfigService {
         }
     }
 
-    fun getBoolean(key: String): Boolean {
-        return try {
-            val value = remoteConfig.getValue(key)
-            value.asBoolean()
-        } catch (e: Exception) {
-            getDefaultBoolean(key)
-        }
+    private fun getBoolean(key: String): Boolean {
+        val value = remoteConfig.getValue(key)
+        return value.asBoolean()
     }
 
-    fun getString(key: String): String {
-        return try {
-            val value = remoteConfig.getValue(key)
-            value.asString()
-        } catch (e: Exception) {
-            getDefaultString(key)
-        }
+    private fun getString(key: String): String {
+        val value = remoteConfig.getValue(key)
+        return value.asString()
     }
 
-    fun getLong(key: String): Long {
-        return try {
-            val value = remoteConfig.getValue(key)
-            value.asLong()
-        } catch (e: Exception) {
-            getDefaultLong(key)
-        }
-    }
-
-    fun getDouble(key: String): Double {
-        return try {
-            val value = remoteConfig.getValue(key)
-            value.asDouble()
-        } catch (e: Exception) {
-            getDefaultDouble(key)
-        }
-    }
-
-    // App-specific feature flags
     fun shouldShowAppData(): Boolean = getBoolean("showAppData")
 
-    fun getStartDate(): String = getString("startDate")
+    fun getStartDate(): String = getString("startDate").ifEmpty { "2026-07-18" }
 
-    fun getQrResetPin(): String = getString("qrResetPin")
+    fun getQrResetPin(): String = getString("qrResetPin").ifEmpty { "7973955" }
 
     fun getMainInfo(): String = getString("mainInfo")
 
-    // Default values for fallback
-    private fun getDefaultBoolean(key: String): Boolean {
-        return when (key) {
-            "showAppData" -> false
-            else -> false
-        }
-    }
+    fun getGalleryLink(): String = getString("mediaGallery").ifEmpty { "https://eu.zonerama.com/xcamp/1274394" }
 
-    private fun getDefaultString(key: String): String {
-        return when (key) {
-            "startDate" -> "2026-07-18"
-            "qrResetPin" -> "1234"
-            "mainInfo" -> "Welcome to Xcamp!"
-            else -> ""
-        }
-    }
+    fun getContactPhone(): String = getString("phone").ifEmpty { "+420732378740" }
 
-    private fun getDefaultLong(key: String): Long {
-        return when (key) {
-            else -> 0L
-        }
-    }
+    fun getShowRegistration(): Boolean = getBoolean("registration")
 
-    private fun getDefaultDouble(key: String): Double {
-        return when (key) {
-            else -> 0.0
-        }
-    }
-
-    suspend fun refresh(): Result<Unit> {
-        return try {
-            withTimeout(10.seconds) {
-                remoteConfig.fetchAndActivate()
-                Result.success(Unit)
-            }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
+    fun getYoutubeLink(): String =
+        getString("youtubePlaylist").ifEmpty { "https://www.youtube.com/watch?v=AOFRsBUgjjU&list=PLVFssG93u7cbUrrT8_ocPN055g3EpsUbf" }
 }

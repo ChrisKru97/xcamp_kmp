@@ -27,7 +27,6 @@ napier = "2.7.1"
 uuid = "0.8.4"
 kmpnotifier = "1.6.0"
 google-services = "4.4.3"
-firebase-crashlytics = "3.0.6"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -67,8 +66,6 @@ firebase-app = { module = "dev.gitlive:firebase-app", version.ref = "firebase-ko
 firebase-auth = { module = "dev.gitlive:firebase-auth", version.ref = "firebase-kotlin-sdk" }
 firebase-firestore = { module = "dev.gitlive:firebase-firestore", version.ref = "firebase-kotlin-sdk" }
 firebase-storage = { module = "dev.gitlive:firebase-storage", version.ref = "firebase-kotlin-sdk" }
-firebase-analytics = { module = "dev.gitlive:firebase-analytics", version.ref = "firebase-kotlin-sdk" }
-firebase-crashlytics = { module = "dev.gitlive:firebase-crashlytics", version.ref = "firebase-kotlin-sdk" }
 firebase-messaging = { module = "dev.gitlive:firebase-messaging", version.ref = "firebase-kotlin-sdk" }
 firebase-config = { module = "dev.gitlive:firebase-config", version.ref = "firebase-kotlin-sdk" }
 
@@ -105,4 +102,3 @@ kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref =
 kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 sqlDelight = { id = "app.cash.sqldelight", version.ref = "sqlDelight" }
 googleServices = { id = "com.google.gms.google-services", version.ref = "google-services" }
-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase-crashlytics" }

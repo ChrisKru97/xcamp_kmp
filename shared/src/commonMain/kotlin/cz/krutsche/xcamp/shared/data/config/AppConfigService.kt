@@ -1,53 +1,39 @@
-@file:OptIn(kotlin.time.ExperimentalTime::class)
+@file:OptIn(ExperimentalTime::class)
 
 package cz.krutsche.xcamp.shared.data.config
 
 import cz.krutsche.xcamp.shared.data.firebase.RemoteConfigService
+import kotlin.time.Clock.System.now
+import kotlin.time.Duration.Companion.days
+import kotlin.time.ExperimentalTime
+import kotlin.time.Instant
+
+const val EventLength = 8
 
 class AppConfigService(
     private val remoteConfigService: RemoteConfigService
 ) {
-
     suspend fun initialize(): Result<Unit> {
         return remoteConfigService.initialize()
     }
 
-    /**
-     * Returns true if app should show full event data (Schedule, Speakers, Places tabs)
-     * Returns false for limited mode (Home, Media, Info only)
-     */
-    fun shouldShowAppData(): Boolean {
-        return remoteConfigService.shouldShowAppData()
+    private fun getEndOfEvent(): Instant {
+        val startDateStr = remoteConfigService.getStartDate()
+        val startDate = Instant.parse(startDateStr)
+        return startDate + EventLength.days
     }
 
-    /**
-     * Returns the event start date from remote config
-     * Default: 2026-07-18
-     */
-    fun getEventStartDate(): String {
-        return remoteConfigService.getStartDate()
+    private fun isEventActive(): Boolean {
+        val startDateStr = remoteConfigService.getStartDate()
+        val startDate = Instant.parse(startDateStr)
+        val today = now()
+        return today >= startDate && !isEventOver()
     }
 
-    /**
-     * Returns the QR reset PIN
-     */
-    fun getQrResetPin(): String {
-        return remoteConfigService.getQrResetPin()
-    }
-
-    /**
-     * Returns the main info text for the homepage
-     */
-    fun getMainInfo(): String {
-        return remoteConfigService.getMainInfo()
-    }
-
-    fun isEventActive(): Boolean {
-        return false
-    }
-
-    fun isEventOver(): Boolean {
-        return false
+    private fun isEventOver(): Boolean {
+        val endDate = getEndOfEvent()
+        val today = now()
+        return today >= endDate
     }
 
     /**
@@ -55,7 +41,7 @@ class AppConfigService(
      */
     fun getAppState(): AppState {
         return when {
-            !shouldShowAppData() -> AppState.LIMITED
+            !remoteConfigService.shouldShowAppData() -> AppState.LIMITED
             isEventOver() -> AppState.POST_EVENT
             isEventActive() -> AppState.ACTIVE_EVENT
             else -> AppState.PRE_EVENT
@@ -68,16 +54,8 @@ class AppConfigService(
     fun getAvailableTabs(): List<AppTab> {
         return when (getAppState()) {
             AppState.LIMITED -> listOf(AppTab.HOME, AppTab.MEDIA, AppTab.INFO)
-            AppState.PRE_EVENT -> listOf(
-                AppTab.HOME,
-                AppTab.SCHEDULE,
-                AppTab.SPEAKERS,
-                AppTab.PLACES,
-                AppTab.MEDIA,
-                AppTab.INFO
-            )
 
-            AppState.ACTIVE_EVENT -> listOf(
+            AppState.PRE_EVENT, AppState.ACTIVE_EVENT -> listOf(
                 AppTab.HOME,
                 AppTab.SCHEDULE,
                 AppTab.SPEAKERS,
@@ -88,10 +66,6 @@ class AppConfigService(
 
             AppState.POST_EVENT -> listOf(AppTab.HOME, AppTab.SCHEDULE, AppTab.RATING, AppTab.MEDIA, AppTab.INFO)
         }
-    }
-
-    suspend fun refresh(): Result<Unit> {
-        return remoteConfigService.refresh()
     }
 }
 
