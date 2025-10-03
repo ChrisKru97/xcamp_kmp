@@ -182,6 +182,7 @@
 				"./gradlew :shared:embedAndSignAppleFrameworkForXcode",
 				"",
 				"",
+				"",
 			);
 		};
 /* End PBXShellScriptBuildPhase section */

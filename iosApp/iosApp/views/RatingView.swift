@@ -13,3 +13,9 @@ struct RatingView: View {
         }
     }
 }
+
+#Preview {
+    RatingView()
+        .environmentObject(AppViewModel())
+        .preferredColorScheme(.dark)
+}

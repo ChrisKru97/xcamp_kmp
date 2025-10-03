@@ -13,3 +13,9 @@ struct SpeakersView: View {
         }
     }
 }
+
+#Preview {
+    SpeakersView()
+        .environmentObject(AppViewModel())
+        .preferredColorScheme(.dark)
+}

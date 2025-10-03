@@ -104,3 +104,9 @@ struct ContentView: View {
         }
     }
 }
+
+#Preview {
+    ContentView()
+        .environmentObject(AppViewModel())
+        .preferredColorScheme(.dark)
+}

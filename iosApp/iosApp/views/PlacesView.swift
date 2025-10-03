@@ -13,3 +13,9 @@ struct PlacesView: View {
         }
     }
 }
+
+#Preview {
+    PlacesView()
+        .environmentObject(AppViewModel())
+        .preferredColorScheme(.dark)
+}

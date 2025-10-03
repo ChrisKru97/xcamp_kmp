@@ -52,3 +52,9 @@ struct HomeView: View {
         return String(year)
     }
 }
+
+#Preview {
+    HomeView()
+        .environmentObject(AppViewModel())
+        .preferredColorScheme(.dark)
+}

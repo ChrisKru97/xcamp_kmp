@@ -13,3 +13,9 @@ struct ScheduleView: View {
         }
     }
 }
+
+#Preview {
+    ScheduleView()
+        .environmentObject(AppViewModel())
+        .preferredColorScheme(.dark)
+}
