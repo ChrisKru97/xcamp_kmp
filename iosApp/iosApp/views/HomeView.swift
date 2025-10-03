@@ -9,7 +9,7 @@ struct HomeView: View {
             ScrollView {
                 VStack(alignment: .leading) {
                     if shouldShowCountdown {
-                        CountdownView(targetDate: eventStartDate)
+                        CountdownView(targetDateString: eventDateString)
                             .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     if mainInfo.isEmpty == false {
@@ -34,7 +34,7 @@ struct HomeView: View {
             }
         }
     }
-    
+
     private var mainInfo: String {
         return appViewModel.getRemoteConfigService().getMainInfo()
     }
@@ -43,16 +43,12 @@ struct HomeView: View {
         appViewModel.appState == .preEvent || appViewModel.appState == .limited
     }
 
-    private var eventStartDate: Date {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        let startDateString = appViewModel.getRemoteConfigService().getStartDate()
-        return formatter.date(from: startDateString)?.addingTimeInterval(46800) ?? Date()
+    private var eventDateString: String {
+        return appViewModel.getRemoteConfigService().getStartDate()
     }
-    
+
     private var eventYear: String {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy"
-        return dateFormatter.string(from: eventStartDate)
+        let year = TimeUtils.shared.getYearFromDateString(dateString: eventDateString)
+        return String(year)
     }
 }

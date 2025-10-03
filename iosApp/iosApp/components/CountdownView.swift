@@ -2,7 +2,7 @@ import SwiftUI
 import shared
 
 struct CountdownView: View {
-    let targetDate: Date
+    let targetDateString: String
     @State private var timeRemaining: String = ""
 
     var body: some View {
@@ -21,26 +21,15 @@ struct CountdownView: View {
         .cornerRadius(10)
     }
 
+    private var countdownCalculator: CountdownCalculator {
+        return TimeUtils.shared.createCountdownCalculator(dateString: targetDateString)
+    }
+
     private func updateTimeRemaining() {
-        let now = Date()
-        let difference = Calendar.current.dateComponents([.day, .hour, .minute, .second], from: now, to: targetDate)
-        
-        let timeDiff = String(format: "%02d:%02d:%02d", difference.hour ?? 0, difference.minute ?? 0, difference.second ?? 0)
-        
-        guard let dayDifference = difference.day else {
-            timeRemaining = timeDiff
-            return
-        }
-        
-        if(dayDifference > 0) {
-            timeRemaining = "\(dayDifference) \(Strings.Countdown.shared.DAYS), \(timeDiff)"
-        } else {
-            timeRemaining = timeDiff
-        }
+        timeRemaining = countdownCalculator.getTimeRemaining()
     }
 }
 
 #Preview {
-    let dateFormatter = DateFormatter()
-    CountdownView(targetDate:  dateFormatter.date(from: "07-18-2026") ?? Date())
+    CountdownView(targetDateString: "2026-07-18")
 }
