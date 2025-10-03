@@ -37,7 +37,7 @@ struct ContentView: View {
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
                 .padding()
             } else {
-                let availableTabs = appViewModel.getAppConfigService()?.getAvailableTabs() ?? []
+                let availableTabs = appViewModel.getAppConfigService().getAvailableTabs()
 
                 TabView {
                     ForEach(Array(availableTabs.enumerated()), id: \.element) { index, tab in

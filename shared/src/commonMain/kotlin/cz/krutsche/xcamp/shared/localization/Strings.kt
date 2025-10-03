@@ -16,8 +16,10 @@ object Strings {
         const val RATING = "Hodnocení"
     }
 
-    // Countdown View
     object Countdown {
-        const val TITLE = "Event Countdown"
+        const val TITLE = "Už za"
+        const val DAYS = "dní"
+        const val DAYS_FEW = "dny"
+        const val DAY = "den"
     }
 }

@@ -10,8 +10,6 @@ class AppViewModel: ObservableObject {
     private var remoteConfigService: RemoteConfigService?
 
     func initializeApp() {
-        FirebaseConfig.shared.initialize()
-
         let driverFactory = DatabaseDriverFactory()
         let _databaseManager = DatabaseManager(driverFactory: driverFactory)
         let authService = AuthService()

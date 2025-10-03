@@ -24,11 +24,18 @@ struct CountdownView: View {
     private func updateTimeRemaining() {
         let now = Date()
         let difference = Calendar.current.dateComponents([.day, .hour, .minute, .second], from: now, to: targetDate)
-
-        if let day = difference.day, let hour = difference.hour, let minute = difference.minute, let second = difference.second {
-            timeRemaining = String(format: "%02dd %02dh %02dm %02ds", day, hour, minute, second)
+        
+        let timeDiff = String(format: "%02d:%02d:%02d", difference.hour ?? 0, difference.minute ?? 0, difference.second ?? 0)
+        
+        guard let dayDifference = difference.day else {
+            timeRemaining = timeDiff
+            return
+        }
+        
+        if(dayDifference > 0) {
+            timeRemaining = "\(dayDifference) \(Strings.Countdown.shared.DAYS), \(timeDiff)"
         } else {
-            timeRemaining = "00d 00h 00m 00s"
+            timeRemaining = timeDiff
         }
     }
 }
