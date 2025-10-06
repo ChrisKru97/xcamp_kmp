@@ -67,6 +67,10 @@ class AppConfigService(
             AppState.POST_EVENT -> listOf(AppTab.HOME, AppTab.SCHEDULE, AppTab.RATING, AppTab.MEDIA, AppTab.INFO)
         }
     }
+
+    fun getEventYear(): String {
+        return remoteConfigService.getStartDate().take(4)
+    }
 }
 
 enum class AppState {

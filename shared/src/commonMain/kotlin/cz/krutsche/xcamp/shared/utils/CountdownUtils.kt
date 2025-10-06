@@ -56,10 +56,8 @@ class CountdownCalculator private constructor(
     }
 }
 
-object TimeUtils {
+object CountdownUtils {
     fun createCountdownCalculator(dateString: String): CountdownCalculator {
         return CountdownCalculator.getInstance(dateString)
     }
-
-    fun getYearFromDateString(dateString: String): String = dateString.take(4)
 }

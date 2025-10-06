@@ -220,3 +220,28 @@ The app uses a **dynamic bottom tab system** controlled by Remote Config:
 - Apply functional programming patterns where appropriate (map, filter, fold)
 - Write self-documenting code that doesn't require extensive comments
 - Use extension functions to enhance existing APIs rather than utility classes
+
+### iOS SwiftUI Development Guidelines
+
+#### View Splitting Principles
+**Always split complex views into smaller, focused components:**
+- **Single Responsibility Views**: Each view component should have one clear purpose
+- **Reusable Components**: Extract common UI patterns into separate view files
+- **Component Size**: Keep individual view files under 50 lines when possible
+- **Clear Naming**: Use descriptive names that indicate the component's purpose
+
+#### No Logic in Swift Files
+**CRITICAL: All business logic must be in Kotlin shared code, not Swift files:**
+- **Swift files should only contain UI code**: Views, layouts, styling, animations
+- **Business logic in Kotlin**: All data processing, calculations, state management, and decision logic must be implemented in the shared Kotlin module
+- **Shared services**: Use Kotlin classes for RemoteConfig, AppState calculations, link generation, data formatting
+- **Swift as UI layer only**: Swift components should only call Kotlin methods and display the results
+- **No conditional logic**: Avoid if/else statements, switch cases, and data transformations in Swift - move these to Kotlin
+- **Pure functions**: Kotlin logic should be pure functions that return data for Swift to display
+
+#### iOS Design Principles
+- **Native iOS Aesthetics**: Prefer standard iOS design patterns over custom styling
+- **System Colors**: Use system colors and semantic colors where appropriate
+- **Standard Controls**: Leverage built-in iOS controls (NavigationLink, Button, List, etc.)
+- **Minimal Custom Styling**: Avoid excessive gradients, shadows, and custom effects
+- **Asset Integration**: Use colors and images from Assets.xcassets for consistency
