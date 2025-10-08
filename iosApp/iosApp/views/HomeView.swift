@@ -48,8 +48,7 @@ struct HomeView: View {
     }
 
     private var eventYear: String {
-        let year = TimeUtils.shared.getYearFromDateString(dateString: eventDateString)
-        return String(year)
+        return appViewModel.getAppConfigService().getEventYear()
     }
 }
 

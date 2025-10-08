@@ -245,3 +245,8 @@ The app uses a **dynamic bottom tab system** controlled by Remote Config:
 - **Standard Controls**: Leverage built-in iOS controls (NavigationLink, Button, List, etc.)
 - **Minimal Custom Styling**: Avoid excessive gradients, shadows, and custom effects
 - **Asset Integration**: Use colors and images from Assets.xcassets for consistency
+
+#### SwiftUI Preview Requirements
+- **Mandatory Previews**: All SwiftUI views and components must have `#Preview` implementations
+- **Component Testing**: Previews should demonstrate different states (normal, loading, disabled) where applicable
+- **Environment Objects**: Provide necessary environment objects (like `AppViewModel()`) for preview functionality

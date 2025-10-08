@@ -22,7 +22,7 @@ struct CountdownView: View {
     }
 
     private var countdownCalculator: CountdownCalculator {
-        return TimeUtils.shared.createCountdownCalculator(dateString: targetDateString)
+        return CountdownUtils.shared.createCountdownCalculator(dateString: targetDateString)
     }
 
     private func updateTimeRemaining() {
