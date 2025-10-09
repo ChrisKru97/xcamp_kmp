@@ -5,45 +5,15 @@ struct ContentView: View {
     @EnvironmentObject var appViewModel: AppViewModel
 
     var body: some View {
-        Group {
-            if appViewModel.isLoading {
-                VStack {
-                    ProgressView("Initializing app...")
-                        .progressViewStyle(CircularProgressViewStyle())
-                        .scaleEffect(1.5)
-                    Text("Please wait...")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .padding(.top, 8)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else if let errorMessage = appViewModel.errorMessage {
-                VStack(spacing: 16) {
-                    Image(systemName: "exclamationmark.triangle")
-                        .font(.system(size: 48))
-                        .foregroundColor(.orange)
-                    Text("Initialization Error")
-                        .font(.headline)
-                    Text(errorMessage)
-                        .font(.body)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal)
-                    Button("Retry") {
-                        appViewModel.initializeApp()
-                    }
-                    .buttonStyle(.borderedProminent)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .padding()
-            } else {
-                let availableTabs = appViewModel.getAppConfigService().getAvailableTabs()
+        if appViewModel.isLoading {
+            SplashView()
+        } else {
+            let availableTabs = appViewModel.getAppConfigService().getAvailableTabs()
 
-                TabView {
-                    ForEach(Array(availableTabs.enumerated()), id: \.element) { index, tab in
-                        createTabView(for: tab)
-                            .tag(index)
-                    }
+            TabView {
+                ForEach(Array(availableTabs.enumerated()), id: \.element) { index, tab in
+                    createTabView(for: tab)
+                        .tag(index)
                 }
             }
         }
@@ -105,8 +75,15 @@ struct ContentView: View {
     }
 }
 
-#Preview {
+#Preview("Loaded") {
     ContentView()
-        .environmentObject(AppViewModel())
-        .preferredColorScheme(.dark)
+        .environmentObject({
+            let vm = AppViewModel()
+            vm.isLoading = false
+            return vm
+        }())
+}
+
+#Preview("Loading") {
+    ContentView().environmentObject(AppViewModel())
 }
