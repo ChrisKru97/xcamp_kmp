@@ -48,6 +48,13 @@ class AppConfigService(
         }
     }
 
+    fun shouldShowCountdown(): Boolean {
+        return when (getAppState()) {
+            AppState.LIMITED, AppState.PRE_EVENT -> true
+            AppState.ACTIVE_EVENT, AppState.POST_EVENT -> false
+        }
+    }
+
     /**
      * Get the available bottom navigation tabs based on current app state
      */

@@ -3,7 +3,7 @@ import SwiftUI
 struct SplashView: View {
     var body: some View {
         ZStack {
-            Color("background")
+            Color.background
                 .ignoresSafeArea()
 
             Image("logo")
@@ -14,12 +14,7 @@ struct SplashView: View {
     }
 }
 
-#Preview("Light Mode") {
+@available(iOS 18, *)
+#Preview("Splash view", traits: .sizeThatFitsLayout) {
     SplashView()
-        .preferredColorScheme(.light)
-}
-
-#Preview("Dark Mode") {
-    SplashView()
-        .preferredColorScheme(.dark)
 }

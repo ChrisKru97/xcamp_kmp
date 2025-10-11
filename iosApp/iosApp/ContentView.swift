@@ -10,17 +10,27 @@ struct ContentView: View {
         } else {
             let availableTabs = appViewModel.getAppConfigService().getAvailableTabs()
 
-            TabView {
-                ForEach(Array(availableTabs.enumerated()), id: \.element) { index, tab in
-                    createTabView(for: tab)
-                        .tag(index)
+            if #available(iOS 18.0, *) {
+                TabView {
+                    ForEach(Array(availableTabs.enumerated()), id: \.element) { index, tab in
+                        createTabView(tab)
+                            .tag(index)
+                    }
+                }
+                .tabViewStyle(.sidebarAdaptable)
+            } else {
+                TabView {
+                    ForEach(Array(availableTabs.enumerated()), id: \.element) { index, tab in
+                        createTabView(tab)
+                            .tag(index)
+                    }
                 }
             }
         }
     }
 
     @ViewBuilder
-    private func createTabView(for tab: AppTab) -> some View {
+    private func createTabView(_ tab: AppTab) -> some View {
         switch tab {
             case .home:
                 HomeView()
@@ -75,15 +85,20 @@ struct ContentView: View {
     }
 }
 
-#Preview("Loaded") {
+@available(iOS 18, *)
+#Preview("Loaded state", traits: .sizeThatFitsLayout) {
     ContentView()
         .environmentObject({
             let vm = AppViewModel()
             vm.isLoading = false
             return vm
         }())
+        .background(.background)
 }
 
-#Preview("Loading") {
-    ContentView().environmentObject(AppViewModel())
+@available(iOS 18, *)
+#Preview("Loading state", traits: .sizeThatFitsLayout) {
+    ContentView()
+        .environmentObject(AppViewModel())
+        .background(.background)
 }

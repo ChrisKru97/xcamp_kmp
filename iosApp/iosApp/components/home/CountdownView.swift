@@ -1,0 +1,36 @@
+import SwiftUI
+import shared
+
+struct CountdownView: View {
+    @EnvironmentObject var appViewModel: AppViewModel
+    @State private var timeRemaining: String = ""
+
+    var body: some View {
+        GlassCard {
+            VStack(spacing: Spacing.sm) {
+                Text(Strings.Countdown.shared.TITLE)
+                Text(timeRemaining)
+                    .font(.title)
+                    .fontWeight(.semibold)
+                    .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
+                        timeRemaining = countdownCalculator.getTimeRemaining()
+                    }
+            }.onAppear {
+                timeRemaining = countdownCalculator.getTimeRemaining()
+            }
+        }
+    }
+
+    private var countdownCalculator: CountdownCalculator {
+        let targetDate = appViewModel.getRemoteConfigService().getStartDate()
+        return CountdownUtils.shared.createCountdownCalculator(dateString: targetDate)
+    }
+}
+
+@available(iOS 18, *)
+#Preview("Countdown", traits: .sizeThatFitsLayout) {
+    CountdownView()
+        .environmentObject(AppViewModel())
+        .padding(Spacing.md)
+        .background(Color("background"))
+}

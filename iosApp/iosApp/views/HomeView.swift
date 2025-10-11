@@ -3,57 +3,65 @@ import shared
 
 struct HomeView: View {
     @EnvironmentObject var appViewModel: AppViewModel
+    let overrideMainInfo: String?
+    let overrideShowCountdown: Bool?
+
+    init(overrideMainInfo: String? = nil, overrideShowCountdown: Bool? = nil) {
+        self.overrideMainInfo = overrideMainInfo
+        self.overrideShowCountdown = overrideShowCountdown
+    }
 
     var body: some View {
         NavigationView {
-            ScrollView {
-                VStack(alignment: .leading) {
-                    if shouldShowCountdown {
-                        CountdownView(targetDateString: eventDateString)
-                            .frame(maxWidth: .infinity, alignment: .leading)
+            ScrollView(.vertical) {
+                VStack(spacing: Spacing.md) {
+                    if showCountdown {
+                        CountdownView()
                     }
-                    if mainInfo.isEmpty == false {
-                        Text(mainInfo)
-                            .padding()
-                            .withDynamicGlassEffect()
-                            .frame(maxWidth: .infinity, alignment: .leading)
+                    
+                    if !mainInfo.isEmpty {
+                        MainInfoCard(infoText: mainInfo)
                     }
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding()
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Color(.background))
+            .padding(Spacing.md)
+            .frame(maxWidth: .infinity)
+            .background(.background)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    HStack {
-                        Image("logo").resizable().scaledToFit().frame(height: 40)
-                        Text("\(Strings.App.shared.TITLE) \(eventYear)").font(.title).fontWeight(.semibold)
-                    }.padding()
+                    HomeHeaderView()
                 }
             }
         }
+        .navigationViewStyle(.automatic)
     }
 
     private var mainInfo: String {
-        return appViewModel.getRemoteConfigService().getMainInfo()
+        return overrideMainInfo ?? appViewModel.getRemoteConfigService().getMainInfo()
     }
-
-    private var shouldShowCountdown: Bool {
-        appViewModel.appState == .preEvent || appViewModel.appState == .limited
-    }
-
-    private var eventDateString: String {
-        return appViewModel.getRemoteConfigService().getStartDate()
-    }
-
-    private var eventYear: String {
-        return appViewModel.getAppConfigService().getEventYear()
+    
+    private var showCountdown: Bool {
+        return overrideShowCountdown ?? appViewModel.getAppConfigService().shouldShowCountdown()
     }
 }
 
-#Preview {
-    HomeView()
-        .environmentObject(AppViewModel())
-        .preferredColorScheme(.dark)
+@available(iOS 18, *)
+#Preview("Upcoming event", traits: .sizeThatFitsLayout) {
+    HomeView(overrideMainInfo: "Ahoj! Tohle je test\nNovy event", overrideShowCountdown: true)
+        .environmentObject({
+            let vm = AppViewModel()
+            vm.appState = .limited
+            return vm
+        }())
+}
+
+
+@available(iOS 18, *)
+#Preview("Ongoing event", traits: .sizeThatFitsLayout) {
+    HomeView(overrideShowCountdown: false)
+        .environmentObject({
+            let vm = AppViewModel()
+            vm.appState = .activeEvent
+            return vm
+        }())
 }
