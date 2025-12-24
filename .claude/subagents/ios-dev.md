@@ -16,8 +16,9 @@ SwiftUI, iOS, Swift, preview, Xcode, glass effect
 ### View Splitting Principles
 - **Single Responsibility**: Each view component has one clear purpose
 - **Reusable Components**: Extract common UI patterns into separate view files
-- **Component Size**: Keep individual view files under 50 lines when possible
+- **Component Size**: Keep individual view files under 50 lines when possible, max 100 lines
 - **Clear Naming**: Use descriptive names (e.g., `CountdownView`, `MainInfoCard`)
+- **Separate Files**: Always keep views and components in separate files - no embedded components
 
 ### No Logic in Swift Files
 **CRITICAL**: All business logic must be in Kotlin shared code.
@@ -105,10 +106,18 @@ Use the reusable `GlassCard<Content: View>` component for consistency.
 iosApp/iosApp/
 ├── components/
 │   ├── common/       # Reusable components (GlassCard, buttons)
-│   └── home/         # Home-specific components
+│   ├── home/         # Home-specific components
+│   ├── media/        # Media-specific components
+│   └── [feature]/    # Feature-specific components as needed
 ├── views/            # Main views (HomeView, ScheduleView, etc.)
 └── utils/            # Spacing, CornerRadius, helpers
 ```
+
+**Component Organization Patterns**:
+- **Feature-based**: Group components by feature (e.g., `media/`, `home/`)
+- **Generic vs Specific**: Common reusable items in `common/`, feature-specific in feature folders
+- **Helper Utilities**: Extract presentation logic (e.g., icon mapping) into utility files
+- **No Embedded Components**: Never define components inside view files - always separate
 
 ## Common Xcode Commands
 ```bash

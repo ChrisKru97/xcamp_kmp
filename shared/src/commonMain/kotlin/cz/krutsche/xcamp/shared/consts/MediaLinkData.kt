@@ -12,7 +12,8 @@ enum class MediaLinkType {
     ApplePodcasts,
     Facebook,
     Instagram,
-    Gallery
+    Gallery,
+    Web
 }
 
 val mediaLinkOrder = listOf(
@@ -21,14 +22,15 @@ val mediaLinkOrder = listOf(
     MediaLinkType.ApplePodcasts,
     MediaLinkType.Facebook,
     MediaLinkType.Instagram,
-    MediaLinkType.Gallery
+    MediaLinkType.Web
 )
 
 val mediaLinkUrls = mapOf(
     MediaLinkType.Spotify to "https://open.spotify.com/show/6HwtclZ6RZkmUmOoBFppbf",
     MediaLinkType.ApplePodcasts to "https://podcasts.apple.com/us/podcast/festival-xcamp/id1637264212",
     MediaLinkType.Facebook to "https://www.facebook.com/xcamp.cz",
-    MediaLinkType.Instagram to "https://www.instagram.com/xcamp.cz/"
+    MediaLinkType.Instagram to "https://www.instagram.com/xcamp.cz/",
+    MediaLinkType.Web to "https://www.xcamp.cz"
 )
 
 val mediaLinkTitles = mapOf(
@@ -37,5 +39,6 @@ val mediaLinkTitles = mapOf(
     MediaLinkType.ApplePodcasts to "Apple Podcasts",
     MediaLinkType.Facebook to "Facebook",
     MediaLinkType.Instagram to "Instagram",
-    MediaLinkType.Gallery to "Galerie"
+    MediaLinkType.Gallery to "Galerie",
+    MediaLinkType.Web to "Website"
 )

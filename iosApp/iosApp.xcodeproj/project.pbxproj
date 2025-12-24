@@ -121,10 +121,6 @@
 			productReference = 7555FF7B242A565900829871 /* iosApp.app */;
 			productType = "com.apple.product-type.application";
 		};
-			outputFiles = (
-				"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)/shared.framework/shared",
-				"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)/shared.framework/Modules/module.modulemap",
-			);
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -192,10 +188,6 @@
 				"",
 				"",
 				"",
-			);
-			outputFiles = (
-				"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)/shared.framework/shared",
-				"$(SRCROOT)/../shared/build/xcode-frameworks/$(CONFIGURATION)/$(SDK_NAME)/shared.framework/Modules/module.modulemap",
 			);
 		};
 /* End PBXShellScriptBuildPhase section */
