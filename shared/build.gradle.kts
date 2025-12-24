@@ -66,9 +66,6 @@ kotlin {
             // Image Loading
             implementation(libs.kamel.image)
 
-            // Permissions
-            implementation(libs.moko.permissions)
-
             // Dependency Injection
             implementation(libs.koin.core)
 
@@ -92,10 +89,6 @@ kotlin {
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
             implementation(libs.sqldelight.native.driver)
-        }
-
-        commonTest.dependencies {
-            implementation(libs.kotlin.test)
         }
     }
 }

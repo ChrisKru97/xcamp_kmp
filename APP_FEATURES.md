@@ -297,7 +297,7 @@ The app uses a **dynamic bottom tab system** that adapts based on event state an
 
 ---
 
-# Developer Features & Testing
+# Developer Features
 
 ## 🛠️ Developer Settings Access
 
@@ -308,12 +308,12 @@ The app uses a **dynamic bottom tab system** that adapts based on event state an
 
 ### Developer Settings Screen
 - **Development Mode Toggle**: Enable/disable remote config overrides
-- **Remote Config Overrides**: When enabled, allows overriding Firebase Remote Config values for testing
+- **Remote Config Overrides**: When enabled, allows overriding Firebase Remote Config values
 - **Available Overrides**:
   - `showAppData` (boolean): Controls event mode vs. limited mode
   - `qrResetPin` (integer): Admin pin for resetting QR data
 
-## 🚀 Event Mode Testing
+## 🚀 Event Modes
 
 ### Limited Mode (showAppData = false)
 **Default Production State**
@@ -321,7 +321,7 @@ The app uses a **dynamic bottom tab system** that adapts based on event state an
 - **Features**: Countdown, news, media links, contact info
 - **Purpose**: Pre-event engagement and basic information access
 
-### Event Mode (showAppData = true)  
+### Event Mode (showAppData = true)
 **Full Event Features Enabled**
 - **Navigation**: 6 tabs (Home → Program → Řečníci → Mapa → Media → Info)
 - **Additional Features**:
