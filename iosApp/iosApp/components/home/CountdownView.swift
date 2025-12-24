@@ -31,6 +31,6 @@ struct CountdownView: View {
 #Preview("Countdown", traits: .sizeThatFitsLayout) {
     CountdownView()
         .environmentObject(AppViewModel())
-        .padding(Spacing.md)
-        .background(Color("background"))
+        .padding()
+        .background(Color.background)
 }

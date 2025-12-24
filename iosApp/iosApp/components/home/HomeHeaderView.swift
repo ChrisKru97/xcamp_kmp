@@ -25,6 +25,6 @@ struct HomeHeaderView: View {
 #Preview("Home header", traits: .sizeThatFitsLayout) {
     HomeHeaderView()
         .environmentObject(AppViewModel())
-        .padding(Spacing.md)
+        .padding()
         .background(.background)
 }

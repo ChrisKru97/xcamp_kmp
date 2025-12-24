@@ -24,7 +24,7 @@ struct HomeView: View {
                     }
                 }
             }
-            .padding(Spacing.md)
+            .padding()
             .frame(maxWidth: .infinity)
             .background(.background)
             .toolbar {

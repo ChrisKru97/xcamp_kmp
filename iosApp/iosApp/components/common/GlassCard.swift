@@ -6,11 +6,11 @@ struct GlassCard<Content: View>: View {
     var body: some View {
         if #available(iOS 26.0, *) {
             content()
-                .padding(Spacing.md)
+                .padding()
                 .glassEffect(.clear, in: .rect(cornerRadius: CornerRadius.medium))
         } else {
             content()
-                .padding(Spacing.md)
+                .padding()
                 .background(
                     RadialGradient(
                         colors: [
@@ -38,18 +38,18 @@ struct GlassCard<Content: View>: View {
     VStack {
         GlassCard {
             Text("Test")
-        }.padding(Spacing.md)
+        }.padding()
         GlassCard {
             Text("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.")
-        }.padding(Spacing.md)
+        }.padding()
         GlassCard {
             VStack {
                 Text("Test")
                 Image("logo").resizable().scaledToFit().frame(height: 30)
             }
-        }.padding(Spacing.md)
+        }.padding()
         GlassCard {
             Image("logo")
-        }.padding(Spacing.md)
-    }.background(Color("background"))
+        }.padding()
+    }.background(Color.background)
 }
