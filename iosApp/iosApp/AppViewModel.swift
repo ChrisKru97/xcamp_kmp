@@ -7,6 +7,7 @@ class AppViewModel: ObservableObject {
     @Published var isLoading: Bool = true
     private var appConfigService: AppConfigService?
     private var remoteConfigService: RemoteConfigService?
+    private var linksService: LinksService?
 
     func initializeApp() {
         let authService = AuthService()
@@ -48,5 +49,16 @@ class AppViewModel: ObservableObject {
             return newRemoteConfigService
         }
         return remoteConfigService
+    }
+
+    func getLinksService() -> LinksService {
+        guard let linksService = linksService else {
+            let newLinksService = LinksService(
+                remoteConfigService: getRemoteConfigService()
+            )
+            self.linksService = newLinksService
+            return newLinksService
+        }
+        return linksService
     }
 }

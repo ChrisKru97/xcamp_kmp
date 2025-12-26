@@ -22,4 +22,27 @@ object Strings {
         const val DAYS_FEW = "dny"
         const val DAY = "den"
     }
+
+    object Info {
+        const val IMPORTANT_INFO = "Důležité informace"
+        const val MEDICAL_HELP_TITLE = "Zdravotnická pomoc"
+        const val MEDICAL_HELP_TEXT = "Dostupná na informacích 24/7. V případě jakýchkoliv potíží se prosím obraťte na službu na Informacích."
+        const val LEAVING_CAMP_TITLE = "Opuštění tábora"
+        const val LEAVING_CAMP_TEXT = "V případě opuštění tábora tuto skutečnost prosím předem ohlaste na Informacích a svým skupinkovým vedoucím."
+        const val CONTACT_EMAIL = "info@xcamp.cz"
+        const val CONTACT_WEB = "Webové stránky"
+        const val CONTACT_MAP = "Mapa"
+        const val CONTACT_REGISTRATION = "Registrace"
+        const val CONTACT_PHONE_LABEL = "Telefon:"
+    }
+
+    object Media {
+        const val YOUTUBE = "YouTube"
+        const val SPOTIFY = "Spotify"
+        const val APPLE_PODCASTS = "Apple Podcasts"
+        const val FACEBOOK = "Facebook"
+        const val INSTAGRAM = "Instagram"
+        const val GALLERY = "Galerie"
+        const val WEBSITE = "Website"
+    }
 }

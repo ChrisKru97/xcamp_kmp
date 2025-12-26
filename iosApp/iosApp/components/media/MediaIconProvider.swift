@@ -8,12 +8,12 @@ enum MediaIconProvider {
 
     static func iconName(for title: String) -> String {
         switch title {
-        case "YouTube": return "play.rectangle.fill"
-        case "Spotify": return "music.note"
-        case "Apple Podcasts": return "music.note"
-        case "Facebook": return "book"
-        case "Instagram": return "camera"
-        case "Website": return "safari.fill"
+        case Strings.Media.shared.YOUTUBE: return "play.rectangle.fill"
+        case Strings.Media.shared.SPOTIFY: return "music.note"
+        case Strings.Media.shared.APPLE_PODCASTS: return "music.note"
+        case Strings.Media.shared.FACEBOOK: return "book"
+        case Strings.Media.shared.INSTAGRAM: return "camera"
+        case Strings.Media.shared.WEBSITE: return "safari.fill"
         default: return "link"
         }
     }

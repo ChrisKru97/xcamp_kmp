@@ -10,6 +10,7 @@ import cz.krutsche.xcamp.shared.consts.infoLinkUrls
 import cz.krutsche.xcamp.shared.consts.mediaLinkOrder
 import cz.krutsche.xcamp.shared.consts.mediaLinkTitles
 import cz.krutsche.xcamp.shared.consts.mediaLinkUrls
+import cz.krutsche.xcamp.shared.localization.Strings
 
 object LinkUtils {
     fun getInfoItems(phone: String, showRegistration: Boolean): List<InfoLink> {
@@ -23,7 +24,7 @@ object LinkUtils {
                     else -> ""
                 },
                 title = infoLinkTitles[type] ?: when (type) {
-                    InfoLinkType.Phone -> "Telefon: $phone"
+                    InfoLinkType.Phone -> "${Strings.Info.CONTACT_PHONE_LABEL} $phone"
                     else -> ""
                 }
             )

@@ -19,16 +19,7 @@ struct MediaView: View {
         }
     }
 
-    private var mediaLinks: [MediaLink] {
-        let remoteConfig = appViewModel.getRemoteConfigService()
-        let youtubeUrl = remoteConfig.getYoutubeLink()
-        let galleryUrl = remoteConfig.getGalleryLink()
-
-        return LinkUtils.shared.getMediaItems(
-            youtubePlaylist: youtubeUrl,
-            mediaGallery: galleryUrl
-        )
-    }
+    private var mediaLinks: [MediaLink] { appViewModel.getLinksService().getMediaLinks() }
 }
 
 @available(iOS 18, *)

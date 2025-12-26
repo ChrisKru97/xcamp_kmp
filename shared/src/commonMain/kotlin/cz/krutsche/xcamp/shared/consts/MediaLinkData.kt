@@ -1,5 +1,7 @@
 package cz.krutsche.xcamp.shared.consts
 
+import cz.krutsche.xcamp.shared.localization.Strings
+
 data class MediaLink(
     val title: String,
     val url: String,
@@ -34,11 +36,11 @@ val mediaLinkUrls = mapOf(
 )
 
 val mediaLinkTitles = mapOf(
-    MediaLinkType.Youtube to "YouTube",
-    MediaLinkType.Spotify to "Spotify",
-    MediaLinkType.ApplePodcasts to "Apple Podcasts",
-    MediaLinkType.Facebook to "Facebook",
-    MediaLinkType.Instagram to "Instagram",
-    MediaLinkType.Gallery to "Galerie",
-    MediaLinkType.Web to "Website"
+    MediaLinkType.Youtube to Strings.Media.YOUTUBE,
+    MediaLinkType.Spotify to Strings.Media.SPOTIFY,
+    MediaLinkType.ApplePodcasts to Strings.Media.APPLE_PODCASTS,
+    MediaLinkType.Facebook to Strings.Media.FACEBOOK,
+    MediaLinkType.Instagram to Strings.Media.INSTAGRAM,
+    MediaLinkType.Gallery to Strings.Media.GALLERY,
+    MediaLinkType.Web to Strings.Media.WEBSITE
 )

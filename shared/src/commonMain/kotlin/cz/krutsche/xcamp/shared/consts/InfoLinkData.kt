@@ -1,5 +1,7 @@
 package cz.krutsche.xcamp.shared.consts
 
+import cz.krutsche.xcamp.shared.localization.Strings
+
 data class InfoLink(
     val title: String,
     val url: String,
@@ -30,8 +32,8 @@ val infoLinkUrls = mapOf(
 )
 
 val infoLinkTitles = mapOf(
-    InfoLinkType.Email to "info@xcamp.cz",
-    InfoLinkType.Web to "Webové stránky",
-    InfoLinkType.Map to "Mapa",
-    InfoLinkType.Registration to "Registrace"
+    InfoLinkType.Email to Strings.Info.CONTACT_EMAIL,
+    InfoLinkType.Web to Strings.Info.CONTACT_WEB,
+    InfoLinkType.Map to Strings.Info.CONTACT_MAP,
+    InfoLinkType.Registration to Strings.Info.CONTACT_REGISTRATION
 )
