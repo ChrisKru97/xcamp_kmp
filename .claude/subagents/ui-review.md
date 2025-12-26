@@ -459,3 +459,14 @@ struct GlassCard<Content: View>: View {
 - Single responsibility
 - Clear purpose
 - Reusable
+
+## Post-Review Verification
+
+After code review passes, the implementation agent MUST:
+
+1. **Build the app** via MCP tools (`build_run_sim`)
+2. **Screenshot** the feature to verify visual state
+3. **Interact** with all UI elements using `tap`, `swipe`, `gesture`
+4. **Check logs** for errors via `launch_app_logs_sim`
+
+This is NOT optional - no feature is complete until visually verified in simulator!

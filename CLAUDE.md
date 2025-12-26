@@ -115,19 +115,23 @@ Specialized Claude Code plugin agents for parallel platform work. These agents c
 
 | Agent | Purpose | Trigger |
 |-------|---------|---------|
+| `ios-component-generator` | SwiftUI component creation with duplicate detection | Creating new iOS views/components |
+| `android-component-generator` | Compose component creation with duplicate detection | Creating new Android composables |
 | `ios-developer` | SwiftUI views, previews, components | iOS/Swift UI work |
 | `android-developer` | Compose, Material, Gradle | Android UI work |
 | `firebase-specialist` | Firestore, Storage, Remote Config | Database/cloud ops |
 | `shared-logic-dev` | Repositories, SQLDelight, Koin | Kotlin shared module |
 | `strings-manager` | Strings.kt, localization | UI text management |
-| `ui-reviewer` | KISS/DRY code review | Quality review |
+| `ui-reviewer` | KISS/DRY code review | UI quality review |
+| `code-reviewer` | Code quality, anti-patterns, architecture | Comprehensive code review |
 
 ### Parallel Work Examples
 
 Launch multiple agents simultaneously for maximum efficiency:
 - `ios-developer` + `android-developer` for cross-platform UI implementation
 - `shared-logic-dev` + `firebase-specialist` for backend features
-- Any implementation agent + `ui-reviewer` for implementation with quality review
+- Any implementation agent + `ui-reviewer` for implementation with UI quality review
+- Any implementation agent + `code-reviewer` for comprehensive code quality review
 
 ### When to Use Agents vs Documentation
 
@@ -145,9 +149,42 @@ Launch multiple agents simultaneously for maximum efficiency:
 ### Documentation References
 
 For quick context (without spawning agents):
+- `.claude/subagents/component-generator-ios.md` - iOS SwiftUI component creation guide
+- `.claude/subagents/component-generator-android.md` - Android Compose component creation guide
 - `.claude/subagents/ios-dev.md`
 - `.claude/subagents/android-dev.md`
 - `.claude/subagents/firebase-integration.md`
 - `.claude/subagents/shared-logic.md`
 - `.claude/subagents/strings-management.md`
 - `.claude/subagents/ui-review.md`
+- `.claude/subagents/code-review.md`
+
+## Post-Development Workflow (REQUIRED)
+
+**NEVER assume a feature is complete without these steps!**
+
+### 1. Code Review
+- Spawn `code-reviewer` agent for comprehensive code quality review
+- Spawn `ui-reviewer` agent for KISS/DRY UI component review
+- Address all violations before proceeding
+- Ensure proper component separation and naming
+
+### 2. Build & Launch
+- iOS: Use MCP `build_run_sim` to build and launch in simulator
+- Android: `./gradlew :composeApp:installDebug` (when Android MCP available)
+
+### 3. Visual & Functional Testing (iOS)
+Use MCP tools to verify the feature works:
+- `screenshot` - Capture current visual state
+- `describe_ui` - Verify UI element hierarchy
+- `tap`, `swipe`, `gesture` - Test all interactions
+- `launch_app_logs_sim` - Monitor for runtime errors
+
+### 4. Clean Code Checklist
+- [ ] No hardcoded strings (use Strings.kt)
+- [ ] No duplicate code patterns
+- [ ] SwiftUI previews added for new views
+- [ ] Proper error handling implemented
+
+### Android Development Blocker
+**IMPORTANT:** If asked to do Android-specific UI work, STOP and require the user to add Android MCP tools first before proceeding!

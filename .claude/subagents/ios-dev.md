@@ -130,3 +130,33 @@ xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -sdk iphonesimulator
 # Clean build
 xcodebuild clean -project iosApp/iosApp.xcodeproj
 ```
+
+## Post-Development Testing (MCP)
+
+After implementing any iOS feature, use these MCP tools to verify:
+
+### Build & Launch
+- `build_run_sim` - Build and run in simulator
+- `build_sim` - Build only (for quick compilation check)
+
+### Visual Verification
+- `screenshot` - Capture current screen state
+- `describe_ui` - Get full UI element hierarchy with coordinates
+
+### Interaction Testing
+- `tap(x, y)` or `tap(label: "Button")` - Tap elements
+- `swipe(x1, y1, x2, y2)` - Test scroll/swipe
+- `gesture(preset: "scroll-down")` - Preset gestures
+- `type_text("...")` - Test text input
+
+### Log Monitoring
+- `launch_app_logs_sim(bundleId)` - Launch with log capture
+- `start_sim_log_cap(bundleId)` - Start log capture
+- `stop_sim_log_cap(sessionId)` - Get captured logs
+
+### Testing Checklist
+- [ ] Feature renders correctly (screenshot)
+- [ ] All buttons/links are tappable (describe_ui + tap)
+- [ ] Navigation flows work (tap through screens)
+- [ ] No runtime errors in logs
+- [ ] Edge cases handled (empty states, errors)
