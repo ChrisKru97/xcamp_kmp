@@ -106,3 +106,48 @@ For Firebase implementation details, see `.claude/subagents/firebase-integration
 - 5-second timeouts on all network operations
 - Use latest KMP-compatible framework versions
 - For shared module patterns, see `.claude/subagents/shared-logic.md`
+
+## Development Agents
+
+Specialized Claude Code plugin agents for parallel platform work. These agents can be spawned via the Task tool for autonomous, focused work.
+
+### Available Agents
+
+| Agent | Purpose | Trigger |
+|-------|---------|---------|
+| `ios-developer` | SwiftUI views, previews, components | iOS/Swift UI work |
+| `android-developer` | Compose, Material, Gradle | Android UI work |
+| `firebase-specialist` | Firestore, Storage, Remote Config | Database/cloud ops |
+| `shared-logic-dev` | Repositories, SQLDelight, Koin | Kotlin shared module |
+| `strings-manager` | Strings.kt, localization | UI text management |
+| `ui-reviewer` | KISS/DRY code review | Quality review |
+
+### Parallel Work Examples
+
+Launch multiple agents simultaneously for maximum efficiency:
+- `ios-developer` + `android-developer` for cross-platform UI implementation
+- `shared-logic-dev` + `firebase-specialist` for backend features
+- Any implementation agent + `ui-reviewer` for implementation with quality review
+
+### When to Use Agents vs Documentation
+
+**Spawn an agent when:**
+- Creating new files or significant modifications
+- Need autonomous multi-step work
+- Complex platform-specific implementation
+- Code review or refactoring tasks
+
+**Read documentation directly when:**
+- Quick reference lookup
+- Understanding patterns before starting
+- Verifying conventions mid-task
+
+### Documentation References
+
+For quick context (without spawning agents):
+- `.claude/subagents/ios-dev.md`
+- `.claude/subagents/android-dev.md`
+- `.claude/subagents/firebase-integration.md`
+- `.claude/subagents/shared-logic.md`
+- `.claude/subagents/strings-management.md`
+- `.claude/subagents/ui-review.md`
