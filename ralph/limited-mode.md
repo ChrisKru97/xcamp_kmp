@@ -1,0 +1,3 @@
+I want you to understand the limited mode of the app and plan how to implement it properly - the shared logic and both UI implementations (kotlin, ios)
+The source of truth or inspiration is to be taken from flutter project located in ~/Documents/xcamp_app - make sure you keep all the data/info and functionality that is in the limited mode in flutter project (home, media and info tab)
+The design should be modern, minimalistic, and aligning to latest design standards for each system (ios 26 - liquid glass, android 16 - material ui 3)
