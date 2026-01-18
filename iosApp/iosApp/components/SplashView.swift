@@ -14,7 +14,6 @@ struct SplashView: View {
     }
 }
 
-@available(iOS 18, *)
-#Preview("Splash view", traits: .sizeThatFitsLayout) {
+#Preview("Splash view") {
     SplashView()
 }

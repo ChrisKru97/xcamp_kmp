@@ -27,8 +27,7 @@ struct CountdownView: View {
     }
 }
 
-@available(iOS 18, *)
-#Preview("Countdown", traits: .sizeThatFitsLayout) {
+#Preview("Countdown") {
     CountdownView()
         .environmentObject(AppViewModel())
         .padding()

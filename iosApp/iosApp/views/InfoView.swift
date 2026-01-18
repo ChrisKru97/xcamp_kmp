@@ -8,85 +8,44 @@ struct InfoView: View {
         NavigationView {
             ScrollView {
                 VStack(spacing: Spacing.lg) {
-                    importantInfoSection
-                    contactLinksSection
+                    emergencySection
+                    contactSection
                 }
-                .padding(Spacing.md)
+                .padding(.horizontal, Spacing.md)
+                .padding(.top, Spacing.md)
+                .padding(.bottom, Spacing.xxl)
             }
             .background(Color.background)
             .navigationTitle(Strings.Tabs.shared.INFO)
         }
     }
 
-    private var importantInfoSection: some View {
-        GlassCard {
-            VStack(alignment: .leading, spacing: Spacing.md) {
-                sectionHeader(icon: "cross.case.fill", title: Strings.Info.shared.IMPORTANT_INFO)
-
-                VStack(spacing: Spacing.sm) {
-                    importantInfoCard(
-                        icon: "cross.case.fill",
-                        title: Strings.Info.shared.MEDICAL_HELP_TITLE,
-                        text: Strings.Info.shared.MEDICAL_HELP_TEXT
-                    )
-
-                    importantInfoCard(
-                        icon: "arrow.up.forward.square",
-                        title: Strings.Info.shared.LEAVING_CAMP_TITLE,
-                        text: Strings.Info.shared.LEAVING_CAMP_TEXT
-                    )
-                }
-            }
-        }
-    }
-
-    private var contactLinksSection: some View {
-        VStack(spacing: Spacing.sm) {
-            ForEach(infoLinks, id: \.type) { link in
-                InfoLinkCard(link: link)
-            }
-        }
-    }
-
-    private func sectionHeader(icon: String, title: String) -> some View {
-        HStack(spacing: Spacing.md) {
-            Image(systemName: icon)
-                .font(.system(size: 20))
+    private var emergencySection: some View {
+        VStack(alignment: .leading, spacing: Spacing.md) {
+            Text(Strings.Info.shared.IMPORTANT_INFO)
+                .font(.subheadline)
+                .fontWeight(.medium)
                 .foregroundStyle(.secondary)
-            Text(title)
-                .font(.headline)
-                .foregroundStyle(.primary)
-            Spacer()
+                .padding(.horizontal, Spacing.xs)
+
+            VStack(spacing: Spacing.sm) {
+                EmergencyPill(
+                    icon: "cross.case.fill",
+                    title: Strings.Info.shared.MEDICAL_HELP_TITLE,
+                    description: Strings.Info.shared.MEDICAL_HELP_TEXT
+                )
+
+                EmergencyPill(
+                    icon: "arrow.up.forward.square.fill",
+                    title: Strings.Info.shared.LEAVING_CAMP_TITLE,
+                    description: Strings.Info.shared.LEAVING_CAMP_TEXT
+                )
+            }
         }
     }
 
-    private func importantInfoCard(icon: String, title: String, text: String) -> some View {
-        HStack(alignment: .top, spacing: Spacing.md) {
-            Image(systemName: icon)
-                .font(.system(size: 16))
-                .foregroundStyle(.orange)
-                .padding(Spacing.sm)
-                .background(Color.orange.opacity(0.2))
-                .clipShape(RoundedRectangle(cornerRadius: CornerRadius.small))
-
-            VStack(alignment: .leading, spacing: Spacing.xs) {
-                Text(title)
-                    .font(.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(.primary)
-
-                Text(text)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-            }
-        }
-        .padding(Spacing.md)
-        .background(Color.orange.opacity(0.1))
-        .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
-        .overlay(
-            RoundedRectangle(cornerRadius: CornerRadius.medium)
-                .stroke(Color.orange.opacity(0.3), lineWidth: 1)
-        )
+    private var contactSection: some View {
+        ContactGrid(links: infoLinks)
     }
 
     private var infoLinks: [InfoLink] {
@@ -94,8 +53,7 @@ struct InfoView: View {
     }
 }
 
-@available(iOS 18, *)
-#Preview("Info View", traits: .sizeThatFitsLayout) {
+#Preview("Info View") {
     InfoView()
         .environmentObject(AppViewModel())
 }

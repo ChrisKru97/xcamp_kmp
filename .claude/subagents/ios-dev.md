@@ -86,15 +86,37 @@ Apply consistently:
 
 ## Glass Effect Implementation
 
+Use the backport namespace for iOS version compatibility:
+
 ```swift
-if #available(iOS 26.0, *) {
-    // Native glass effect
-} else {
-    // Gradient-based fallback
-}
+// Use backport namespace for iOS version compatibility
+content.backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
 ```
 
 Use the reusable `GlassCard<Content: View>` component for consistency.
+
+## iOS Version Compatibility
+
+Use the backport namespace pattern for version-specific APIs:
+
+```swift
+// Available backports (defined in utils/BackportModifiers.swift)
+content.backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
+iconView.backport.bounceSymbol(trigger: isPressed)
+buttonView.backport.impactFeedback(trigger: isPressed)
+```
+
+**Do NOT use inline `#available` checks** in your views - the backport namespace handles version compatibility internally.
+
+### Available Backports
+
+| Backport Method | Modern API | Fallback | Min iOS |
+|----------------|-----------|----------|---------|
+| `.backport.glassEffect(in:)` | iOS 26.0 `.glassEffect(.clear, in:)` | `.background(.ultraThinMaterial, in:)` | 15.0+ |
+| `.backport.bounceSymbol(trigger:)` | iOS 17.0 `.symbolEffect(.bounce, value:)` | No-op | 15.0+ |
+| `.backport.impactFeedback(trigger:)` | iOS 17.0 `.sensoryFeedback(.impact(flexibility: .soft), trigger:)` | No-op | 15.0+ |
+
+**Reference**: `iosApp/iosApp/utils/BackportModifiers.swift`
 
 ## Navigation & Toolbar
 - `.navigationViewStyle(.automatic)` for consistency

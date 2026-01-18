@@ -22,8 +22,7 @@ struct MainInfoCard: View {
     }
 }
 
-@available(iOS 18, *)
-#Preview("Main info", traits: .sizeThatFitsLayout) {
+#Preview("Main info") {
     MainInfoCard(infoText: "Test\nAhoj\nLorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also")
         .padding()
         .background(.background)

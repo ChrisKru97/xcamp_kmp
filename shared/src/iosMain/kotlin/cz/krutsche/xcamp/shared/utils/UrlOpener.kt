@@ -5,6 +5,8 @@ import platform.UIKit.*
 
 actual object UrlOpener {
     actual fun openUrl(url: String) {
+        if (url.isBlank()) return
+        
         val nsUrl = NSURL.URLWithString(url) ?: return
         UIApplication.sharedApplication.openURL(
             url = nsUrl,

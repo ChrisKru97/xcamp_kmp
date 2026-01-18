@@ -98,7 +98,6 @@ Thumbs.db
 *~
 
 # IDE
-.vscode/
 *.sublime-project
 *.sublime-workspace
 

@@ -2,39 +2,15 @@ import SwiftUI
 
 struct GlassCard<Content: View>: View {
     @ViewBuilder let content: () -> Content
-    
+
     var body: some View {
-        if #available(iOS 26.0, *) {
-            content()
-                .padding()
-                .glassEffect(.clear, in: .rect(cornerRadius: CornerRadius.medium))
-        } else {
-            content()
-                .padding()
-                .background(
-                    RadialGradient(
-                        colors: [
-                            .white.opacity(0.15),
-                            .white.opacity(0.25),
-                            .white.opacity(0.4)
-                        ],
-                        center: .center,
-                        startRadius: 0,
-                        endRadius: 180
-                    )
-                )
-                .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
-                .overlay(
-                    RoundedRectangle(cornerRadius: CornerRadius.medium)
-                        .stroke(Color.gray.opacity(0.3), lineWidth: 1)
-                )
-                .shadow(color: .black.opacity(0.2), radius: 8)
-        }
+        content()
+            .padding()
+            .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
     }
 }
 
-@available(iOS 18, *)
-#Preview("Glass Card", traits: .sizeThatFitsLayout) {
+#Preview("Glass Card") {
     VStack {
         GlassCard {
             Text("Test")

@@ -112,3 +112,31 @@ sqldelight {
         }
     }
 }
+
+// VS Code SourceKit-LSP support: Create version-independent symlink to framework
+tasks.register("createVsCodeFrameworkSymlink") {
+    group = "ide"
+    description = "Create symlink for VS Code SourceKit-LSP (points to current framework version)"
+
+    doLast {
+        val frameworkBaseDir = layout.buildDirectory.dir("xcode-frameworks/Debug").get().asFile
+        val linkDir = layout.buildDirectory.dir("xcode-frameworks").get().asFile
+
+        // Find the simulator framework directory (e.g., iphonesimulator26.2)
+        val simulatorDir = frameworkBaseDir.listFiles()?.firstOrNull {
+            it.name.startsWith("iphonesimulator")
+        } ?: error("No simulator framework directory found in $frameworkBaseDir")
+
+        // Create symlink using ln -sf (relative path from xcode-frameworks to Debug/iphonesimulator26.2)
+        exec {
+            commandLine("ln", "-sf", "Debug/${simulatorDir.name}", "${linkDir.absolutePath}/vscode-current")
+        }
+
+        println("Created VS Code framework symlink: vscode-current -> ${simulatorDir.name}")
+    }
+}
+
+// Automatically run symlink task after simulator framework builds
+tasks.named("linkDebugFrameworkIosSimulatorArm64") {
+    finalizedBy("createVsCodeFrameworkSymlink")
+}

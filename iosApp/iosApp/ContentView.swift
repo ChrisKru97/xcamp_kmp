@@ -10,22 +10,13 @@ struct ContentView: View {
         } else {
             let availableTabs = appViewModel.getAppConfigService().getAvailableTabs()
 
-            if #available(iOS 18.0, *) {
-                TabView {
-                    ForEach(Array(availableTabs.enumerated()), id: \.element) { index, tab in
-                        createTabView(tab)
-                            .tag(index)
-                    }
-                }
-                .tabViewStyle(.sidebarAdaptable)
-            } else {
-                TabView {
-                    ForEach(Array(availableTabs.enumerated()), id: \.element) { index, tab in
-                        createTabView(tab)
-                            .tag(index)
-                    }
+            TabView {
+                ForEach(Array(availableTabs.enumerated()), id: \.element) { index, tab in
+                    createTabView(tab)
+                        .tag(index)
                 }
             }
+            .tabViewStyle(.automatic)
         }
     }
 
@@ -85,8 +76,7 @@ struct ContentView: View {
     }
 }
 
-@available(iOS 18, *)
-#Preview("Loaded state", traits: .sizeThatFitsLayout) {
+#Preview("Loaded state") {
     ContentView()
         .environmentObject({
             let vm = AppViewModel()
@@ -96,8 +86,7 @@ struct ContentView: View {
         .background(.background)
 }
 
-@available(iOS 18, *)
-#Preview("Loading state", traits: .sizeThatFitsLayout) {
+#Preview("Loading state") {
     ContentView()
         .environmentObject(AppViewModel())
         .background(.background)

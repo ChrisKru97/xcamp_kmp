@@ -18,7 +18,7 @@ struct HomeView: View {
                     if showCountdown {
                         CountdownView()
                     }
-                    
+
                     if !mainInfo.isEmpty {
                         MainInfoCard(infoText: mainInfo)
                     }
@@ -39,14 +39,13 @@ struct HomeView: View {
     private var mainInfo: String {
         return overrideMainInfo ?? appViewModel.getRemoteConfigService().getMainInfo()
     }
-    
+
     private var showCountdown: Bool {
         return overrideShowCountdown ?? appViewModel.getAppConfigService().shouldShowCountdown()
     }
 }
 
-@available(iOS 18, *)
-#Preview("Upcoming event", traits: .sizeThatFitsLayout) {
+#Preview("Upcoming event") {
     HomeView(overrideMainInfo: "Ahoj! Tohle je test\nNovy event", overrideShowCountdown: true)
         .environmentObject({
             let vm = AppViewModel()
@@ -56,8 +55,7 @@ struct HomeView: View {
 }
 
 
-@available(iOS 18, *)
-#Preview("Ongoing event", traits: .sizeThatFitsLayout) {
+#Preview("Ongoing event") {
     HomeView(overrideShowCountdown: false)
         .environmentObject({
             let vm = AppViewModel()

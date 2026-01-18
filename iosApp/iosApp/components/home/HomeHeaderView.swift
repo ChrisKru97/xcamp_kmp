@@ -15,14 +15,13 @@ struct HomeHeaderView: View {
                 .fontWeight(.semibold)
         }
     }
-    
+
     private var eventYear: String {
         return appViewModel.getAppConfigService().getEventYear()
     }
 }
 
-@available(iOS 18, *)
-#Preview("Home header", traits: .sizeThatFitsLayout) {
+#Preview("Home header") {
     HomeHeaderView()
         .environmentObject(AppViewModel())
         .padding()

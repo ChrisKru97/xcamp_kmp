@@ -7,23 +7,22 @@ struct MediaView: View {
     var body: some View {
         NavigationView {
             ScrollView {
-                VStack(spacing: Spacing.md) {
-                    ForEach(mediaLinks, id: \.type) { link in
-                        MediaLinkCard(link: link)
-                    }
-                }
-                .padding(Spacing.md)
+                MediaGrid(links: mediaLinks)
+                    .padding(.horizontal, Spacing.md)
+                    .padding(.top, Spacing.md)
+                    .padding(.bottom, Spacing.xxl)
             }
             .background(Color.background)
             .navigationTitle(Strings.Tabs.shared.MEDIA)
         }
     }
 
-    private var mediaLinks: [MediaLink] { appViewModel.getLinksService().getMediaLinks() }
+    private var mediaLinks: [MediaLink] {
+        appViewModel.getLinksService().getMediaLinks()
+    }
 }
 
-@available(iOS 18, *)
-#Preview("Media View", traits: .sizeThatFitsLayout) {
+#Preview("Media View") {
     MediaView()
         .environmentObject(AppViewModel())
 }

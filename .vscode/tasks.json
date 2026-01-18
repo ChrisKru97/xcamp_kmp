@@ -1,0 +1,40 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Build Shared Framework (iOS Simulator)",
+      "type": "shell",
+      "command": "./gradlew",
+      "args": [":shared:linkDebugFrameworkIosSimulatorArm64"],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": ["$swiftc"]
+    },
+    {
+      "label": "Build Shared Framework (iOS Device)",
+      "type": "shell",
+      "command": "./gradlew",
+      "args": [":shared:linkDebugFrameworkIosArm64"],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "problemMatcher": ["$swiftc"]
+    },
+    {
+      "label": "KMP: Update Framework Symlink",
+      "type": "shell",
+      "command": "./gradlew",
+      "args": [":shared:createVsCodeFrameworkSymlink"],
+      "group": "build",
+      "presentation": {
+        "reveal": "silent"
+      },
+      "problemMatcher": []
+    }
+  ]
+}

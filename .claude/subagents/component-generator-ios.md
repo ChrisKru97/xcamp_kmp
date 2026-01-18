@@ -418,23 +418,26 @@ Button("Click me") { }
 
 ## iOS Version Compatibility
 
-Use inline `#available` checks for iOS version differences:
+Use the backport namespace pattern for version-specific APIs:
 
 ```swift
-var body: some View {
-    if #available(iOS 26.0, *) {
-        // Modern implementation
-        content.glassEffect(.regular, in: .rect(cornerRadius: CornerRadius.medium))
-    } else {
-        // Fallback for older versions
-        content
-            .background(.ultraThinMaterial)
-            .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
-    }
-}
+// Use the backport namespace for version-specific APIs
+content.backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
+iconView.backport.bounceSymbol(trigger: isPressed)
+buttonView.backport.impactFeedback(trigger: isPressed)
 ```
 
-**Do NOT create separate wrapper views** for version checks - use inline checks.
+**Do NOT use inline `#available` checks** in your views - the backport namespace handles version compatibility internally.
+
+### Available Backports
+
+| Backport Method | Modern API | Fallback | Min iOS |
+|----------------|-----------|----------|---------|
+| `.backport.glassEffect(in:)` | iOS 26.0 `.glassEffect(.clear, in:)` | `.background(.ultraThinMaterial, in:)` | 15.0+ |
+| `.backport.bounceSymbol(trigger:)` | iOS 17.0 `.symbolEffect(.bounce, value:)` | No-op | 15.0+ |
+| `.backport.impactFeedback(trigger:)` | iOS 17.0 `.sensoryFeedback(.impact(flexibility: .soft), trigger:)` | No-op | 15.0+ |
+
+**Reference**: `iosApp/iosApp/utils/BackportModifiers.swift`
 
 ## KISS/DRY Decision Guidelines
 
