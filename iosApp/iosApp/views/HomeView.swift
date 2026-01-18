@@ -13,27 +13,24 @@ struct HomeView: View {
 
     var body: some View {
         NavigationView {
-            ScrollView(.vertical) {
-                VStack(spacing: Spacing.md) {
-                    if showCountdown {
-                        CountdownView()
-                    }
+            VStack(spacing: Spacing.md) {
+                HomeHeaderView()
+                    .padding(.bottom, Spacing.sm)
 
-                    if !mainInfo.isEmpty {
-                        MainInfoCard(infoText: mainInfo)
-                    }
+                if showCountdown {
+                    CountdownView()
                 }
-            }
-            .padding()
-            .frame(maxWidth: .infinity)
-            .background(.background)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    HomeHeaderView()
+
+                if !mainInfo.isEmpty {
+                    MainInfoCard(infoText: mainInfo)
                 }
+
+                Spacer()
             }
+            .padding(.horizontal, Spacing.md)
+            .padding(.top, Spacing.md)
+            .background(Color.background.ignoresSafeArea())
         }
-        .navigationViewStyle(.automatic)
     }
 
     private var mainInfo: String {

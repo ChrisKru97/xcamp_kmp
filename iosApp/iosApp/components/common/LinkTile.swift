@@ -23,13 +23,13 @@ struct LinkTile<T: LinkData>: View {
         VStack(spacing: Spacing.sm) {
             Image(systemName: item.icon)
                 .font(.system(size: 24, weight: .medium))
-                .foregroundStyle(.primary.opacity(0.7))
+                .foregroundStyle(.black.opacity(0.8))
                 .backport.bounceSymbol(trigger: isPressed)
 
             Text(item.title)
                 .font(.caption)
                 .fontWeight(.medium)
-                .foregroundStyle(.primary)
+                .foregroundStyle(.black.opacity(0.8))
                 .lineLimit(2)
                 .multilineTextAlignment(.center)
         }
