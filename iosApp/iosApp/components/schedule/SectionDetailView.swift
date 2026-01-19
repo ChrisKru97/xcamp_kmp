@@ -3,10 +3,15 @@ import shared
 
 struct SectionDetailView: View {
     let section: shared.Section
+    let service: ScheduleService
+    let onFavoriteToggled: () -> Void
+
     @State private var isFavorite: Bool
 
-    init(section: shared.Section) {
+    init(section: shared.Section, service: ScheduleService, onFavoriteToggled: @escaping () -> Void) {
         self.section = section
+        self.service = service
+        self.onFavoriteToggled = onFavoriteToggled
         self._isFavorite = State(initialValue: section.favorite)
     }
 
@@ -22,7 +27,13 @@ struct SectionDetailView: View {
         .background(Color.background)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
-                Button(action: { isFavorite.toggle() }) {
+                Button(action: {
+                    Task {
+                        isFavorite.toggle()
+                        try? await service.toggleFavorite(sectionId: section.id, favorite: isFavorite)
+                        onFavoriteToggled()
+                    }
+                }) {
                     Image(systemName: isFavorite ? "star.fill" : "star")
                         .foregroundColor(isFavorite ? .yellow : .secondary)
                 }

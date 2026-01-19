@@ -76,7 +76,15 @@ struct ScheduleView: View {
             ScrollView {
                 LazyVStack(spacing: Spacing.md) {
                     ForEach(sections, id: \.id) { section in
-                        NavigationLink(destination: SectionDetailView(section: section)) {
+                        NavigationLink(destination: SectionDetailView(
+                            section: section,
+                            service: appViewModel.getScheduleService(),
+                            onFavoriteToggled: {
+                                Task {
+                                    await viewModel.loadSections(service: appViewModel.getScheduleService())
+                                }
+                            }
+                        )) {
                             SectionListItem(section: section)
                         }
                         .buttonStyle(PlainButtonStyle())

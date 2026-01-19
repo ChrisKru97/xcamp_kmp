@@ -83,10 +83,11 @@ Total commits analyzed: 17 commits from `7ed9af795cb6bd193446d6af0f784e798f76aef
 
 ### High Priority Issues
 
-- [ ] **HIGH-001**: Fix SectionDetailView favorite toggle persistence
-  - **File**: `iosApp/iosApp/views/ScheduleView.swift`
-  - **Lines**: 426-429
-  - **Issue**: Toggle only updates local @State, doesn't call viewModel.toggleFavorite()
+- [x] **HIGH-001**: Fix SectionDetailView favorite toggle persistence
+  - **File**: `iosApp/iosApp/components/schedule/SectionDetailView.swift`
+  - **Lines**: 4-11 (init), 24-36 (toolbar)
+  - **Issue**: Toggle only updates local @State, doesn't call service.toggleFavorite()
+  - **Fix**: Added service and onFavoriteToggled callback parameters to SectionDetailView, persist favorite toggle via service.toggleFavorite() and refresh parent view
 
 - [ ] **HIGH-002**: Remove redundant client-side sorting in SpeakersViewModel
   - **File**: `iosApp/iosApp/views/SpeakersView.swift`
@@ -193,6 +194,29 @@ Total commits analyzed: 17 commits from `7ed9af795cb6bd193446d6af0f784e798f76aef
 - **CRITICAL-002**: Fixed DRY violation in insertSections() - now uses existing toDbInsert() helper instead of inline duplication
 - **CRITICAL-003**: Added timeout protection to ScheduleRepository.syncFromFirestore() - wrapped entire sync operation (fetch + insert) in withTimeout(5.seconds) to ensure total operation completes within 5 seconds
 - **CRITICAL-004**: Split ScheduleView.swift (720 lines → 150 lines) into separate component files in `iosApp/iosApp/components/schedule/`:
+  - Created `ScheduleViewModel.swift` - ViewModel and ScheduleState enum
+  - Created `SectionListItem.swift` - List item component
+  - Created `ScheduleDayTab.swift` - Day tab and DayTabItem components
+  - Created `SectionDetailView.swift` - Detail view component
+  - Created `ScheduleFilterView.swift` - Filter view and filter row components
+  - Fixed ScheduleRepository.kt bug: Changed `XcampDatabase.Section` to correct `cz.krutsche.xcamp.shared.db.Section` import
+  - Fixed ScheduleRepository.kt bug: Changed `XcampDatabase` parameter type to `XcampDatabaseQueries` in `toDbInsert()`
+  - Fixed ScheduleRepository.kt bug: Removed incorrect `suspend` modifier from `toDbInsert()` function
+  - Build successful, app running in iOS simulator
+- **CRITICAL-005**: Fixed hardcoded Czech strings in Schedule components:
+  - Updated `Strings.kt` to add SECTIONTYPE_*, DAYS_*, and DETAIL_* constants with proper naming
+  - Updated `ScheduleView.swift` to use `Strings.ScheduleDays.shared.DAYS_*` for day names
+  - Updated `SectionDetailView.swift` to use `Strings.ScheduleDetail.shared.DETAIL_*` for labels
+  - Updated `SectionTypeExtensions.swift` to use `Strings.ScheduleSectionType.shared.SECTIONTYPE_*` for type labels
+  - All hardcoded strings now use Strings.kt for consistency and easier localization
+  - Build successful, app verified running in iOS simulator
+- **CRITICAL-006**: Implemented calculateDayIndex() to properly calculate day index based on event start date from Remote Config:
+  - Added `remoteConfigService` property to ScheduleViewModel
+  - Added `setRemoteConfigService()` method to inject dependency
+  - Implemented day calculation using ISO-8601 date parsing with fallback
+  - Clamped result to valid range [0, 7] for 8-day event
+  - Updated ScheduleView to pass Remote Config service on appear
+  - Build verified successful
   - Created `ScheduleViewModel.swift` - ViewModel and ScheduleState enum
   - Created `SectionListItem.swift` - List item component
   - Created `ScheduleDayTab.swift` - Day tab and DayTabItem components
