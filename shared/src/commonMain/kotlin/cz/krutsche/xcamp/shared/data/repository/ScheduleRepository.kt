@@ -9,6 +9,43 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlin.time.Instant
 import kotlinx.serialization.json.Json
+import cz.krutsche.xcamp.shared.db.XcampDatabase
+
+// Extension functions to map between database and domain models
+private fun XcampDatabase.Section.toDomain(json: Json): Section = Section(
+    id = id,
+    uid = uid,
+    name = name,
+    description = description,
+    startTime = Instant.fromEpochMilliseconds(startTime),
+    endTime = Instant.fromEpochMilliseconds(endTime),
+    place = place,
+    speakers = speakers?.let { json.decodeFromString<List<Long>>(it) },
+    leader = leader,
+    type = SectionType.valueOf(type),
+    favorite = favorite > 0,
+    repeatedDates = repeatedDates?.let { json.decodeFromString<List<String>>(it) }
+)
+
+private suspend fun Section.toDbInsert(
+    queries: XcampDatabase,
+    json: Json
+) {
+    queries.insertSection(
+        id = id,
+        uid = uid,
+        name = name,
+        description = description,
+        startTime = startTime.toEpochMilliseconds(),
+        endTime = endTime.toEpochMilliseconds(),
+        place = place,
+        speakers = speakers?.let { json.encodeToString(it) },
+        leader = leader,
+        type = type.name,
+        favorite = if (favorite) 1 else 0,
+        repeatedDates = repeatedDates?.let { json.encodeToString(it) }
+    )
+}
 
 class ScheduleRepository(
     private val databaseManager: DatabaseManager,
@@ -19,101 +56,25 @@ class ScheduleRepository(
 
     suspend fun getAllSections(): List<Section> {
         return withContext(Dispatchers.Default) {
-            queries.selectAllSections().executeAsList().map { dbSection ->
-                Section(
-                    id = dbSection.id,
-                    uid = dbSection.uid,
-                    name = dbSection.name,
-                    description = dbSection.description,
-                    startTime = Instant.fromEpochMilliseconds(dbSection.startTime),
-                    endTime = Instant.fromEpochMilliseconds(dbSection.endTime),
-                    place = dbSection.place,
-                    speakers = dbSection.speakers?.let {
-                        json.decodeFromString<List<Long>>(it)
-                    },
-                    leader = dbSection.leader,
-                    type = SectionType.valueOf(dbSection.type),
-                    favorite = dbSection.favorite > 0,
-                    repeatedDates = dbSection.repeatedDates?.let {
-                        json.decodeFromString<List<String>>(it)
-                    }
-                )
-            }
+            queries.selectAllSections().executeAsList().map { it.toDomain(json) }
         }
     }
 
     suspend fun getSectionById(id: Long): Section? {
         return withContext(Dispatchers.Default) {
-            queries.selectSectionById(id).executeAsOneOrNull()?.let { dbSection ->
-                Section(
-                    id = dbSection.id,
-                    uid = dbSection.uid,
-                    name = dbSection.name,
-                    description = dbSection.description,
-                    startTime = Instant.fromEpochMilliseconds(dbSection.startTime),
-                    endTime = Instant.fromEpochMilliseconds(dbSection.endTime),
-                    place = dbSection.place,
-                    speakers = dbSection.speakers?.let {
-                        json.decodeFromString<List<Long>>(it)
-                    },
-                    leader = dbSection.leader,
-                    type = SectionType.valueOf(dbSection.type),
-                    favorite = dbSection.favorite > 0,
-                    repeatedDates = dbSection.repeatedDates?.let {
-                        json.decodeFromString<List<String>>(it)
-                    }
-                )
-            }
+            queries.selectSectionById(id).executeAsOneOrNull()?.let { it.toDomain(json) }
         }
     }
 
     suspend fun getSectionsByType(type: SectionType): List<Section> {
         return withContext(Dispatchers.Default) {
-            queries.selectSectionsByType(type.name).executeAsList().map { dbSection ->
-                Section(
-                    id = dbSection.id,
-                    uid = dbSection.uid,
-                    name = dbSection.name,
-                    description = dbSection.description,
-                    startTime = Instant.fromEpochMilliseconds(dbSection.startTime),
-                    endTime = Instant.fromEpochMilliseconds(dbSection.endTime),
-                    place = dbSection.place,
-                    speakers = dbSection.speakers?.let {
-                        json.decodeFromString<List<Long>>(it)
-                    },
-                    leader = dbSection.leader,
-                    type = SectionType.valueOf(dbSection.type),
-                    favorite = dbSection.favorite > 0,
-                    repeatedDates = dbSection.repeatedDates?.let {
-                        json.decodeFromString<List<String>>(it)
-                    }
-                )
-            }
+            queries.selectSectionsByType(type.name).executeAsList().map { it.toDomain(json) }
         }
     }
 
     suspend fun getFavoriteSections(): List<Section> {
         return withContext(Dispatchers.Default) {
-            queries.selectFavoriteSections().executeAsList().map { dbSection ->
-                Section(
-                    id = dbSection.id,
-                    uid = dbSection.uid,
-                    name = dbSection.name,
-                    description = dbSection.description,
-                    startTime = Instant.fromEpochMilliseconds(dbSection.startTime),
-                    endTime = Instant.fromEpochMilliseconds(dbSection.endTime),
-                    place = dbSection.place,
-                    speakers = dbSection.speakers?.let {
-                        json.decodeFromString<List<Long>>(it)
-                    },
-                    leader = dbSection.leader,
-                    type = SectionType.valueOf(dbSection.type),
-                    favorite = dbSection.favorite > 0,
-                    repeatedDates = dbSection.repeatedDates?.let {
-                        json.decodeFromString<List<String>>(it)
-                    }
-                )
-            }
+            queries.selectFavoriteSections().executeAsList().map { it.toDomain(json) }
         }
     }
 
@@ -122,26 +83,7 @@ class ScheduleRepository(
             queries.selectSectionsByDateRange(
                 startTime.toEpochMilliseconds(),
                 endTime.toEpochMilliseconds()
-            ).executeAsList().map { dbSection ->
-                Section(
-                    id = dbSection.id,
-                    uid = dbSection.uid,
-                    name = dbSection.name,
-                    description = dbSection.description,
-                    startTime = Instant.fromEpochMilliseconds(dbSection.startTime),
-                    endTime = Instant.fromEpochMilliseconds(dbSection.endTime),
-                    place = dbSection.place,
-                    speakers = dbSection.speakers?.let {
-                        json.decodeFromString<List<Long>>(it)
-                    },
-                    leader = dbSection.leader,
-                    type = SectionType.valueOf(dbSection.type),
-                    favorite = dbSection.favorite > 0,
-                    repeatedDates = dbSection.repeatedDates?.let {
-                        json.decodeFromString<List<String>>(it)
-                    }
-                )
-            }
+            ).executeAsList().map { it.toDomain(json) }
         }
     }
 
@@ -153,20 +95,7 @@ class ScheduleRepository(
 
     suspend fun insertSection(section: Section) {
         withContext(Dispatchers.Default) {
-            queries.insertSection(
-                id = section.id,
-                uid = section.uid,
-                name = section.name,
-                description = section.description,
-                startTime = section.startTime.toEpochMilliseconds(),
-                endTime = section.endTime.toEpochMilliseconds(),
-                place = section.place,
-                speakers = section.speakers?.let { json.encodeToString(it) },
-                leader = section.leader,
-                type = section.type.name,
-                favorite = if (section.favorite) 1 else 0,
-                repeatedDates = section.repeatedDates?.let { json.encodeToString(it) }
-            )
+            section.toDbInsert(queries, json)
         }
     }
 
@@ -174,20 +103,7 @@ class ScheduleRepository(
         withContext(Dispatchers.Default) {
             queries.transaction {
                 sections.forEach { section ->
-                    queries.insertSection(
-                        id = section.id,
-                        uid = section.uid,
-                        name = section.name,
-                        description = section.description,
-                        startTime = section.startTime.toEpochMilliseconds(),
-                        endTime = section.endTime.toEpochMilliseconds(),
-                        place = section.place,
-                        speakers = section.speakers?.let { json.encodeToString(it) },
-                        leader = section.leader,
-                        type = section.type.name,
-                        favorite = if (section.favorite) 1 else 0,
-                        repeatedDates = section.repeatedDates?.let { json.encodeToString(it) }
-                    )
+                    section.toDbInsert(queries, json)
                 }
             }
         }

@@ -54,7 +54,7 @@ Total commits analyzed: 17 commits from `7ed9af795cb6bd193446d6af0f784e798f76aef
   - **Issue**: Line 45 `return AppState.PRE_EVENT` is active, bypassing Remote Config
   - **Fix**: Comment out the debug override line
 
-- [ ] **CRITICAL-002**: Extract database mapping duplication in ScheduleRepository.kt
+- [x] **CRITICAL-002**: Extract database mapping duplication in ScheduleRepository.kt
   - **File**: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/repository/ScheduleRepository.kt`
   - **Issue**: 5 identical mapping blocks (18 lines each) in lines 20-145
   - **Fix**: Create `toDomain()` extension function, reduce file from 218 to ~120 lines
@@ -190,6 +190,7 @@ Total commits analyzed: 17 commits from `7ed9af795cb6bd193446d6af0f784e798f76aef
 
 ## Completed This Iteration
 - **CRITICAL-001**: Disabled debug override in AppConfigService.kt - removed `return AppState.PRE_EVENT` bypass, restored proper Remote Config-based app state determination
+- **CRITICAL-002**: Fixed DRY violation in insertSections() - now uses existing toDbInsert() helper instead of inline duplication
 
 ## Notes
 
