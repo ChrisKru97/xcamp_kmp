@@ -78,7 +78,11 @@ object Strings {
             const val INTERNAL = "Interní"
             const val GOSPEL = "Gospel"
             const val FOOD = "Jídlo"
+            const val OTHER = "Ostatní"
         }
+
+        const val HIDE_ALL = "Skrýt vše"
+        const val DONE = "Hotovo"
 
         object Days {
             const val MONDAY = "Pondělí"

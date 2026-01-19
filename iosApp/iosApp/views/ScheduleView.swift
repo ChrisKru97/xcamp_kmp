@@ -91,14 +91,14 @@ struct ScheduleView: View {
 
     private var dayNames: [String] {
         [
-            "Sobota",    // Saturday - Day 1
-            "Neděle",    // Sunday - Day 2
-            "Pondělí",   // Monday - Day 3
-            "Úterý",     // Tuesday - Day 4
-            "Středa",    // Wednesday - Day 5
-            "Čtvrtek",   // Thursday - Day 6
-            "Pátek",     // Friday - Day 7
-            "Sobota"     // Saturday - Day 8
+            Strings.Schedule.Days.shared.SATURDAY,  // Day 1
+            Strings.Schedule.Days.shared.SUNDAY,    // Day 2
+            Strings.Schedule.Days.shared.MONDAY,    // Day 3
+            Strings.Schedule.Days.shared.TUESDAY,   // Day 4
+            Strings.Schedule.Days.shared.WEDNESDAY, // Day 5
+            Strings.Schedule.Days.shared.THURSDAY,  // Day 6
+            Strings.Schedule.Days.shared.FRIDAY,    // Day 7
+            Strings.Schedule.Days.shared.SATURDAY   // Day 8
         ]
     }
 
@@ -306,11 +306,7 @@ struct SectionListItem: View {
     }
 
     private func formatTime(_ millis: Int64) -> String {
-        let date = Date(timeIntervalSince1970: TimeInterval(millis) / 1000)
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        formatter.locale = Locale(identifier: "cs_CZ")
-        return formatter.string(from: date)
+        DateFormatter.formatTime(from: millis)
     }
 }
 
@@ -433,7 +429,7 @@ struct SectionDetailView: View {
 
     private var heroSection: some View {
         ZStack {
-            let typeColor = colorForSectionType(section.type)
+            let typeColor = section.type.color
             LinearGradient(
                 colors: [typeColor.opacity(0.6), typeColor.opacity(0.2)],
                 startPoint: .top,
@@ -442,10 +438,10 @@ struct SectionDetailView: View {
             .frame(height: 200)
 
             VStack(spacing: Spacing.sm) {
-                Image(systemName: iconForSectionType(section.type))
+                Image(systemName: section.type.icon)
                     .font(.system(size: 50))
                     .foregroundColor(.white)
-                Text(typeLabelForSectionType(section.type))
+                Text(section.type.label)
                     .font(.caption)
                     .foregroundColor(.white.opacity(0.8))
             }
@@ -460,7 +456,7 @@ struct SectionDetailView: View {
                     HStack {
                         Image(systemName: "clock")
                             .foregroundColor(.secondary)
-                        Text("Čas")
+                        Text(Strings.Schedule.Detail.shared.TIME)
                             .font(.caption)
                             .foregroundColor(.secondary)
                         Spacer()
@@ -481,7 +477,7 @@ struct SectionDetailView: View {
                         HStack {
                             Image(systemName: "text.alignleft")
                                 .foregroundColor(.secondary)
-                            Text("Popis")
+                            Text(Strings.Schedule.Detail.shared.DESCRIPTION)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                             Spacer()
@@ -501,62 +497,7 @@ struct SectionDetailView: View {
     }
 
     private func formatTime(_ millis: Int64) -> String {
-        let date = Date(timeIntervalSince1970: TimeInterval(millis) / 1000)
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        formatter.locale = Locale(identifier: "cs_CZ")
-        return formatter.string(from: date)
-    }
-
-    private func colorForSectionType(_ type: SectionType) -> Color {
-        switch type {
-        case .main:
-            return .purple
-        case .internal:
-            return .green
-        case .gospel:
-            return .pink
-        case .food:
-            return .yellow
-        case .basic:
-            return .purple
-        default:
-            return .gray
-        }
-    }
-
-    private func iconForSectionType(_ type: SectionType) -> String {
-        switch type {
-        case .main:
-            return "star.fill"
-        case .internal:
-            return "person.3.fill"
-        case .gospel:
-            return "heart.fill"
-        case .food:
-            return "fork.knife"
-        case .basic:
-            return "star.fill"
-        default:
-            return "calendar"
-        }
-    }
-
-    private func typeLabelForSectionType(_ type: SectionType) -> String {
-        switch type {
-        case .main:
-            return "Hlavní"
-        case .internal:
-            return "Interní"
-        case .gospel:
-            return "Gospel"
-        case .food:
-            return "Jídlo"
-        case .basic:
-            return "Hlavní"
-        default:
-            return "Ostatní"
-        }
+        DateFormatter.formatTime(from: millis)
     }
 }
 
@@ -636,7 +577,7 @@ struct ScheduleFilterView: View {
                             Button(action: hideAllTypes) {
                                 HStack {
                                     Image(systemName: "eye.slash")
-                                    Text("Skrýt vše")
+                                    Text(Strings.Schedule.shared.HIDE_ALL)
                                 }
                                 .font(.subheadline)
                                 .foregroundColor(.white)
@@ -657,7 +598,7 @@ struct ScheduleFilterView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("Hotovo") {
+                    Button(Strings.Schedule.shared.DONE) {
                         dismiss()
                     }
                 }
@@ -696,10 +637,10 @@ struct FilterTypeRow: View {
             HStack(spacing: Spacing.md) {
                 // Color indicator
                 Circle()
-                    .fill(colorForType(type))
+                    .fill(type.color)
                     .frame(width: 16, height: 16)
 
-                Text(labelForType(type))
+                Text(type.label)
                     .font(.body)
                     .foregroundColor(.white)
 
@@ -720,40 +661,6 @@ struct FilterTypeRow: View {
             )
         }
         .buttonStyle(PlainButtonStyle())
-    }
-
-    private func colorForType(_ type: SectionType) -> Color {
-        switch type {
-        case .main:
-            return .purple
-        case .internal:
-            return .green
-        case .gospel:
-            return .pink
-        case .food:
-            return .yellow
-        case .basic:
-            return .purple
-        default:
-            return .gray
-        }
-    }
-
-    private func labelForType(_ type: SectionType) -> String {
-        switch type {
-        case .main:
-            return "Hlavní"
-        case .internal:
-            return "Interní"
-        case .gospel:
-            return "Gospel"
-        case .food:
-            return "Jídlo"
-        case .basic:
-            return "Hlavní"
-        default:
-            return "Ostatní"
-        }
     }
 }
 
