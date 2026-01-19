@@ -1,19 +1,17 @@
 # Progress: speakers
 
 Started: Mon Jan 19 09:22:49 CET 2026
-Last Updated: Mon Jan 19 2025
+Last Updated: Mon Jan 19 2026
 
 ## Status
 
 IN_PROGRESS
 
+## Completed This Iteration
+- Task 1.1: Created SpeakersService in shared module following PlacesService pattern with lazy initialization and all required methods (getAllSpeakers, getSpeakerById, syncFromFirestore, refreshSpeakers)
+- Task 2.1: Added getSpeakersService() to AppViewModel.swift following getPlacesService() pattern with lazy initialization and caching
+
 ## Task List
-
-### Phase 1: Shared Module Setup
-
-- [x] Task 1.1: Create SpeakersService in shared module
-
-## Analysis
 
 ### Existing Components (Already Implemented)
 
@@ -95,7 +93,7 @@ Follow the **Places pattern** established in the codebase:
 
 ### Phase 2: iOS Service Integration
 
-- [ ] Task 2.1: Add getSpeakersService() to AppViewModel.swift
+- [x] Task 2.1: Add getSpeakersService() to AppViewModel.swift
   - Follow getPlacesService() pattern
   - Lazy initialization with caching
   - File: `iosApp/iosApp/AppViewModel.swift`

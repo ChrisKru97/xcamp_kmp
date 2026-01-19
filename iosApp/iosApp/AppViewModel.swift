@@ -9,6 +9,7 @@ class AppViewModel: ObservableObject {
     private var remoteConfigService: RemoteConfigService?
     private var linksService: LinksService?
     private var placesService: PlacesService?
+    private var speakersService: SpeakersService?
 
     func initializeApp() {
         let authService = AuthService()
@@ -86,5 +87,14 @@ class AppViewModel: ObservableObject {
             return newPlacesService
         }
         return placesService
+    }
+
+    func getSpeakersService() -> SpeakersService {
+        guard let speakersService = speakersService else {
+            let newSpeakersService = SpeakersService()
+            self.speakersService = newSpeakersService
+            return newSpeakersService
+        }
+        return speakersService
     }
 }
