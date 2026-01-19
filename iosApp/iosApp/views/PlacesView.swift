@@ -143,8 +143,13 @@ struct PlaceListItem: View {
         }
     }
 
+    private var imageUrl: URL? {
+        guard let urlString = place.imageUrl, !urlString.isEmpty else { return nil }
+        return URL(string: urlString)
+    }
+
     private var placeImage: some View {
-        AsyncImage(url: URL(string: place.imageUrl ?? "")) { phase in
+        AsyncImage(url: imageUrl) { phase in
             switch phase {
             case .success(let image):
                 image
@@ -206,8 +211,13 @@ struct PlaceDetailView: View {
         .background(Color.background)
     }
 
+    private var imageUrl: URL? {
+        guard let urlString = place.imageUrl, !urlString.isEmpty else { return nil }
+        return URL(string: urlString)
+    }
+
     private var placeHeroImage: some View {
-        AsyncImage(url: URL(string: place.imageUrl ?? "")) { phase in
+        AsyncImage(url: imageUrl) { phase in
             switch phase {
             case .success(let image):
                 image

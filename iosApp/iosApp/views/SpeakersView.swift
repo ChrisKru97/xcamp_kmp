@@ -144,8 +144,13 @@ struct SpeakerListItem: View {
         }
     }
 
+    private var imageUrl: URL? {
+        guard let urlString = speaker.imageUrl, !urlString.isEmpty else { return nil }
+        return URL(string: urlString)
+    }
+
     private var speakerImage: some View {
-        AsyncImage(url: URL(string: speaker.imageUrl ?? "")) { phase in
+        AsyncImage(url: imageUrl) { phase in
             switch phase {
             case .success(let image):
                 image
@@ -198,8 +203,13 @@ struct SpeakerDetailView: View {
         .background(Color.background)
     }
 
+    private var imageUrl: URL? {
+        guard let urlString = speaker.imageUrl, !urlString.isEmpty else { return nil }
+        return URL(string: urlString)
+    }
+
     private var speakerHeroImage: some View {
-        AsyncImage(url: URL(string: speaker.imageUrl ?? "")) { phase in
+        AsyncImage(url: imageUrl) { phase in
             switch phase {
             case .success(let image):
                 image
