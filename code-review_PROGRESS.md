@@ -69,11 +69,11 @@ Total commits analyzed: 17 commits from `7ed9af795cb6bd193446d6af0f784e798f76aef
   - **Issue**: Contains 7 components in one file (8x the 100-line guideline)
   - **Fix**: Create directory structure with separate files for each component
 
-- [ ] **CRITICAL-005**: Fix hardcoded Czech strings in ScheduleView.swift
-  - **File**: `iosApp/iosApp/views/ScheduleView.swift`
-  - **Lines**: 93-102, 463, 484, 548-559, 639, 745-756
-  - **Issue**: Day names, "Čas", "Popis", "Skrýt vše", type labels hardcoded
-  - **Fix**: Move to Strings.kt, create SectionType extensions
+- [x] **CRITICAL-005**: Fix hardcoded Czech strings in ScheduleView.swift
+  - **File**: `iosApp/iosApp/views/ScheduleView.swift`, `iosApp/iosApp/components/schedule/SectionDetailView.swift`, `iosApp/iosApp/utils/SectionTypeExtensions.swift`
+  - **Lines**: 93-102, SectionDetailView.swift:62,83, SectionTypeExtensions.swift:38-46
+  - **Issue**: Day names, "Čas", "Popis", type labels hardcoded
+  - **Fix**: Moved to Strings.kt, updated to use localized constants
 
 - [ ] **CRITICAL-006**: Implement or remove TODO in calculateDayIndex()
   - **File**: `iosApp/iosApp/views/ScheduleView.swift`
@@ -202,6 +202,13 @@ Total commits analyzed: 17 commits from `7ed9af795cb6bd193446d6af0f784e798f76aef
   - Fixed ScheduleRepository.kt bug: Changed `XcampDatabase` parameter type to `XcampDatabaseQueries` in `toDbInsert()`
   - Fixed ScheduleRepository.kt bug: Removed incorrect `suspend` modifier from `toDbInsert()` function
   - Build successful, app running in iOS simulator
+- **CRITICAL-005**: Fixed hardcoded Czech strings in Schedule components:
+  - Updated `Strings.kt` to add SECTIONTYPE_*, DAYS_*, and DETAIL_* constants with proper naming
+  - Updated `ScheduleView.swift` to use `Strings.ScheduleDays.shared.DAYS_*` for day names
+  - Updated `SectionDetailView.swift` to use `Strings.ScheduleDetail.shared.DETAIL_*` for labels
+  - Updated `SectionTypeExtensions.swift` to use `Strings.ScheduleSectionType.shared.SECTIONTYPE_*` for type labels
+  - All hardcoded strings now use Strings.kt for consistency and easier localization
+  - Build successful, app verified running in iOS simulator
 
 ## Notes
 

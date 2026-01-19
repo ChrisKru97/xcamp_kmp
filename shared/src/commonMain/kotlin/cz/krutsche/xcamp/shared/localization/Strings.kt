@@ -74,35 +74,35 @@ object Strings {
         const val SHOW_ALL = "Zobrazit vše"
 
         object SectionType {
-            const val MAIN = "Hlavní"
-            const val INTERNAL = "Interní"
-            const val GOSPEL = "Gospel"
-            const val FOOD = "Jídlo"
-            const val OTHER = "Ostatní"
+            const val SECTIONTYPE_MAIN = "Hlavní"
+            const val SECTIONTYPE_INTERNAL = "Interní"
+            const val SECTIONTYPE_GOSPEL = "Gospel"
+            const val SECTIONTYPE_FOOD = "Jídlo"
+            const val SECTIONTYPE_OTHER = "Ostatní"
         }
 
         const val HIDE_ALL = "Skrýt vše"
         const val DONE = "Hotovo"
 
         object Days {
-            const val MONDAY = "Pondělí"
-            const val TUESDAY = "Úterý"
-            const val WEDNESDAY = "Středa"
-            const val THURSDAY = "Čtvrtek"
-            const val FRIDAY = "Pátek"
-            const val SATURDAY = "Sobota"
-            const val SUNDAY = "Neděle"
+            const val DAYS_SATURDAY = "Sobota"
+            const val DAYS_SUNDAY = "Neděle"
+            const val DAYS_MONDAY = "Pondělí"
+            const val DAYS_TUESDAY = "Úterý"
+            const val DAYS_WEDNESDAY = "Středa"
+            const val DAYS_THURSDAY = "Čtvrtek"
+            const val DAYS_FRIDAY = "Pátek"
         }
 
         object Detail {
-            const val TIME = "Čas"
-            const val PLACE = "Místo"
-            const val SPEAKERS = "Řečníci"
-            const val LEADER = "Vedoucí"
-            const val TYPE = "Typ"
-            const val DESCRIPTION = "Popis"
-            const val ADD_TO_FAVORITES = "Přidat do oblíbených"
-            const val REMOVE_FROM_FAVORITES = "Odebrat z oblíbených"
+            const val DETAIL_TIME = "Čas"
+            const val DETAIL_PLACE = "Místo"
+            const val DETAIL_SPEAKERS = "Řečníci"
+            const val DETAIL_LEADER = "Vedoucí"
+            const val DETAIL_TYPE = "Typ"
+            const val DETAIL_DESCRIPTION = "Popis"
+            const val DETAIL_ADD_TO_FAVORITES = "Přidat do oblíbených"
+            const val DETAIL_REMOVE_FROM_FAVORITES = "Odebrat z oblíbených"
         }
     }
 }

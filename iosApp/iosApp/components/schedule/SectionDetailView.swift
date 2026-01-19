@@ -59,7 +59,7 @@ struct SectionDetailView: View {
                     HStack {
                         Image(systemName: "clock")
                             .foregroundColor(.secondary)
-                        Text("Čas")
+                        Text(Strings.ScheduleDetail.shared.DETAIL_TIME)
                             .font(.caption)
                             .foregroundColor(.secondary)
                         Spacer()
@@ -80,7 +80,7 @@ struct SectionDetailView: View {
                         HStack {
                             Image(systemName: "text.alignleft")
                                 .foregroundColor(.secondary)
-                            Text("Popis")
+                            Text(Strings.ScheduleDetail.shared.DETAIL_DESCRIPTION)
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                             Spacer()

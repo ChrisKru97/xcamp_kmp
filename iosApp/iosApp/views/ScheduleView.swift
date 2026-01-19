@@ -91,14 +91,14 @@ struct ScheduleView: View {
 
     private var dayNames: [String] {
         [
-            "Sobota",   // Day 1
-            "Neděle",   // Day 2
-            "Pondělí",  // Day 3
-            "Úterý",    // Day 4
-            "Středa",   // Day 5
-            "Čtvrtek",  // Day 6
-            "Pátek",    // Day 7
-            "Sobota"    // Day 8
+            Strings.ScheduleDays.shared.DAYS_SATURDAY,  // Day 1
+            Strings.ScheduleDays.shared.DAYS_SUNDAY,    // Day 2
+            Strings.ScheduleDays.shared.DAYS_MONDAY,    // Day 3
+            Strings.ScheduleDays.shared.DAYS_TUESDAY,   // Day 4
+            Strings.ScheduleDays.shared.DAYS_WEDNESDAY, // Day 5
+            Strings.ScheduleDays.shared.DAYS_THURSDAY,  // Day 6
+            Strings.ScheduleDays.shared.DAYS_FRIDAY,    // Day 7
+            Strings.ScheduleDays.shared.DAYS_SATURDAY   // Day 8
         ]
     }
 

@@ -35,15 +35,15 @@ extension SectionType {
     var label: String {
         switch self {
         case .main, .basic:
-            return "Hlavní"
+            return Strings.ScheduleSectionType.shared.SECTIONTYPE_MAIN
         case .internal:
-            return "Interní"
+            return Strings.ScheduleSectionType.shared.SECTIONTYPE_INTERNAL
         case .gospel:
-            return "Gospel"
+            return Strings.ScheduleSectionType.shared.SECTIONTYPE_GOSPEL
         case .food:
-            return "Jídlo"
+            return Strings.ScheduleSectionType.shared.SECTIONTYPE_FOOD
         default:
-            return "Ostatní"
+            return Strings.ScheduleSectionType.shared.SECTIONTYPE_OTHER
         }
     }
 }
