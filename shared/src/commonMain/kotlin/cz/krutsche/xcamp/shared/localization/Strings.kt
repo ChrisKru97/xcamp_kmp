@@ -46,4 +46,13 @@ object Strings {
         const val GALLERY = "Galerie"
         const val WEBSITE = "Website"
     }
+
+    object Places {
+        const val LOADING = "Načítám místa..."
+        const val EMPTY_TITLE = "Žádná místa"
+        const val ERROR_TITLE = "Nepodařilo se načíst místa"
+        const val RETRY = "Zkusit znovu"
+        const val SHOW_ON_MAP = "Zobrazit na mapě"
+        const val OPEN_IN_MAPS = "Otevřít v mapách"
+    }
 }

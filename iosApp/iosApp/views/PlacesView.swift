@@ -52,7 +52,7 @@ struct PlacesView: View {
     private var loadingView: some View {
         VStack(spacing: Spacing.lg) {
             ProgressView()
-            Text("Načítám místa...")
+            Text(Strings.Places.shared.LOADING)
                 .font(.body)
                 .foregroundColor(.secondary)
         }
@@ -63,10 +63,10 @@ struct PlacesView: View {
             Image(systemName: "location.slash")
                 .font(.system(size: 50))
                 .foregroundColor(.secondary)
-            Text("Žádná místa")
+            Text(Strings.Places.shared.EMPTY_TITLE)
                 .font(.headline)
                 .foregroundColor(.secondary)
-            Button("Zkusit znovu") {
+            Button(Strings.Places.shared.RETRY) {
                 Task {
                     await viewModel.loadPlaces(service: appViewModel.getPlacesService())
                 }
@@ -80,9 +80,9 @@ struct PlacesView: View {
             Image(systemName: "exclamationmark.triangle")
                 .font(.system(size: 50))
                 .foregroundColor(.red)
-            Text("Nepodařilo se načíst místa")
+            Text(Strings.Places.shared.ERROR_TITLE)
                 .font(.headline)
-            Button("Zkusit znovu") {
+            Button(Strings.Places.shared.RETRY) {
                 Task {
                     await viewModel.loadPlaces(service: appViewModel.getPlacesService())
                 }
@@ -180,7 +180,7 @@ struct PlaceListItem: View {
                 HStack(spacing: Spacing.xs) {
                     Image(systemName: "location.fill")
                         .font(.caption)
-                    Text("Zobrazit na mapě")
+                    Text(Strings.Places.shared.SHOW_ON_MAP)
                         .font(.caption)
                 }
                 .foregroundColor(.secondary)
@@ -266,7 +266,7 @@ struct PlaceDetailView: View {
                 } label: {
                     HStack {
                         Image(systemName: "map.fill")
-                        Text("Otevřít v mapách")
+                        Text(Strings.Places.shared.OPEN_IN_MAPS)
                         Spacer()
                         Image(systemName: "arrow.up.right")
                     }
