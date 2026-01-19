@@ -11,10 +11,12 @@ import kotlinx.coroutines.withTimeout
 import kotlin.time.Instant
 import kotlinx.serialization.json.Json
 import cz.krutsche.xcamp.shared.db.XcampDatabase
+import cz.krutsche.xcamp.shared.db.XcampDatabaseQueries
+import cz.krutsche.xcamp.shared.db.Section as DbSection
 import kotlin.time.Duration.Companion.seconds
 
 // Extension functions to map between database and domain models
-private fun XcampDatabase.Section.toDomain(json: Json): Section = Section(
+private fun DbSection.toDomain(json: Json): Section = Section(
     id = id,
     uid = uid,
     name = name,
@@ -29,8 +31,8 @@ private fun XcampDatabase.Section.toDomain(json: Json): Section = Section(
     repeatedDates = repeatedDates?.let { json.decodeFromString<List<String>>(it) }
 )
 
-private suspend fun Section.toDbInsert(
-    queries: XcampDatabase,
+private fun Section.toDbInsert(
+    queries: XcampDatabaseQueries,
     json: Json
 ) {
     queries.insertSection(

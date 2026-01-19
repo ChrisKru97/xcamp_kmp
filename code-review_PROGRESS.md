@@ -64,7 +64,7 @@ Total commits analyzed: 17 commits from `7ed9af795cb6bd193446d6af0f784e798f76aef
   - **Lines**: 196-211
   - **Issue**: Missing 5-second timeout wrapper on Firestore operations
 
-- [ ] **CRITICAL-004**: Split ScheduleView.swift (812 lines) into separate files
+- [x] **CRITICAL-004**: Split ScheduleView.swift (812 lines) into separate files
   - **File**: `iosApp/iosApp/views/ScheduleView.swift`
   - **Issue**: Contains 7 components in one file (8x the 100-line guideline)
   - **Fix**: Create directory structure with separate files for each component
@@ -192,6 +192,16 @@ Total commits analyzed: 17 commits from `7ed9af795cb6bd193446d6af0f784e798f76aef
 - **CRITICAL-001**: Disabled debug override in AppConfigService.kt - removed `return AppState.PRE_EVENT` bypass, restored proper Remote Config-based app state determination
 - **CRITICAL-002**: Fixed DRY violation in insertSections() - now uses existing toDbInsert() helper instead of inline duplication
 - **CRITICAL-003**: Added timeout protection to ScheduleRepository.syncFromFirestore() - wrapped entire sync operation (fetch + insert) in withTimeout(5.seconds) to ensure total operation completes within 5 seconds
+- **CRITICAL-004**: Split ScheduleView.swift (720 lines → 150 lines) into separate component files in `iosApp/iosApp/components/schedule/`:
+  - Created `ScheduleViewModel.swift` - ViewModel and ScheduleState enum
+  - Created `SectionListItem.swift` - List item component
+  - Created `ScheduleDayTab.swift` - Day tab and DayTabItem components
+  - Created `SectionDetailView.swift` - Detail view component
+  - Created `ScheduleFilterView.swift` - Filter view and filter row components
+  - Fixed ScheduleRepository.kt bug: Changed `XcampDatabase.Section` to correct `cz.krutsche.xcamp.shared.db.Section` import
+  - Fixed ScheduleRepository.kt bug: Changed `XcampDatabase` parameter type to `XcampDatabaseQueries` in `toDbInsert()`
+  - Fixed ScheduleRepository.kt bug: Removed incorrect `suspend` modifier from `toDbInsert()` function
+  - Build successful, app running in iOS simulator
 
 ## Notes
 
