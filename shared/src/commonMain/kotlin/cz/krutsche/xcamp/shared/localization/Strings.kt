@@ -62,4 +62,43 @@ object Strings {
         const val ERROR_TITLE = "Nepodařilo se načíst řečníky"
         const val RETRY = "Zkusit znovu"
     }
+
+    object Schedule {
+        const val LOADING = "Načítám program..."
+        const val EMPTY_TITLE = "Žádný program"
+        const val ERROR_TITLE = "Nepodařilo se načíst program"
+        const val RETRY = "Zkusit znovu"
+        const val FILTER_TITLE = "Filtr typů"
+        const val FILTER_ALL = "Všechny typy"
+        const val FAVORITES = "Oblíbené"
+        const val SHOW_ALL = "Zobrazit vše"
+
+        object SectionType {
+            const val MAIN = "Hlavní"
+            const val INTERNAL = "Interní"
+            const val GOSPEL = "Gospel"
+            const val FOOD = "Jídlo"
+        }
+
+        object Days {
+            const val MONDAY = "Pondělí"
+            const val TUESDAY = "Úterý"
+            const val WEDNESDAY = "Středa"
+            const val THURSDAY = "Čtvrtek"
+            const val FRIDAY = "Pátek"
+            const val SATURDAY = "Sobota"
+            const val SUNDAY = "Neděle"
+        }
+
+        object Detail {
+            const val TIME = "Čas"
+            const val PLACE = "Místo"
+            const val SPEAKERS = "Řečníci"
+            const val LEADER = "Vedoucí"
+            const val TYPE = "Typ"
+            const val DESCRIPTION = "Popis"
+            const val ADD_TO_FAVORITES = "Přidat do oblíbených"
+            const val REMOVE_FROM_FAVORITES = "Odebrat z oblíbených"
+        }
+    }
 }
