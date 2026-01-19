@@ -55,4 +55,11 @@ object Strings {
         const val SHOW_ON_MAP = "Zobrazit na mapě"
         const val OPEN_IN_MAPS = "Otevřít v mapách"
     }
+
+    object Speakers {
+        const val LOADING = "Načítám řečníky..."
+        const val EMPTY_TITLE = "Žádní řečníci"
+        const val ERROR_TITLE = "Nepodařilo se načíst řečníky"
+        const val RETRY = "Zkusit znovu"
+    }
 }

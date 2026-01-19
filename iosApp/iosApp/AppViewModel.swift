@@ -29,6 +29,8 @@ class AppViewModel: ObservableObject {
                 }
                 // Lazy load places in background after Remote Config loads
                 syncPlacesInBackground()
+                // Lazy load speakers in background after Remote Config loads
+                syncSpeakersInBackground()
             } catch {
                 await MainActor.run {
                     isLoading = false
@@ -45,6 +47,20 @@ class AppViewModel: ObservableObject {
             let placesService = await self.getPlacesService()
             do {
                 _ = try await placesService.refreshPlaces()
+            } catch {
+                // Silently handle errors - background sync is optional
+            }
+        }
+    }
+
+    /// Syncs speakers data in the background after app initialization
+    /// Uses Task.detached to avoid blocking the main initialization flow
+    private func syncSpeakersInBackground() {
+        Task.detached(priority: .background) { [weak self] in
+            guard let self = self else { return }
+            let speakersService = await self.getSpeakersService()
+            do {
+                _ = try await speakersService.refreshSpeakers()
             } catch {
                 // Silently handle errors - background sync is optional
             }
