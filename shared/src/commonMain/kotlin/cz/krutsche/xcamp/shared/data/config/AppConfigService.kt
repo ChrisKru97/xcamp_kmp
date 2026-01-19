@@ -40,6 +40,10 @@ class AppConfigService(
      * Determines current app state based on event dates and showAppData flag
      */
     fun getAppState(): AppState {
+        // DEBUG: Force PRE_EVENT mode to show Places tab for debugging
+        // Uncomment the line below to enable full app mode regardless of Remote Config
+        // return AppState.PRE_EVENT
+
         return when {
             !remoteConfigService.shouldShowAppData() -> AppState.LIMITED
             isEventOver() -> AppState.POST_EVENT
