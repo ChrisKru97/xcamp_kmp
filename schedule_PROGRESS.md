@@ -139,8 +139,8 @@ Reference Flutter project has these features to replicate:
   - Visual indicator for current day
   - Horizontal scroll with leading/trailing padding
 
-- [ ] Task 4.4: Create ScheduleFilterView (bottom sheet)
-  - File: `iosApp/iosApp/components/schedule/ScheduleFilterView.swift`
+- [x] Task 4.4: Create ScheduleFilterView (bottom sheet)
+  - File: `iosApp/iosApp/views/ScheduleView.swift` (included in ScheduleView.swift)
   - Sheet presentation
   - Filter toggle for each SectionType
   - Color-coded type indicators
@@ -215,6 +215,7 @@ Reference Flutter project has these features to replicate:
 - Task 4.1: Created SectionListItem component with GlassCard, time display, section info, favorite star indicator, and navigation.
 - Task 4.2: Created SectionDetailView with hero section (color gradient by type), time display, description, and favorite toggle button in toolbar.
 - Task 4.3: Created ScheduleDayTab component with scrollable 8-day tab bar, Czech day names (Sobota → Sobota), visual indicators for selected day (secondary color with border) and current day detection, horizontal scroll with padding, and smooth animations on selection.
+- Task 4.4: Created ScheduleFilterView with bottom sheet presentation, type toggles with color-coded indicators, favorites-only toggle, and "Show All"/"Hide All" quick actions. Added filter FAB to ScheduleView and integrated filteredSections computed property in ViewModel.
 - Task 5.1: Implemented ScheduleView with NavigationView, loading/empty/error states, ScrollView with LazyVStack, pull-to-refresh support, and .task modifier for initial load.
 - Task 6.2: Created KotlinInstantExtensions.swift with epochMillis computed property for easy time conversion.
 - Task 8.1: iOS build successful - no compilation errors.
@@ -227,6 +228,8 @@ Reference Flutter project has these features to replicate:
 - Color scheme: purple (main/basic), green (internal), pink (gospel), yellow (food)
 - ScheduleDayTab uses closure-based selection instead of @Binding for cleaner separation of concerns
 - Day names hardcoded in Swift due to Kotlin nested object access issues (nested `Days` object not properly exposed to Swift)
+- SectionType labels hardcoded in Swift due to Kotlin nested object access issues
+- presentationDetents/presentationDragIndicator omitted for iOS 15.0 compatibility (deployment target is 15.0, those modifiers require iOS 16.0+)
 
 ## Notes
 

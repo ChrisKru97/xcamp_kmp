@@ -7,29 +7,57 @@ typealias ScheduleSection = shared.Section
 struct ScheduleView: View {
     @EnvironmentObject var appViewModel: AppViewModel
     @StateObject private var viewModel = ScheduleViewModel()
+    @State private var showingFilter = false
 
     var body: some View {
         NavigationView {
-            ZStack {
+            ZStack(alignment: .bottomTrailing) {
                 Color.background.ignoresSafeArea()
 
                 switch viewModel.state {
                 case .loading:
                     loadingView
-                case .loaded(let sections):
-                    if sections.isEmpty {
+                case .loaded:
+                    if viewModel.filteredSections.isEmpty {
                         emptyView
                     } else {
-                        scheduleContent(sections)
+                        scheduleContent(viewModel.filteredSections)
                     }
                 case .error:
                     errorView
+                }
+
+                // Filter FAB
+                if case .loaded = viewModel.state {
+                    filterFab
+                        .padding(.trailing, Spacing.md)
+                        .padding(.bottom, Spacing.md)
                 }
             }
             .navigationTitle(Strings.Tabs.shared.SCHEDULE)
             .task {
                 await viewModel.loadSections(service: appViewModel.getScheduleService())
             }
+            .sheet(isPresented: $showingFilter) {
+                ScheduleFilterView(
+                    visibleTypes: $viewModel.visibleTypes,
+                    favoritesOnly: $viewModel.favoritesOnly
+                )
+            }
+        }
+    }
+
+    private var filterFab: some View {
+        Button(action: { showingFilter = true }) {
+            Image(systemName: "line.3.horizontal.decrease.circle")
+                .font(.title2)
+                .foregroundColor(.white)
+                .padding()
+                .background(
+                    Circle()
+                        .fill(Color.secondary.opacity(0.8))
+                )
+                .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
         }
     }
 
@@ -123,12 +151,32 @@ struct ScheduleView: View {
 class ScheduleViewModel: ObservableObject {
     @Published private(set) var state: ScheduleState = .loading
     @Published private(set) var selectedDayIndex: Int = 0
-    @Published private(set) var visibleTypes: Set<SectionType> = Set([
+    @Published var visibleTypes: Set<SectionType> = Set([
         .main, .internal, .gospel, .food
     ])
-    @Published private(set) var favoritesOnly: Bool = false
+    @Published var favoritesOnly: Bool = false
 
     private var allSections: [ScheduleSection] = []
+
+    var filteredSections: [ScheduleSection] {
+        guard case .loaded(let sections) = state else {
+            return []
+        }
+
+        return sections.filter { section in
+            // Filter by type
+            guard visibleTypes.contains(section.type) else {
+                return false
+            }
+
+            // Filter by favorites
+            if favoritesOnly && !section.favorite {
+                return false
+            }
+
+            return true
+        }
+    }
 
     func loadSections(service: ScheduleService) async {
         state = .loading
@@ -512,10 +560,253 @@ struct SectionDetailView: View {
     }
 }
 
+// MARK: - Schedule Filter View
+
+struct ScheduleFilterView: View {
+    @Binding var visibleTypes: Set<SectionType>
+    @Binding var favoritesOnly: Bool
+    @Environment(\.dismiss) private var dismiss
+
+    private let allTypes: [SectionType] = [.main, .internal, .gospel, .food]
+
+    var body: some View {
+        NavigationView {
+            VStack(spacing: 0) {
+                // Drag handle
+                RoundedRectangle(cornerRadius: 2.5)
+                    .fill(Color.white.opacity(0.3))
+                    .frame(width: 40, height: 5)
+                    .padding(.top, Spacing.sm)
+                    .padding(.bottom, Spacing.md)
+
+                // Filter content
+                ScrollView {
+                    VStack(spacing: Spacing.md) {
+                        // Section type filters
+                        ForEach(allTypes, id: \.self) { type in
+                            FilterTypeRow(
+                                type: type,
+                                isVisible: visibleTypes.contains(type),
+                                onTap: {
+                                    withAnimation(.easeInOut(duration: 0.2)) {
+                                        toggleType(type)
+                                    }
+                                }
+                            )
+                        }
+
+                        Divider()
+                            .background(Color.white.opacity(0.2))
+                            .padding(.vertical, Spacing.sm)
+
+                        // Favorites filter
+                        FilterToggleRow(
+                            title: Strings.Schedule.shared.FAVORITES,
+                            icon: "star.fill",
+                            color: .yellow,
+                            isOn: favoritesOnly,
+                            onTap: {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    favoritesOnly.toggle()
+                                }
+                            }
+                        )
+
+                        Divider()
+                            .background(Color.white.opacity(0.2))
+                            .padding(.vertical, Spacing.sm)
+
+                        // Quick actions
+                        HStack(spacing: Spacing.md) {
+                            Button(action: showAllTypes) {
+                                HStack {
+                                    Image(systemName: "eye")
+                                    Text(Strings.Schedule.shared.SHOW_ALL)
+                                }
+                                .font(.subheadline)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(
+                                    Capsule()
+                                        .fill(Color.secondary.opacity(0.3))
+                                )
+                            }
+
+                            Button(action: hideAllTypes) {
+                                HStack {
+                                    Image(systemName: "eye.slash")
+                                    Text("Skrýt vše")
+                                }
+                                .font(.subheadline)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(
+                                    Capsule()
+                                        .fill(Color.secondary.opacity(0.3))
+                                )
+                            }
+                        }
+                    }
+                    .padding(.horizontal, Spacing.md)
+                }
+            }
+            .background(Color.background)
+            .navigationTitle(Strings.Schedule.shared.FILTER_TITLE)
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button("Hotovo") {
+                        dismiss()
+                    }
+                }
+            }
+        }
+    }
+
+    private func toggleType(_ type: SectionType) {
+        if visibleTypes.contains(type) {
+            visibleTypes.remove(type)
+        } else {
+            visibleTypes.insert(type)
+        }
+    }
+
+    private func showAllTypes() {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            visibleTypes = Set(allTypes)
+        }
+    }
+
+    private func hideAllTypes() {
+        withAnimation(.easeInOut(duration: 0.3)) {
+            visibleTypes = []
+        }
+    }
+}
+
+struct FilterTypeRow: View {
+    let type: SectionType
+    let isVisible: Bool
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            HStack(spacing: Spacing.md) {
+                // Color indicator
+                Circle()
+                    .fill(colorForType(type))
+                    .frame(width: 16, height: 16)
+
+                Text(labelForType(type))
+                    .font(.body)
+                    .foregroundColor(.white)
+
+                Spacer()
+
+                if isVisible {
+                    Image(systemName: "checkmark")
+                        .foregroundColor(.secondary)
+                        .font(.body)
+                        .transition(.scale.combined(with: .opacity))
+                }
+            }
+            .padding()
+            .background(
+                GlassCard {
+                    EmptyView()
+                }
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+
+    private func colorForType(_ type: SectionType) -> Color {
+        switch type {
+        case .main:
+            return .purple
+        case .internal:
+            return .green
+        case .gospel:
+            return .pink
+        case .food:
+            return .yellow
+        case .basic:
+            return .purple
+        default:
+            return .gray
+        }
+    }
+
+    private func labelForType(_ type: SectionType) -> String {
+        switch type {
+        case .main:
+            return "Hlavní"
+        case .internal:
+            return "Interní"
+        case .gospel:
+            return "Gospel"
+        case .food:
+            return "Jídlo"
+        case .basic:
+            return "Hlavní"
+        default:
+            return "Ostatní"
+        }
+    }
+}
+
+struct FilterToggleRow: View {
+    let title: String
+    let icon: String
+    let color: Color
+    let isOn: Bool
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            HStack(spacing: Spacing.md) {
+                Image(systemName: icon)
+                    .foregroundColor(color)
+                    .font(.body)
+
+                Text(title)
+                    .font(.body)
+                    .foregroundColor(.white)
+
+                Spacer()
+
+                if isOn {
+                    Image(systemName: "checkmark")
+                        .foregroundColor(.secondary)
+                        .font(.body)
+                        .transition(.scale.combined(with: .opacity))
+                }
+            }
+            .padding()
+            .background(
+                GlassCard {
+                    EmptyView()
+                }
+            )
+        }
+        .buttonStyle(PlainButtonStyle())
+    }
+}
+
 // MARK: - Previews
 
 #Preview("Schedule View") {
     ScheduleView()
         .environmentObject(AppViewModel())
         .preferredColorScheme(.dark)
+}
+
+#Preview("Filter View") {
+    ScheduleFilterView(
+        visibleTypes: .constant(Set([.main, .internal])),
+        favoritesOnly: .constant(false)
+    )
+    .preferredColorScheme(.dark)
 }
