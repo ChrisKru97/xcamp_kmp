@@ -100,11 +100,11 @@ Total commits analyzed: 17 commits from `7ed9af795cb6bd193446d6af0f784e798f76aef
   - **Issue**: Each service creates its own FirestoreService instance
   - **Fix**: Created ServiceFactory with getFirestoreService() singleton, following DatabaseFactory pattern. All three services now use ServiceFactory.getFirestoreService()
 
-- [ ] **HIGH-004**: Add error state to ScheduleViewModel
-  - **File**: `iosApp/iosApp/views/ScheduleView.swift`
-  - **Lines**: 204-206, 214-216
+- [x] **HIGH-004**: Add error state to ScheduleViewModel
+  - **File**: `iosApp/iosApp/components/schedule/ScheduleViewModel.swift`
+  - **Lines**: 17, 23, 69-71, 79-81 (updated)
   - **Issue**: Empty catch blocks silently swallow errors
-  - **Fix**: Add @Published var lastError: Error?
+  - **Fix**: Added @Published var lastError: Error? and clearError() method, set lastError in catch blocks
 
 - [ ] **HIGH-005**: Add missing SwiftUI previews for Schedule components
   - **File**: `iosApp/iosApp/views/ScheduleView.swift`

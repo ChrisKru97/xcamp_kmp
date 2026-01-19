@@ -15,12 +15,17 @@ class ScheduleViewModel: ObservableObject {
         .main, .internal, .gospel, .food
     ])
     @Published var favoritesOnly: Bool = false
+    @Published private(set) var lastError: Error?
 
     private var allSections: [shared.Section] = []
     private var remoteConfigService: RemoteConfigService?
 
     func setRemoteConfigService(_ service: RemoteConfigService) {
         self.remoteConfigService = service
+    }
+
+    func clearError() {
+        lastError = nil
     }
 
     var filteredSections: [shared.Section] {
@@ -66,8 +71,10 @@ class ScheduleViewModel: ObservableObject {
             _ = try await service.refreshSections()
             // On success, reload the sections from local cache
             await loadSections(service: service)
+            lastError = nil
         } catch {
-            // If refresh fails, keep showing existing data silently
+            // If refresh fails, keep showing existing data but track the error
+            lastError = error
         }
     }
 
@@ -76,8 +83,10 @@ class ScheduleViewModel: ObservableObject {
             try await service.toggleFavorite(sectionId: section.id, favorite: !section.favorite)
             // Reload to reflect changes
             await loadSections(service: service)
+            lastError = nil
         } catch {
-            // Handle error silently or show error
+            // Track the error for UI display
+            lastError = error
         }
     }
 
