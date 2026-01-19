@@ -75,11 +75,11 @@ Total commits analyzed: 17 commits from `7ed9af795cb6bd193446d6af0f784e798f76aef
   - **Issue**: Day names, "Čas", "Popis", type labels hardcoded
   - **Fix**: Moved to Strings.kt, updated to use localized constants
 
-- [ ] **CRITICAL-006**: Implement or remove TODO in calculateDayIndex()
-  - **File**: `iosApp/iosApp/views/ScheduleView.swift`
-  - **Line**: 261
+- [x] **CRITICAL-006**: Implement or remove TODO in calculateDayIndex()
+  - **File**: `iosApp/iosApp/components/schedule/ScheduleViewModel.swift`
+  - **Line**: 123-162 (previously ScheduleView.swift:261)
   - **Issue**: TODO with incomplete implementation, always returns 0
-  - **Fix**: Implement proper day calculation using Remote Config startDate
+  - **Fix**: Implemented proper day calculation using Remote Config startDate with ISO-8601 date parsing, day difference calculation, and proper clamping for 8-day event
 
 ### High Priority Issues
 

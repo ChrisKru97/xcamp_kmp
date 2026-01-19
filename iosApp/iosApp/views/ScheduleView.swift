@@ -35,6 +35,9 @@ struct ScheduleView: View {
                 }
             }
             .navigationTitle(Strings.Tabs.shared.SCHEDULE)
+            .onAppear {
+                viewModel.setRemoteConfigService(appViewModel.getRemoteConfigService())
+            }
             .task {
                 await viewModel.loadSections(service: appViewModel.getScheduleService())
             }

@@ -17,6 +17,11 @@ class ScheduleViewModel: ObservableObject {
     @Published var favoritesOnly: Bool = false
 
     private var allSections: [shared.Section] = []
+    private var remoteConfigService: RemoteConfigService?
+
+    func setRemoteConfigService(_ service: RemoteConfigService) {
+        self.remoteConfigService = service
+    }
 
     var filteredSections: [shared.Section] {
         guard case .loaded(let sections) = state else {
@@ -116,9 +121,43 @@ class ScheduleViewModel: ObservableObject {
     }
 
     private func calculateDayIndex(from millis: Int64) -> Int {
-        // Assuming event starts on a specific date, calculate day index
-        // For now, return 0 as default
-        // TODO: Implement based on actual event start date from Remote Config
-        return 0
+        guard let remoteConfigService = remoteConfigService else {
+            return 0
+        }
+
+        // Get event start date from Remote Config (ISO-8601 format)
+        let startDateStr = remoteConfigService.getStartDate()
+        guard let startDate = parseISO8601Date(startDateStr) else {
+            return 0
+        }
+
+        // Calculate the target date from millis
+        let targetDate = Date(timeIntervalSince1970: Double(millis) / 1000.0)
+
+        // Calculate day difference (86400 seconds per day)
+        let secondsPerDay: TimeInterval = 86400
+        let dayDifference = Int(targetDate.timeIntervalSince(startDate) / secondsPerDay)
+
+        // Clamp to valid range [0, 7] for 8-day event
+        return max(0, min(7, dayDifference))
+    }
+
+    private func parseISO8601(_ dateString: String) -> Date? {
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.formatOptions = [.withInternetDateTime]
+        return isoFormatter.date(from: dateString)
+    }
+
+    private func parseISO8601Date(_ dateString: String) -> Date? {
+        // Try ISO8601 formatter first
+        if let date = parseISO8601(dateString) {
+            return date
+        }
+
+        // Fallback to DateFormatter for extended format
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        return formatter.date(from: dateString)
     }
 }
