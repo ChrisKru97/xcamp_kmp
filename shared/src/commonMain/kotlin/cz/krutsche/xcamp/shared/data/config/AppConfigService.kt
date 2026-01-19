@@ -40,17 +40,12 @@ class AppConfigService(
      * Determines current app state based on event dates and showAppData flag
      */
     fun getAppState(): AppState {
-        // DEBUG: Force PRE_EVENT mode to show Speakers tab for debugging
-        // Uncomment the line below to enable full app mode regardless of Remote Config
-        return AppState.PRE_EVENT
-        /*
         return when {
             !remoteConfigService.shouldShowAppData() -> AppState.LIMITED
             isEventOver() -> AppState.POST_EVENT
             isEventActive() -> AppState.ACTIVE_EVENT
             else -> AppState.PRE_EVENT
         }
-        */
     }
 
     fun shouldShowCountdown(): Boolean {
