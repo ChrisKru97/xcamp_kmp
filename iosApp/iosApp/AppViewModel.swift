@@ -10,6 +10,7 @@ class AppViewModel: ObservableObject {
     private var linksService: LinksService?
     private var placesService: PlacesService?
     private var speakersService: SpeakersService?
+    private var scheduleService: ScheduleService?
 
     func initializeApp() {
         let authService = AuthService()
@@ -31,6 +32,8 @@ class AppViewModel: ObservableObject {
                 syncPlacesInBackground()
                 // Lazy load speakers in background after Remote Config loads
                 syncSpeakersInBackground()
+                // Lazy load schedule in background after Remote Config loads
+                syncScheduleInBackground()
             } catch {
                 await MainActor.run {
                     isLoading = false
@@ -61,6 +64,20 @@ class AppViewModel: ObservableObject {
             let speakersService = await self.getSpeakersService()
             do {
                 _ = try await speakersService.refreshSpeakers()
+            } catch {
+                // Silently handle errors - background sync is optional
+            }
+        }
+    }
+
+    /// Syncs schedule data in the background after app initialization
+    /// Uses Task.detached to avoid blocking the main initialization flow
+    private func syncScheduleInBackground() {
+        Task.detached(priority: .background) { [weak self] in
+            guard let self = self else { return }
+            let scheduleService = await self.getScheduleService()
+            do {
+                _ = try await scheduleService.refreshSections()
             } catch {
                 // Silently handle errors - background sync is optional
             }
@@ -112,5 +129,14 @@ class AppViewModel: ObservableObject {
             return newSpeakersService
         }
         return speakersService
+    }
+
+    func getScheduleService() -> ScheduleService {
+        guard let scheduleService = scheduleService else {
+            let newScheduleService = ScheduleService()
+            self.scheduleService = newScheduleService
+            return newScheduleService
+        }
+        return scheduleService
     }
 }
