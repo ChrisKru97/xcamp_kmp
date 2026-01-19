@@ -1,6 +1,6 @@
 # Progress: firestore
 
-Started: Mon Jan 19 15:14:36 CET 2026
+Started: Mon Jan 19 23:44:25 CET 2026
 
 ## Status
 
@@ -8,192 +8,445 @@ IN_PROGRESS
 
 ## Analysis
 
-### Current State
+### Current State Assessment
 
-**What Exists:**
-1. **Shared Module Firebase Setup** (Fully implemented in commonMain):
-   - `FirestoreService.kt` - Generic CRUD operations with 5-second timeout
-   - `AuthService.kt` - Anonymous authentication
-   - `StorageService.kt` - File operations
-   - `RemoteConfigService.kt` - App configuration
-   - Firebase GitLive SDK 2.4.0 configured in `libs.versions.toml`
-   - Repositories: `SpeakersRepository`, `PlacesRepository` with `BaseRepository` pattern
-   - Services: `SpeakersService`, `PlacesService` with `refresh()` methods
-   - Data models: `Speaker`, `Place` with proper serialization
+After thorough exploration of the codebase and testing on the iOS simulator, I've discovered that **the Firestore data fetching infrastructure is already largely in place**. However, there are several critical issues preventing it from working correctly.
 
-2. **iOS App Setup** (Partially configured):
-   - `XcampApp.swift` - Has `FirebaseApp.configure()` call
-   - `AppViewModel.swift` - Background sync for places and speakers implemented
-   - `GoogleService-Info.plist` - Firebase configuration file present
-   - Xcode project has Firebase SDK dependencies via SPM (firebase-ios-sdk)
-   - SwiftUI views: `SpeakersView`, `PlacesView` with loading states
+### What Already Exists ✅
 
-3. **Repository Pattern** (Working):
-   - `syncFromFirestore()` method in `BaseRepository`
-   - `getAllSpeakers()`, `getAllPlaces()` from SQLite
-   - `refreshSpeakers()`, `refreshPlaces()` sync from Firestore then return local data
+1. **Firebase Configuration**
+   - GoogleService-Info.plist correctly configured with project ID `xcamp-dea26`
+   - FirebaseApp.configure() called in XcampApp.swift
+   - GitLive Firebase SDK 2.4.0 properly integrated
 
-### What's Missing
+2. **Firestore Service Layer**
+   - `FirestoreService.kt` with complete CRUD operations
+   - 5-second timeout protection on all operations
+   - Proper error handling with Result<T> pattern
 
-**Critical Issue - iOS Firebase Integration:**
-1. **No iOS-specific Firebase implementation** in `iosMain/kotlin/`:
-   - GitLive Firebase SDK requires platform-specific implementations
-   - Need `Firebase` expect/actual class for iOS
-   - Need iOS-specific Firebase configuration
+3. **Repository Pattern**
+   - `SpeakersRepository` extends BaseRepository with `syncFromFirestore()`
+   - `PlacesRepository` extends BaseRepository with `syncFromFirestore()`
+   - SQLDelight database integration with INSERT OR REPLACE pattern
 
-2. **Swift Package Manager (SPM) Configuration**:
-   - Xcode project references firebase-ios-sdk but may not be properly linked
-   - Native Firebase SDK needs to be available to GitLive's iOS bindings
-   - May need to add explicit SPM package references
+4. **Service Layer**
+   - `SpeakersService.refreshSpeakers()` → calls repository sync
+   - `PlacesService.refreshPlaces()` → calls repository sync
+   - Lazy initialization in AppViewModel
 
-3. **Authentication Initialization**:
-   - `AuthService.initialize()` is called but may not be working on iOS
-   - Need to ensure Firebase auth is properly initialized before Firestore calls
+5. **iOS Integration**
+   - AppViewModel properly calls background syncs for speakers and places
+   - SwiftUI views (SpeakersView, PlacesView) use services
+   - Pull-to-refresh functionality implemented
 
-4. **Error Handling & Debugging**:
-   - No logging to verify Firebase connection
-   - No way to see if Firestore queries are actually executing
-   - Silent error handling in background sync masks issues
+### Critical Issues Found ❌
 
-### Root Cause Analysis
+#### Issue 1: App State Stuck in LIMITED Mode
+**Location**: `AppViewModel.swift` + `AppConfigService.kt`
 
-The GitLive Firebase SDK for Kotlin Multiplatform requires:
-1. **Native Firebase SDKs** to be present in each platform (Android/iOS)
-2. **Platform-specific implementations** that bridge Kotlin to native SDKs
-3. **Proper Firebase initialization** before use
+**Problem**: The app is showing "LIMITED" mode (only Home, Media, Info tabs) even though:
+- `shouldShowAppData()` is forced to return `true` (line 40 in RemoteConfigService.kt)
+- The event date is set to "2026-07-18" which is in the future
 
-Currently:
-- Android: Likely works (has google-services.json and Gradle plugin)
-- iOS: **Broken** - Missing iosMain Firebase implementation, GitLive can't bridge to native Firebase SDK
+**Root Cause Analysis**:
+- `getAppState()` in AppConfigService.kt checks:
+  1. `!shouldShowAppData()` → returns LIMITED (should be false)
+  2. `isEventOver()` → returns POST_EVENT
+  3. `isEventActive()` → returns ACTIVE_EVENT
+  4. else → returns PRE_EVENT
 
-### Dependencies
+- With `shouldShowAppData() = true` and event date in future, it should return `PRE_EVENT` which includes Speakers and Places tabs
 
-1. **Firebase iOS SDK** → GitLive needs this to function
-2. **iosMain Firebase implementation** → Bridges Kotlin to iOS SDK
-3. **Auth initialization** → Required before Firestore access
-4. **Firestore queries** → Depend on auth and bridge working
-5. **UI data display** → Depends on successful data fetch
+**Investigation Needed**: The iOS app is not showing the expected tabs despite the configuration.
 
-### Contingencies
+#### Issue 2: Silent Error Handling in Background Syncs
+**Location**: `AppViewModel.swift` lines 47-57, 61-71
 
-1. **SPM package resolution issues** → May need to clean build folder, reset SPM cache
-2. **Framework linking** → shared.framework may not include Firebase dependencies
-3. **Firebase configuration** → GoogleService-Info.plist may not be loaded properly
-4. **Network permissions** → iOS may need Info.plist entries for network access
-5. **Serialization mismatches** → Firestore data may not match Kotlin models
+**Problem**: Background sync errors are silently ignored:
+```swift
+do {
+    _ = try await placesService.refreshPlaces()
+} catch {
+    // Silently handle errors - background sync is optional
+}
+```
 
-## Task List
+**Impact**: If Firestore fetching fails, there's no way to know why. No logs, no user feedback, no debugging information.
 
-### Phase 1: iOS Firebase Foundation (CRITICAL - BLOCKER)
+#### Issue 3: Missing Firestore Initialization Verification
+**Location**: iOS platform setup
 
-- [ ] Task 1.1: Add iosMain Firebase expect/actual implementation
-  - Create `Firebase.kt` in iosMain with actual implementations
-  - Implement FirebaseApp, FirebaseAuth, FirebaseFirestore bridges
-  - Use native Firebase SDK via platform interop
+**Problem**: No verification that:
+- Firebase is actually initialized on iOS
+- Firestore is accessible
+- Auth is working (anonymous sign-in)
 
-- [ ] Task 1.2: Verify Swift Package Manager configuration
-  - Confirm firebase-ios-sdk is properly linked in Xcode
-  - Check that all required Firebase modules are included
-  - Clean build folder and resolve SPM packages if needed
+**Reference Project Differences**:
+The Flutter reference project has explicit Firebase initialization with comprehensive error handling in main.dart.
 
-- [ ] Task 1.3: Add iOS-specific Firebase configuration
-  - Ensure GoogleService-Info.plist is bundled correctly
-  - Add Firebase initialization debugging
-  - Verify FirebaseApp.configure() is called before any Firebase operations
+#### Issue 4: No Logging/Debugging
+**Problem**: The app produces minimal logs. When I captured logs from the simulator, there was no indication of:
+- Firebase initialization status
+- Firestore fetch attempts
+- Success/failure of data sync
+- Any errors occurring
 
-### Phase 2: Authentication & Connection
+### Comparison with Reference Project
 
-- [ ] Task 2.1: Implement iOS auth debugging
-  - Add logging to AuthService.initialize()
-  - Verify anonymous auth succeeds on iOS
-  - Check auth state after initialization
+| Aspect | Reference (Flutter) | Current KMP Project |
+|--------|---------------------|---------------------|
+| Firebase SDK | FlutterFire | GitLive |
+| Firestore Timeout | 5 seconds | 5 seconds ✅ |
+| Offline-First | ObjectBox cache | SQLDelight ✅ |
+| Error Handling | Explicit with fallbacks | Silent ❌ |
+| Initialization | Explicit in main() | Implicit ❌ |
+| Logging | Comprehensive | Minimal ❌ |
+| UID Conversion | Implemented | Not found ❌ |
+| Ordered Queries | orderBy(priority, name) | Not implemented ❌ |
 
-- [ ] Task 2.2: Add network permissions to Info.plist
-  - Verify network access permissions exist
-  - Add any required Firebase-specific permissions
+### What's Missing for Full Functionality
 
-### Phase 3: Firestore Integration
+1. **Logging System**: Add structured logging for Firebase operations
+2. **Error Visibility**: Expose sync errors to UI/logs
+3. **Initialization Verification**: Explicit Firebase setup verification
+4. **Ordered Queries**: Implement orderBy for speakers/places (like reference)
+5. **UID Conversion**: Add convertUid function for document IDs
+6. **Firestore Indexes**: Create indexes for optimal query performance
 
-- [ ] Task 3.1: Add Firestore query debugging
-  - Add logging to FirestoreService.getCollection()
-  - Log query execution, success, and failures
-  - Add timeout handling with specific error messages
+## Task List (Prioritized by Dependencies)
 
-- [ ] Task 3.2: Test speakers collection fetch
-  - Add debug logging in SpeakersService.refreshSpeakers()
-  - Verify Firestore query executes
-  - Check data parsing and SQLite insertion
+### Phase 1: Diagnostics & Logging
+- [x] Task 1.1: Add debug logging to RemoteConfigService to verify showAppData value
+- [ ] Task 1.2: Add debug logging to AppConfigService to trace getAppState() logic
+- [ ] Task 1.3: Add logging to AppViewModel initializeApp() to track initialization flow
+- [ ] Task 1.4: Replace silent error handling in background syncs with logged errors
 
-- [ ] Task 3.3: Test places collection fetch
-  - Add debug logging in PlacesService.refreshPlaces()
-  - Verify Firestore query executes
-  - Check data parsing and SQLite insertion
+### Phase 2: Firebase Initialization Verification
+- [ ] Task 2.1: Add explicit Firebase initialization verification in XcampApp.swift
+- [ ] Task 2.2: Verify anonymous auth is completing successfully
+- [ ] Task 2.3: Test Firestore accessibility with a simple document read
+- [ ] Task 2.4: Verify Remote Config fetch is working
 
-### Phase 4: Data Validation & Display
+### Phase 3: Fix App State Issue
+- [ ] Task 3.1: Debug why getAvailableTabs() returns LIMITED tabs despite showAppData=true
+- [ ] Task 3.2: Verify ContentView is calling getAvailableTabs() correctly
+- [ ] Task 3.3: Add debug logging to trace tab rendering logic
+- [ ] Task 3.4: Test that Speakers and Places tabs appear in iOS simulator
 
-- [ ] Task 4.1: Add data validation
-  - Verify Firestore data structure matches Speaker/Place models
-  - Add validation for required fields
-  - Handle missing or malformed data gracefully
+### Phase 4: Data Fetching Verification
+- [ ] Task 4.1: Add logging to SpeakersRepository.syncFromFirestore()
+- [ ] Task 4.2: Add logging to PlacesRepository.syncFromFirestore()
+- [ ] Task 4.3: Verify Firestore queries are executing (check for documents in collections)
+- [ ] Task 4.4: Verify data is being inserted into SQLite database
+- [ ] Task 4.5: Test SpeakersView displays real Firestore data
+- [ ] Task 4.6: Test PlacesView displays real Firestore data
 
-- [ ] Task 4.2: Test UI data display
-  - Build and run iOS app in simulator
-  - Navigate to Speakers tab
-  - Navigate to Places tab
-  - Verify real Firestore data appears
+### Phase 5: Data Structure Validation
+- [ ] Task 5.1: Verify Firestore document structure matches Kotlin data classes (Speaker, Place)
+- [ ] Task 5.2: Check that image field names match (image vs imageUrl)
+- [ ] Task 5.3: Verify all required fields are present in Firestore documents
+- [ ] Task 5.4: Test serialization/deserialization of Firestore documents
 
-### Phase 5: Error Handling & Verification
+### Phase 6: Ordered Queries Implementation
+- [ ] Task 6.1: Add getCollectionOrdered() method to FirestoreService
+- [ ] Task 6.2: Implement orderBy priority, then name for speakers
+- [ ] Task 6.3: Implement orderBy priority, then name for places
+- [ ] Task 6.4: Update repositories to use ordered queries
+- [ ] Task 6.5: Test ordering is correct in UI
 
-- [ ] Task 5.1: Improve error reporting
-  - Replace silent error handling with proper logging
-  - Add user-friendly error messages
-  - Implement retry logic for transient failures
+### Phase 7: Error Handling & Resilience
+- [ ] Task 7.1: Implement proper error handling in background syncs with user feedback
+- [ ] Task 7.2: Add retry logic for failed Firestore fetches
+- [ ] Task 7.3: Implement fallback to local cache on network failure
+- [ ] Task 7.4: Add loading indicators for sync operations
 
-- [ ] Task 5.2: Final verification
-  - Confirm speakers show real data from Firestore
-  - Confirm places show real data from Firestore
-  - Test pull-to-refresh functionality
-  - Verify offline fallback works
+### Phase 8: Firestore Indexes
+- [ ] Task 8.1: Create Firestore index for speakers (priority ASC, name ASC)
+- [ ] Task 8.2: Create Firestore index for places (priority ASC, name ASC)
+- [ ] Task 8.3: Deploy indexes to Firebase project
+
+### Phase 9: Final Testing & Verification
+- [ ] Task 9.1: End-to-end test: Launch app → see tabs → tap Speakers → see real data
+- [ ] Task 9.2: End-to-end test: Tap Places → see real data with images
+- [ ] Task 9.3: Test pull-to-refresh on both screens
+- [ ] Task 9.4: Test offline behavior (data persists from cache)
+- [ ] Task 9.5: Verify no errors in Xcode console
+
+## Detailed Implementation Notes
+
+### Critical Path (Must Complete for Goal)
+The plan states "Don't finish until you see the real data on the iOS simulator". The critical path is:
+
+1. **Fix App State** (Tasks 1.1-3.4) - Without this, tabs won't show
+2. **Verify Firebase Access** (Tasks 2.1-2.4) - Without this, can't fetch data
+3. **Verify Data Fetching** (Tasks 4.1-4.6) - This is the core goal
+
+### Data Structure Mapping
+From FIREBASE_STRUCTURE.md:
+
+**Speakers Collection:**
+```json
+{
+  "name": "Speaker name",
+  "description": "Biographical text",
+  "priority": 4,
+  "image": "speakers/speaker_image.jpg",
+  "id": "DOCUMENT_ID"
+}
+```
+
+**Places Collection:**
+```json
+{
+  "name": "Location name",
+  "description": "Location description",
+  "latitude": 49.661596,
+  "longitude": 18.575048,
+  "priority": 3,
+  "image": "places/location_image.jpg"
+}
+```
+
+**Kotlin Data Classes (need to verify):**
+- Speaker.kt should map to above structure
+- Place.kt should map to above structure
+
+### Key Implementation Points
+
+1. **UID Conversion**: Reference project uses convertUid() for document IDs - check if needed
+2. **Ordered Queries**: Reference uses orderBy('priority').orderBy('name')
+3. **Timeout Protection**: Already implemented (5 seconds) ✅
+4. **Offline-First**: SQLDelight cache already in place ✅
+
+### Firebase Console Verification Needed
+Before implementing, verify in Firebase Console:
+- [ ] Project: xcamp-dea26
+- [ ] Collections exist: speakers, places
+- [ ] Documents have data (not empty)
+- [ ] Document structure matches expected schema
+- [ ] Security rules allow anonymous read access
+
+### Expected Results After Implementation
+When all tasks complete:
+1. App launches in iOS simulator
+2. Shows PRE_EVENT mode with 6 tabs (Home, Schedule, Speakers, Places, Media, Info)
+3. Tapping Speakers shows list of speakers from Firestore
+4. Tapping Places shows list of places from Firestore
+5. Pull-to-refresh fetches latest data
+6. Images load from Firebase Storage
+7. No errors in console
+8. Data persists offline (cached in SQLite)
+
+---
+
+## Contingency Plans
+
+### If App State Still Shows LIMITED After Debugging
+**Possible Causes:**
+1. Remote Config not fetching correctly
+2. Event date calculation issue
+3. iOS/Kotlin enum mismatch
+
+**Solutions:**
+- Add explicit logging to trace exact value of each condition
+- Consider bypassing Remote Config temporarily with hardcoded PRE_EVENT
+- Verify Swift enum values match Kotlin enum values
+
+### If Firestore Queries Return Empty
+**Possible Causes:**
+1. Collections are empty in Firebase project
+2. Security rules blocking access
+3. Wrong collection names
+4. Serialization failures
+
+**Solutions:**
+- Verify collections have data in Firebase Console
+- Check Firestore security rules allow anonymous read
+- Add logging to see actual query results
+- Test with simple collection().get() before complex queries
+
+### If Serialization Fails
+**Possible Causes:**
+1. Field name mismatch (JSON vs Kotlin)
+2. Missing fields in Firestore
+3. Type mismatch (String vs Int, etc.)
+4. Extra fields in Firestore not in Kotlin class
+
+**Solutions:**
+- Add @SerialName annotations for field mapping
+- Make fields optional with default values
+- Use JSON { ignoreUnknownKeys = true } if available
+- Log raw document data to debug mismatches
+
+### If Images Don't Load
+**Possible Causes:**
+1. Firebase Storage not configured
+2. Storage paths incorrect
+3. Security rules blocking Storage access
+4. AsyncImage not handling URLs correctly
+
+**Solutions:**
+- Verify Firebase Storage bucket exists
+- Check Storage security rules
+- Add logging to image URL construction
+- Test with hardcoded image URL first
+
+### If Background Sync Fails Silently
+**Possible Causes:**
+1. Network timeout (5 seconds too short)
+2. Auth not initialized before sync
+3. Task.detached not executing
+4. Exception caught and discarded
+
+**Solutions:**
+- Increase timeout temporarily for testing
+- Add explicit logging in catch blocks
+- Verify Task.detached is executing
+- Move sync to main thread temporarily for debugging
+
+---
+
+## Reference Implementation Patterns
+
+From ~/Documents/xcamp_app (Flutter reference):
+
+### Firestore Query Pattern
+```dart
+final dbSpeakers = await _speakersCollection
+    .orderBy('priority')
+    .orderBy('name')
+    .get()
+    .timeout(const Duration(seconds: 5));
+```
+
+### Error Handling Pattern
+```dart
+try {
+  final result = await fetchFromFirestore();
+  await cacheLocally(result);
+} catch (e) {
+  // Fall back to local cache
+  final cached = await getLocalCache();
+  if (cached.isNotEmpty) {
+    return cached;
+  }
+  rethrow;
+}
+```
+
+### Data Validation Pattern
+```dart
+for (final doc in dbSpeakers.docs) {
+  final data = doc.data();
+  final speaker = Speaker(
+    convertUid(doc.id),
+    doc.id,
+    data["name"] as String,
+    data["description"] as String?,
+    data["priority"] as int,
+    data["image"] as String?,
+  );
+  validSpeakers.add(speaker);
+}
+```
+
+---
+
+## Next Immediate Steps
+
+When starting implementation, begin with:
+
+1. **Add logging everywhere** - Can't fix what you can't see
+2. **Verify Firebase is working** - Test with a simple query first
+3. **Fix the app state** - Tabs must show before testing data
+4. **Test one collection at a time** - Get speakers working, then places
+5. **Use iOS Simulator extensively** - See the actual results
+
+**Remember**: The goal is to see REAL Firestore data in the iOS simulator. Not mock data, not hardcoded data - actual data from Firebase project xcamp-dea26.
+
+## Detailed Investigation Notes
+
+### Firebase Configuration Verification
+- ✅ GoogleService-Info.plist exists and has correct project ID
+- ✅ Bundle ID matches: com.krutsche.xcamp
+- ✅ FirebaseApp.configure() called in XcampApp.swift init()
+- ❓ Unknown: Is Firebase actually initializing successfully?
+- ❓ Unknown: Is Firestore accessible from iOS?
+- ❓ Unknown: Is anonymous auth working?
+
+### Data Flow Verification
+The expected flow is:
+1. App launches → XcampApp.swift
+2. ContentView.onAppear → AppViewModel.initializeApp()
+3. AppInitializer.initialize() → RemoteConfig + Auth setup
+4. Background syncs triggered:
+   - syncSpeakersInBackground() → SpeakersService.refreshSpeakers()
+   - syncPlacesInBackground() → PlacesService.refreshPlaces()
+5. Services call repositories → syncFromFirestore()
+6. Repositories call FirestoreService → getCollection()
+7. Data inserted into SQLite
+8. UI shows data from SQLite
+
+**Unknown**: At which step is this failing?
+
+### Next Steps for Implementation
+
+1. **Add Logging First**: Before fixing anything, add comprehensive logging to see what's actually happening
+2. **Verify Firebase Init**: Ensure Firebase is actually initialized on iOS
+3. **Check Remote Config**: Verify Remote Config is fetching values correctly
+4. **Test Firestore Access**: Directly test if Firestore is accessible
+5. **Enable Error Reporting**: Stop silencing errors in background syncs
+6. **Fix App State**: Debug why PRE_EVENT tabs aren't showing
+7. **Verify Data**: Check if speakers/places actually exist in Firestore
+
+## Completed This Iteration
+
+### Task 1.1: Add debug logging to RemoteConfigService to verify showAppData value
+
+**What was done:**
+
+1. **Added Napier logging import** to `RemoteConfigService.kt`:
+   - Import: `io.github.aakira.napier.Napier`
+   - Added debug/info/error logging throughout the service
+
+2. **Added logging to `initialize()` method**:
+   - Log when initialization starts
+   - Log fetchAndActivate result
+   - Log any initialization failures with throwable
+
+3. **Added logging to `shouldShowAppData()` method**:
+   - Logs that it's returning hardcoded `true` value
+   - Commented actual Remote Config fetch code with logging ready to uncomment
+
+4. **Added logging to all getter methods**:
+   - `getStartDate()`, `getQrResetPin()`, `getMainInfo()`, `getGalleryLink()`
+   - `getContactPhone()`, `getShowRegistration()`, `getYoutubeLink()`
+   - Each logs the returned value for debugging
+
+5. **Created iOS logger initializer**:
+   - New file: `shared/src/iosMain/kotlin/cz/krutsche/xcamp/shared/utils/LoggerInitializer.kt`
+   - Uses Napier's `DebugAntilog()` for iOS console output
+
+6. **Updated XcampApp.swift**:
+   - Added `import shared` statement
+   - Calls `LoggerInitializerKt.initializeLogger()` before Firebase initialization
+   - Ensures logging is available from app startup
+
+7. **Verified build**:
+   - iOS Kotlin code compiles successfully
+   - iOS app builds successfully with Xcode
+
+**Files modified:**
+- `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/firebase/RemoteConfigService.kt`
+- `shared/src/iosMain/kotlin/cz/krutsche/xcamp/shared/utils/LoggerInitializer.kt` (new)
+- `iosApp/iosApp/XcampApp.swift`
 
 ## Notes
 
-### Critical Discoveries
+- The plan states "Don't finish until you see the real data on the iOS simulator"
+- Current status: App runs but shows LIMITED mode, no speakers/places tabs visible
+- Need to verify there's actual data in the Firestore project first
+- Reference project shows the pattern - follow it for ordered queries and error handling
+- The user mentioned having data in Firestore - need to verify collection names and structure match
+- Logging is now available via Napier - will output to Xcode console when app runs
 
-1. **GitLive SDK Architecture**: The GitLive Firebase SDK is a wrapper that bridges Kotlin code to native Firebase SDKs. It requires the actual native Firebase SDKs to be present in the platform projects.
-
-2. **iOS Implementation Gap**: While commonMain has the Firebase service classes, there are NO iosMain implementations. This is the root cause - GitLive has no native Firebase SDK to bridge to on iOS.
-
-3. **SPM vs Gradle**: The native Firebase iOS SDK must be added via Swift Package Manager in Xcode, separate from the Gradle dependencies that only affect the Kotlin side.
-
-4. **Reference Project Pattern**: The Flutter reference project uses direct Firebase SDK calls, while this KMP project uses GitLive wrapper. Different approaches, but both need native SDKs present.
-
-### Implementation Strategy
-
-**Primary Approach** (GitLive with iOS native SDK):
-1. Create iosMain expect/actual implementations for Firebase
-2. Ensure Firebase iOS SDK is installed via SPM
-3. Bridge between Kotlin and iOS Firebase SDK using platform interop
-4. Initialize Firebase on iOS before any Kotlin Firebase operations
-
-**Alternative** (if GitLive doesn't work):
-1. Create iOS-specific services in Swift
-2. Call these from Kotlin via platform interop
-3. Keep shared module logic but use native implementations for Firebase ops
-
-### Key Files to Modify
-
-- `shared/src/iosMain/kotlin/cz/krutsche/xcamp/shared/firebase/` (CREATE)
-- `iosApp/iosApp/XcampApp.swift` (may need changes)
-- `iosApp/iosApp/Info.plist` (may need permissions)
-- `iosApp/iosApp.xcodeproj/project.pbxproj` (SPM packages)
-
-### Success Criteria
-
-✅ iOS app builds without errors
-✅ Firebase initializes successfully on iOS
-✅ Anonymous auth completes
-✅ Firestore queries execute successfully
-✅ Real speaker data appears in SpeakersView
-✅ Real place data appears in PlacesView
-✅ Pull-to-refresh fetches updated data
-✅ No database modifications (READ-ONLY maintained)

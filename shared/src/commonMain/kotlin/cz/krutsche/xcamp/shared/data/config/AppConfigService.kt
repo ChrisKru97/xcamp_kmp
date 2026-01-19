@@ -17,15 +17,25 @@ class AppConfigService(
         return remoteConfigService.initialize()
     }
 
-    private fun getEndOfEvent(): Instant {
+    private fun parseStartDate(): Instant {
         val startDateStr = remoteConfigService.getStartDate()
-        val startDate = Instant.parse(startDateStr)
+        // Remote Config returns date in format "YYYY-MM-DD" but Instant.parse() requires full ISO-8601
+        // Append time component if missing
+        val fullDateTimeStr = if (startDateStr.length == 10) {
+            "${startDateStr}T00:00:00Z"
+        } else {
+            startDateStr
+        }
+        return Instant.parse(fullDateTimeStr)
+    }
+
+    private fun getEndOfEvent(): Instant {
+        val startDate = parseStartDate()
         return startDate + EventLength.days
     }
 
     private fun isEventActive(): Boolean {
-        val startDateStr = remoteConfigService.getStartDate()
-        val startDate = Instant.parse(startDateStr)
+        val startDate = parseStartDate()
         val today = now()
         return today >= startDate && !isEventOver()
     }
