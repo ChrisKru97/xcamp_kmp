@@ -6,7 +6,7 @@ Phase 1-4 Complete: Mon Jan 19 23:06:00 CET 2026
 
 ## Status
 
-IN_PROGRESS - All Critical and High priority issues resolved (14/20 tasks complete). Remaining: 6 Medium/Low priority tasks.
+IN_PROGRESS - All Critical and High priority issues resolved (15/20 tasks complete). Remaining: 5 Medium/Low priority tasks.
 
 ## Analysis
 
@@ -130,10 +130,10 @@ Total commits analyzed: 17 commits from `7ed9af795cb6bd193446d6af0f784e798f76aef
 
 ### Medium Priority Issues
 
-- [ ] **MEDIUM-001**: Extract duplicate AsyncImage phase handling
+- [x] **MEDIUM-001**: Extract duplicate AsyncImage phase handling
   - **Files**: SpeakersView.swift, PlacesView.swift
   - **Issue**: 60+ lines of identical AsyncImage phase handling code
-  - **Fix**: Create AsyncImageWithFallback component
+  - **Fix**: Created AsyncImageWithFallback component with HeroAsyncImageWithFallback variant
 
 - [ ] **MEDIUM-002**: Create shared date formatting utilities
   - **Files**: ScheduleView.swift:308-314, 503-509
@@ -243,6 +243,16 @@ Total commits analyzed: 17 commits from `7ed9af795cb6bd193446d6af0f784e798f76aef
   - Added `imageUrl` computed property in PlaceDetailView (PlacesView.swift:215-217)
   - Replaced unsafe `URL(string: imageUrl ?? "")` with nil-safe computed property
   - Build verified successful
+- **MEDIUM-001**: Extracted duplicate AsyncImage phase handling into reusable components:
+  - Created `iosApp/iosApp/components/common/AsyncImageWithFallback.swift` with two components:
+    - `AsyncImageWithFallback` - for thumbnail images (80x80), handles all phases with fallback icon
+    - `HeroAsyncImageWithFallback` - for hero/detail view images, includes gradient overlay
+  - Updated `SpeakerListItem.speakerImage` to use AsyncImageWithFallback (reduced from 20 to 5 lines)
+  - Updated `SpeakerDetailView.speakerHeroImage` to use HeroAsyncImageWithFallback (reduced from 38 to 5 lines)
+  - Updated `PlaceListItem.placeImage` to use AsyncImageWithFallback (reduced from 20 to 5 lines)
+  - Updated `PlaceDetailView.placeHeroImage` to use HeroAsyncImageWithFallback (reduced from 38 to 5 lines)
+  - Total code reduction: ~70 lines of duplicated code eliminated
+  - Build successful, app verified running in iOS simulator
 
 ## Notes
 
@@ -262,15 +272,15 @@ Total commits analyzed: 17 commits from `7ed9af795cb6bd193446d6af0f784e798f76aef
 ### Code Quality Grade: B+ (Good with known issues)
 The codebase is well-architected but has accumulated some technical debt during rapid feature development. The critical issues are straightforward fixes that don't require architectural changes.
 
-### Current Status (Mon Jan 19 23:06 CET 2026)
-**Progress: 14/20 tasks complete (70%)**
+### Current Status (Mon Jan 19 23:12 CET 2026)
+**Progress: 15/20 tasks complete (75%)**
 
 **Completed:**
 - All 6 Critical issues (CRITICAL-001 through CRITICAL-006)
 - All 8 High priority issues (HIGH-001 through HIGH-008)
 
 **Remaining:**
-- 5 Medium priority issues (MEDIUM-001 through MEDIUM-005)
+- 4 Medium priority issues (MEDIUM-002 through MEDIUM-005)
 - 1 Low priority issue (LOW-001)
 
 The codebase is now in a much better state with all critical and high-priority issues resolved. The remaining medium/low priority tasks are optional improvements that can be addressed in future iterations.

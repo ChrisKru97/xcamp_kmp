@@ -150,23 +150,11 @@ struct SpeakerListItem: View {
     }
 
     private var speakerImage: some View {
-        AsyncImage(url: imageUrl) { phase in
-            switch phase {
-            case .success(let image):
-                image
-                    .resizable()
-                    .scaledToFill()
-            case .failure(_):
-                Image(systemName: "person.fill")
-                    .foregroundColor(.secondary)
-            case .empty:
-                ProgressView()
-            @unknown default:
-                Image(systemName: "person.fill")
-                    .foregroundColor(.secondary)
-            }
-        }
-        .frame(width: 80, height: 80)
+        AsyncImageWithFallback(
+            url: imageUrl,
+            fallbackIconName: "person.fill",
+            size: CGSize(width: 80, height: 80)
+        )
         .clipShape(Circle())
     }
 
@@ -209,42 +197,10 @@ struct SpeakerDetailView: View {
     }
 
     private var speakerHeroImage: some View {
-        AsyncImage(url: imageUrl) { phase in
-            switch phase {
-            case .success(let image):
-                image
-                    .resizable()
-                    .scaledToFill()
-            case .failure(_):
-                ZStack {
-                    Color.secondary.opacity(0.3)
-                    Image(systemName: "person.fill")
-                        .font(.system(size: 50))
-                        .foregroundColor(.secondary)
-                }
-            case .empty:
-                ZStack {
-                    Color.secondary.opacity(0.3)
-                    ProgressView()
-                }
-            @unknown default:
-                ZStack {
-                    Color.secondary.opacity(0.3)
-                    Image(systemName: "person.fill")
-                        .font(.system(size: 50))
-                        .foregroundColor(.secondary)
-                }
-            }
-        }
-        .frame(height: 300)
-        .frame(maxWidth: .infinity)
-        .clipped()
-        .overlay(
-            LinearGradient(
-                colors: [.clear, .black.opacity(0.5)],
-                startPoint: .top,
-                endPoint: .bottom
-            )
+        HeroAsyncImageWithFallback(
+            url: imageUrl,
+            fallbackIconName: "person.fill",
+            height: 300
         )
     }
 

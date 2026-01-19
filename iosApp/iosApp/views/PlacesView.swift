@@ -149,23 +149,11 @@ struct PlaceListItem: View {
     }
 
     private var placeImage: some View {
-        AsyncImage(url: imageUrl) { phase in
-            switch phase {
-            case .success(let image):
-                image
-                    .resizable()
-                    .scaledToFill()
-            case .failure(_):
-                Image(systemName: "photo")
-                    .foregroundColor(.secondary)
-            case .empty:
-                ProgressView()
-            @unknown default:
-                Image(systemName: "photo")
-                    .foregroundColor(.secondary)
-            }
-        }
-        .frame(width: 80, height: 80)
+        AsyncImageWithFallback(
+            url: imageUrl,
+            fallbackIconName: "photo",
+            size: CGSize(width: 80, height: 80)
+        )
         .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
     }
 
@@ -217,42 +205,10 @@ struct PlaceDetailView: View {
     }
 
     private var placeHeroImage: some View {
-        AsyncImage(url: imageUrl) { phase in
-            switch phase {
-            case .success(let image):
-                image
-                    .resizable()
-                    .scaledToFill()
-            case .failure(_):
-                ZStack {
-                    Color.secondary.opacity(0.3)
-                    Image(systemName: "photo")
-                        .font(.system(size: 50))
-                        .foregroundColor(.secondary)
-                }
-            case .empty:
-                ZStack {
-                    Color.secondary.opacity(0.3)
-                    ProgressView()
-                }
-            @unknown default:
-                ZStack {
-                    Color.secondary.opacity(0.3)
-                    Image(systemName: "photo")
-                        .font(.system(size: 50))
-                        .foregroundColor(.secondary)
-                }
-            }
-        }
-        .frame(height: 250)
-        .frame(maxWidth: .infinity)
-        .clipped()
-        .overlay(
-            LinearGradient(
-                colors: [.clear, .black.opacity(0.5)],
-                startPoint: .top,
-                endPoint: .bottom
-            )
+        HeroAsyncImageWithFallback(
+            url: imageUrl,
+            fallbackIconName: "photo",
+            height: 250
         )
     }
 
