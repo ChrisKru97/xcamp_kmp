@@ -59,7 +59,7 @@ Total commits analyzed: 17 commits from `7ed9af795cb6bd193446d6af0f784e798f76aef
   - **Issue**: 5 identical mapping blocks (18 lines each) in lines 20-145
   - **Fix**: Create `toDomain()` extension function, reduce file from 218 to ~120 lines
 
-- [ ] **CRITICAL-003**: Add timeout protection to ScheduleRepository.syncFromFirestore()
+- [x] **CRITICAL-003**: Add timeout protection to ScheduleRepository.syncFromFirestore()
   - **File**: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/repository/ScheduleRepository.kt`
   - **Lines**: 196-211
   - **Issue**: Missing 5-second timeout wrapper on Firestore operations
@@ -191,6 +191,7 @@ Total commits analyzed: 17 commits from `7ed9af795cb6bd193446d6af0f784e798f76aef
 ## Completed This Iteration
 - **CRITICAL-001**: Disabled debug override in AppConfigService.kt - removed `return AppState.PRE_EVENT` bypass, restored proper Remote Config-based app state determination
 - **CRITICAL-002**: Fixed DRY violation in insertSections() - now uses existing toDbInsert() helper instead of inline duplication
+- **CRITICAL-003**: Added timeout protection to ScheduleRepository.syncFromFirestore() - wrapped entire sync operation (fetch + insert) in withTimeout(5.seconds) to ensure total operation completes within 5 seconds
 
 ## Notes
 

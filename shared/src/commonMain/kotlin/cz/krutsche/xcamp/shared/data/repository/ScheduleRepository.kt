@@ -7,9 +7,11 @@ import cz.krutsche.xcamp.shared.domain.model.Section
 import cz.krutsche.xcamp.shared.domain.model.SectionType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeout
 import kotlin.time.Instant
 import kotlinx.serialization.json.Json
 import cz.krutsche.xcamp.shared.db.XcampDatabase
+import kotlin.time.Duration.Companion.seconds
 
 // Extension functions to map between database and domain models
 private fun XcampDatabase.Section.toDomain(json: Json): Section = Section(
@@ -111,16 +113,18 @@ class ScheduleRepository(
 
     suspend fun syncFromFirestore(): Result<Unit> {
         return try {
-            val result = firestoreService.getCollection("schedule", Section.serializer())
-            result.fold(
-                onSuccess = { sections ->
-                    insertSections(sections)
-                    Result.success(Unit)
-                },
-                onFailure = { error ->
-                    Result.failure(error)
-                }
-            )
+            withTimeout(5.seconds) {
+                val result = firestoreService.getCollection("schedule", Section.serializer())
+                result.fold(
+                    onSuccess = { sections ->
+                        insertSections(sections)
+                        Result.success(Unit)
+                    },
+                    onFailure = { error ->
+                        Result.failure(error)
+                    }
+                )
+            }
         } catch (e: Exception) {
             Result.failure(e)
         }
