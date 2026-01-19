@@ -89,10 +89,11 @@ Total commits analyzed: 17 commits from `7ed9af795cb6bd193446d6af0f784e798f76aef
   - **Issue**: Toggle only updates local @State, doesn't call service.toggleFavorite()
   - **Fix**: Added service and onFavoriteToggled callback parameters to SectionDetailView, persist favorite toggle via service.toggleFavorite() and refresh parent view
 
-- [ ] **HIGH-002**: Remove redundant client-side sorting in SpeakersViewModel
+- [x] **HIGH-002**: Remove redundant client-side sorting in SpeakersViewModel
   - **File**: `iosApp/iosApp/views/SpeakersView.swift`
-  - **Lines**: 105-111
+  - **Lines**: 105-111 (removed)
   - **Issue**: O(n log n) sort on data already sorted by SQL
+  - **Fix**: Removed redundant sorting; SQL query already includes `ORDER BY priority, name`
 
 - [ ] **HIGH-003**: Consolidate multiple FirestoreService instances
   - **Files**: SpeakersService.kt:13, PlacesService.kt:13, ScheduleService.kt:15

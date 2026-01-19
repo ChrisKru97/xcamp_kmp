@@ -102,14 +102,8 @@ class SpeakersViewModel: ObservableObject {
         state = .loading
         do {
             let speakers = try await service.getAllSpeakers()
-            // Sort by priority (ascending), then by name alphabetically
-            let sortedSpeakers = speakers.sorted { lhs, rhs in
-                if lhs.priority != rhs.priority {
-                    return lhs.priority < rhs.priority
-                }
-                return lhs.name < rhs.name
-            }
-            state = .loaded(sortedSpeakers)
+            // Data is already sorted by SQL: ORDER BY priority, name
+            state = .loaded(speakers)
         } catch {
             state = .error
         }
