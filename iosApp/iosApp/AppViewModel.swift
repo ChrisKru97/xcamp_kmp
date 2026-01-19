@@ -26,10 +26,26 @@ class AppViewModel: ObservableObject {
                     appState = appConfigService.getAppState()
                     isLoading = false
                 }
+                // Lazy load places in background after Remote Config loads
+                syncPlacesInBackground()
             } catch {
                 await MainActor.run {
                     isLoading = false
                 }
+            }
+        }
+    }
+
+    /// Syncs places data in the background after app initialization
+    /// Uses Task.detached to avoid blocking the main initialization flow
+    private func syncPlacesInBackground() {
+        Task.detached(priority: .background) { [weak self] in
+            guard let self = self else { return }
+            let placesService = await self.getPlacesService()
+            do {
+                _ = try await placesService.refreshPlaces()
+            } catch {
+                // Silently handle errors - background sync is optional
             }
         }
     }

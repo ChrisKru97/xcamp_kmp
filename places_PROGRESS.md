@@ -216,7 +216,7 @@ func getPlacesService() -> PlacesService {
 
 ### Phase 5: Polish & Refinement
 
-- [ ] **Task 5.1:** Implement lazy loading on app startup
+- [x] **Task 5.1:** Implement lazy loading on app startup
   - File: `iosApp/iosApp/AppViewModel.swift`
   - Add background sync after Remote Config loads
   - Use Task.detached for non-blocking sync
@@ -351,18 +351,28 @@ func getPlacesService() -> PlacesService {
 - Build verified successful with Xcode build on iOS Simulator
 - Committed as d84cddf
 
+**Task 5.1 - Lazy Loading on App Startup (2026-01-19):**
+- Added `syncPlacesInBackground()` method to `AppViewModel.swift`
+- Implements background sync using `Task.detached(priority: .background)`
+- Triggered after Remote Config loads successfully in `initializeApp()`
+- Properly handles errors with do-catch block (silently ignores background sync failures)
+- Uses `[weak self]` to avoid retain cycles
+- Build verified successful with Xcode build and run on iOS Simulator
+- App launches successfully with places data syncing in background
+
 ## Remaining Tasks
 
 Based on analysis, the Places feature is **functionally complete** with the following remaining tasks:
 
 **Phase 5 - Remaining Polish Tasks:**
-- [ ] Task 5.1: Implement lazy loading on app startup (background sync)
+- [x] Task 5.1: Implement lazy loading on app startup (background sync) ✅ COMPLETED
 - [ ] Task 5.3: Test all UI states and edge cases
 - [ ] Task 5.4: Optimize performance and animations
 - [ ] Task 5.5: Code review and documentation
 
 **Status Summary:**
-- Core implementation: **COMPLETE** (Tasks 1.1-4.2)
+- Core implementation: **COMPLETE** (Tasks 1.1-4.2, 5.1, 5.2)
 - Build verification: **PASSING**
 - Debug override: **ADDED**
-- Remaining work: Polish, testing, and optimization tasks (Phase 5)
+- Lazy loading: **IMPLEMENTED**
+- Remaining work: Testing, optimization, and documentation (Tasks 5.3-5.5)
