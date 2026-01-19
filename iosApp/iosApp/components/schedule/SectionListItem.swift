@@ -42,9 +42,70 @@ struct SectionListItem: View {
 
 // MARK: - Previews
 
-#Preview("Section List Item") {
-    // Note: Preview data requires valid Section construction
-    // For now, showing placeholder preview structure
-    Text("Section List Item Preview")
-        .foregroundColor(.white)
+#Preview("Section List Item - Light") {
+    VStack(spacing: Spacing.md) {
+        Text("SectionListItem Preview")
+            .font(.caption)
+            .foregroundColor(.secondary)
+        Text("Note: Requires running app with actual Schedule data")
+            .font(.caption2)
+            .foregroundColor(.secondary)
+        GlassCard {
+            HStack(spacing: Spacing.md) {
+                VStack(alignment: .leading, spacing: Spacing.xs) {
+                    Text("09:00")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Text("Main Session")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    Text("Opening worship and welcome message...")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .lineLimit(2)
+                }
+                Spacer()
+                Image(systemName: "star.fill")
+                    .foregroundColor(.yellow)
+                    .font(.caption)
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.secondary)
+                    .font(.caption)
+            }
+        }
+    }
+    .padding()
+    .background(Color.background)
+    .preferredColorScheme(.light)
+}
+
+#Preview("Section List Item - Dark") {
+    VStack(spacing: Spacing.md) {
+        Text("SectionListItem Preview (Dark)")
+            .font(.caption)
+            .foregroundColor(.secondary)
+        GlassCard {
+            HStack(spacing: Spacing.md) {
+                VStack(alignment: .leading, spacing: Spacing.xs) {
+                    Text("14:00")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Text("Workshop: Compose Multiplatform")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    Text("Learn Kotlin multiplatform UI development...")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .lineLimit(2)
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.secondary)
+                    .font(.caption)
+            }
+        }
+    }
+    .padding()
+    .background(Color.background)
+    .preferredColorScheme(.dark)
 }

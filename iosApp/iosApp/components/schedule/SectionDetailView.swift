@@ -117,9 +117,160 @@ struct SectionDetailView: View {
 
 // MARK: - Previews
 
-#Preview("Section Detail View") {
-    // Note: Preview data requires valid Section construction
-    // For now, showing placeholder preview structure
-    Text("Section Detail Preview")
-        .foregroundColor(.white)
+#Preview("Section Detail View - Main") {
+    NavigationView {
+        ScrollView {
+            VStack(spacing: 0) {
+                // Hero section simulation
+                ZStack {
+                    LinearGradient(
+                        colors: [Color.blue.opacity(0.6), Color.blue.opacity(0.2)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 200)
+
+                    VStack(spacing: Spacing.sm) {
+                        Image(systemName: "person.3.fill")
+                            .font(.system(size: 50))
+                            .foregroundColor(.white)
+                        Text("Hlavní")
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.8))
+                    }
+                }
+
+                // Content section simulation
+                VStack(alignment: .leading, spacing: Spacing.lg) {
+                    GlassCard {
+                        VStack(alignment: .leading, spacing: Spacing.xs) {
+                            HStack {
+                                Image(systemName: "clock")
+                                    .foregroundColor(.secondary)
+                                Text("Čas")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                            }
+                            Text("09:00 - 10:30")
+                                .font(.body)
+                                .foregroundColor(.primary)
+                        }
+                    }
+                    .padding(.top, -CornerRadius.large)
+                    .padding(.horizontal, Spacing.md)
+
+                    GlassCard {
+                        VStack(alignment: .leading, spacing: Spacing.sm) {
+                            HStack {
+                                Image(systemName: "text.alignleft")
+                                    .foregroundColor(.secondary)
+                                Text("Popis")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                            }
+                            Text("Ranní chvály a hlavní téma dne. Přijďte si užít worship společně s celým táborem.")
+                                .font(.body)
+                                .foregroundColor(.primary)
+                                .lineSpacing(4)
+                        }
+                    }
+                    .padding(.horizontal, Spacing.md)
+
+                    Spacer(minLength: Spacing.xxl)
+                }
+                .padding(.top, Spacing.md)
+            }
+        }
+        .navigationTitle("Ranní chvály")
+        .navigationBarTitleDisplayMode(.inline)
+        .background(Color.background)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Image(systemName: "star.fill")
+                    .foregroundColor(.yellow)
+            }
+        }
+    }
+    .preferredColorScheme(.dark)
+}
+
+#Preview("Section Detail View - Gospel") {
+    NavigationView {
+        ScrollView {
+            VStack(spacing: 0) {
+                // Hero section simulation
+                ZStack {
+                    LinearGradient(
+                        colors: [Color.purple.opacity(0.6), Color.purple.opacity(0.2)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 200)
+
+                    VStack(spacing: Spacing.sm) {
+                        Image(systemName: "book.fill")
+                            .font(.system(size: 50))
+                            .foregroundColor(.white)
+                        Text("Evangelium")
+                            .font(.caption)
+                            .foregroundColor(.white.opacity(0.8))
+                    }
+                }
+
+                // Content section simulation
+                VStack(alignment: .leading, spacing: Spacing.lg) {
+                    GlassCard {
+                        VStack(alignment: .leading, spacing: Spacing.xs) {
+                            HStack {
+                                Image(systemName: "clock")
+                                    .foregroundColor(.secondary)
+                                Text("Čas")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                            }
+                            Text("19:00 - 20:30")
+                                .font(.body)
+                                .foregroundColor(.primary)
+                        }
+                    }
+                    .padding(.top, -CornerRadius.large)
+                    .padding(.horizontal, Spacing.md)
+
+                    GlassCard {
+                        VStack(alignment: .leading, spacing: Spacing.sm) {
+                            HStack {
+                                Image(systemName: "text.alignleft")
+                                    .foregroundColor(.secondary)
+                                Text("Popis")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                Spacer()
+                            }
+                            Text("Večerní evangelizace a závěrečné modlitby.")
+                                .font(.body)
+                                .foregroundColor(.primary)
+                                .lineSpacing(4)
+                        }
+                    }
+                    .padding(.horizontal, Spacing.md)
+
+                    Spacer(minLength: Spacing.xxl)
+                }
+                .padding(.top, Spacing.md)
+            }
+        }
+        .navigationTitle("Večerní evangelium")
+        .navigationBarTitleDisplayMode(.inline)
+        .background(Color.background)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Image(systemName: "star")
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+    .preferredColorScheme(.light)
 }

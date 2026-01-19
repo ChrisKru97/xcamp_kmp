@@ -106,9 +106,10 @@ Total commits analyzed: 17 commits from `7ed9af795cb6bd193446d6af0f784e798f76aef
   - **Issue**: Empty catch blocks silently swallow errors
   - **Fix**: Added @Published var lastError: Error? and clearError() method, set lastError in catch blocks
 
-- [ ] **HIGH-005**: Add missing SwiftUI previews for Schedule components
-  - **File**: `iosApp/iosApp/views/ScheduleView.swift`
-  - **Missing**: SectionListItem, ScheduleDayTab, SectionDetailView, ScheduleFilterView previews
+- [x] **HIGH-005**: Add missing SwiftUI previews for Schedule components
+  - **Files**: `iosApp/iosApp/components/schedule/SectionListItem.swift`, `SectionDetailView.swift`
+  - **Issue**: Preview placeholders don't show actual component rendering
+  - **Fix**: Enhanced SectionListItem and SectionDetailView previews with simulated data showing full component layout in both light and dark modes. ScheduleDayTab and ScheduleFilterView already had comprehensive previews.
 
 - [ ] **HIGH-006**: Revert LinkTile.swift color changes for dark mode
   - **File**: `iosApp/iosApp/components/common/LinkTile.swift`
