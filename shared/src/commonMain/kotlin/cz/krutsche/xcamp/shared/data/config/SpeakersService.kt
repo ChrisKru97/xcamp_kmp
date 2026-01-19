@@ -1,6 +1,7 @@
 package cz.krutsche.xcamp.shared.data.config
 
 import cz.krutsche.xcamp.shared.data.DatabaseFactory
+import cz.krutsche.xcamp.shared.data.ServiceFactory
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.data.repository.SpeakersRepository
 import cz.krutsche.xcamp.shared.domain.model.Speaker
@@ -10,7 +11,7 @@ class SpeakersService {
     private val repository: SpeakersRepository by lazy {
         SpeakersRepository(
             databaseManager = databaseManager,
-            firestoreService = cz.krutsche.xcamp.shared.data.firebase.FirestoreService()
+            firestoreService = ServiceFactory.getFirestoreService()
         )
     }
 

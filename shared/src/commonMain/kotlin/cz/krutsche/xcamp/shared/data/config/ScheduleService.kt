@@ -2,6 +2,7 @@
 package cz.krutsche.xcamp.shared.data.config
 
 import cz.krutsche.xcamp.shared.data.DatabaseFactory
+import cz.krutsche.xcamp.shared.data.ServiceFactory
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.data.repository.ScheduleRepository
 import cz.krutsche.xcamp.shared.domain.model.Section
@@ -12,7 +13,7 @@ class ScheduleService {
     private val repository: ScheduleRepository by lazy {
         ScheduleRepository(
             databaseManager = databaseManager,
-            firestoreService = cz.krutsche.xcamp.shared.data.firebase.FirestoreService()
+            firestoreService = ServiceFactory.getFirestoreService()
         )
     }
 

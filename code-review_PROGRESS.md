@@ -95,10 +95,10 @@ Total commits analyzed: 17 commits from `7ed9af795cb6bd193446d6af0f784e798f76aef
   - **Issue**: O(n log n) sort on data already sorted by SQL
   - **Fix**: Removed redundant sorting; SQL query already includes `ORDER BY priority, name`
 
-- [ ] **HIGH-003**: Consolidate multiple FirestoreService instances
+- [x] **HIGH-003**: Consolidate multiple FirestoreService instances
   - **Files**: SpeakersService.kt:13, PlacesService.kt:13, ScheduleService.kt:15
   - **Issue**: Each service creates its own FirestoreService instance
-  - **Fix**: Create singleton via service locator or Koin DI
+  - **Fix**: Created ServiceFactory with getFirestoreService() singleton, following DatabaseFactory pattern. All three services now use ServiceFactory.getFirestoreService()
 
 - [ ] **HIGH-004**: Add error state to ScheduleViewModel
   - **File**: `iosApp/iosApp/views/ScheduleView.swift`
