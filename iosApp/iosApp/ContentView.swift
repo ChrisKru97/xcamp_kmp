@@ -4,6 +4,7 @@ import OSLog
 
 struct ContentView: View {
     @EnvironmentObject var appViewModel: AppViewModel
+    @State private var selectedTabIndex: Int = 0
 
     private let logger = Logger(subsystem: "com.krutsche.xcamp", category: "ContentView")
 
@@ -14,9 +15,9 @@ struct ContentView: View {
             // Use the appState from AppViewModel which was set during initialization
             let availableTabs = appViewModel.getAvailableTabsForCurrentState()
 
-            TabView {
+            TabView(selection: $selectedTabIndex) {
                 ForEach(Array(availableTabs.enumerated()), id: \.element) { index, tab in
-                    createTabView(tab)
+                    createTabView(tab, availableTabs: availableTabs, selectedIndex: $selectedTabIndex)
                         .tag(index)
                 }
             }
@@ -25,7 +26,7 @@ struct ContentView: View {
     }
 
     @ViewBuilder
-    private func createTabView(_ tab: AppTab) -> some View {
+    private func createTabView(_ tab: AppTab, availableTabs: [AppTab], selectedIndex: Binding<Int>) -> some View {
         switch tab {
             case .home:
                 HomeView()
@@ -77,7 +78,7 @@ struct ContentView: View {
                     }
 
             case .more:
-                MorePopupView()
+                MorePopupView(selectedTabIndex: selectedIndex)
                     .tabItem {
                         Image(systemName: "ellipsis.circle.fill")
                         Text("More")
@@ -92,7 +93,7 @@ struct ContentView: View {
 /// Shows a popup menu immediately when the More tab is selected
 struct MorePopupView: View {
     @State private var activeView: MoreViewOption?
-    @State private var showingPopup = true
+    @Binding var selectedTabIndex: Int
 
     enum MoreViewOption: String, Identifiable {
         case media
@@ -111,7 +112,9 @@ struct MorePopupView: View {
 
                 VStack(spacing: Spacing.sm) {
                     // Media option
-                    Button(action: { activeView = .media }) {
+                    Button(action: {
+                        activeView = .media
+                    }) {
                         HStack {
                             Image(systemName: "photo.fill")
                                 .foregroundColor(.accentColor)
@@ -131,7 +134,9 @@ struct MorePopupView: View {
                     .buttonStyle(PlainButtonStyle())
 
                     // Info option
-                    Button(action: { activeView = .info }) {
+                    Button(action: {
+                        activeView = .info
+                    }) {
                         HStack {
                             Image(systemName: "info.circle.fill")
                                 .foregroundColor(.accentColor)
@@ -152,8 +157,8 @@ struct MorePopupView: View {
 
                     // Close button
                     Button(action: {
-                        // Return to previous tab - handled by TabView
-                        showingPopup = false
+                        // Return to Home tab
+                        selectedTabIndex = 0
                     }) {
                         HStack {
                             Image(systemName: "xmark.circle.fill")
@@ -174,19 +179,29 @@ struct MorePopupView: View {
                 .padding(Spacing.md)
             }
         }
+        .onAppear {
+            // Auto-show the popup when this view appears
+            activeView = nil
+        }
         .sheet(item: $activeView) { option in
-            switch option {
-            case .media:
-                MediaView()
-            case .info:
-                InfoView()
+            Group {
+                switch option {
+                case .media:
+                    MediaView()
+                case .info:
+                    InfoView()
+                }
+            }
+            .onDisappear {
+                // When sheet is dismissed, return to Home tab
+                selectedTabIndex = 0
             }
         }
     }
 }
 
 #Preview("More Popup View") {
-    MorePopupView()
+    MorePopupView(selectedTabIndex: .constant(0))
         .preferredColorScheme(.dark)
 }
 
