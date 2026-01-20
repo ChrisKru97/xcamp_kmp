@@ -270,8 +270,7 @@ struct PlaceDetailView: View {
 #Preview("Place List Item") {
     VStack {
         PlaceListItem(place: Place(
-            id: 1,
-            uid: "test",
+            id: "test",
             name: "Test Place",
             description: "This is a test description for the place",
             priority: 1,
@@ -281,8 +280,7 @@ struct PlaceDetailView: View {
             imageUrl: nil
         ))
         PlaceListItem(place: Place(
-            id: 2,
-            uid: "test2",
+            id: "test2",
             name: "Another Place",
             description: nil,
             priority: 2,
@@ -300,8 +298,7 @@ struct PlaceDetailView: View {
 #Preview("Place Detail View") {
     NavigationView {
         PlaceDetailView(place: Place(
-            id: 1,
-            uid: "test",
+            id: "test",
             name: "Test Place",
             description: "This is a longer description that should wrap nicely. It can contain multiple lines of text describing the place in detail.",
             priority: 1,
