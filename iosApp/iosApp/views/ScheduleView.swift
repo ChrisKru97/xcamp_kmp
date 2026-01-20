@@ -120,6 +120,8 @@ struct ScheduleView: View {
                 .font(.body)
                 .foregroundColor(.secondary)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.background)
     }
 
     private var emptyView: some View {
@@ -137,6 +139,8 @@ struct ScheduleView: View {
             }
             .buttonStyle(.bordered)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.background)
     }
 
     private var errorView: some View {
@@ -153,6 +157,8 @@ struct ScheduleView: View {
             }
             .buttonStyle(.bordered)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.background)
     }
 }
 
