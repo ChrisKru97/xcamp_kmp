@@ -624,8 +624,32 @@ The expected flow is:
 
 ## Notes
 
+### Summary of Progress (End of Iteration)
+**Phases Complete:**
+- Phase 1: Diagnostics & Logging ✅
+- Phase 2: Firebase Initialization Verification ✅
+- Phase 3: Fix App State Issue ✅ - Tabs now showing correctly (PRE_EVENT mode)
+- Phase 4: Data Fetching Verification - Logging added ✅
+- Phase 5: Data Structure Validation - Speaker model fixed ✅
+
+**Current Issues:**
+- Speakers screen shows "No speakers"
+- Need to verify if Firestore `speakers` collection has data
+- Need to verify Firestore security rules allow anonymous read
+- Cannot see logs through MCP tool (subsystem filter issue)
+
+**Key Fixes Made:**
+1. ContentView was creating new AppConfigService - fixed to use initialized one
+2. Speaker model structure mismatch - fixed to match Firestore (id as String)
+3. Added comprehensive logging throughout the data fetching pipeline
+
+**Next Steps:**
+1. Verify Firestore speakers collection has data (check Firebase Console)
+2. Verify Firestore security rules allow anonymous read
+3. Check logs directly in Xcode to see any errors
+4. Apply same fixes to Places collection
+
 - The plan states "Don't finish until you see the real data on the iOS simulator"
-- Current status: App runs but shows LIMITED mode, no speakers/places tabs visible
 - Need to verify there's actual data in the Firestore project first
 - Reference project shows the pattern - follow it for ordered queries and error handling
 - The user mentioned having data in Firestore - need to verify collection names and structure match
