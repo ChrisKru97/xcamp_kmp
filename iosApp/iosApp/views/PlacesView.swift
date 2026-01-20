@@ -162,8 +162,8 @@ struct PlaceListItem: View {
             Text(place.name)
                 .font(.headline)
                 .foregroundColor(.primary)
-            let description = place.description
-            if !description.isEmpty {
+            // Use description_ to avoid conflict with Swift's built-in .description
+            if let description = place.description_, !description.isEmpty {
                 Text(description.prefix(100) + (description.count > 100 ? "..." : ""))
                     .font(.subheadline)
                     .foregroundColor(.primary)
@@ -214,8 +214,8 @@ struct PlaceDetailView: View {
 
     private var placeContent: some View {
         VStack(alignment: .leading, spacing: Spacing.lg) {
-            let description = place.description
-            if !description.isEmpty {
+            // Use description_ to avoid conflict with Swift's built-in .description
+            if let description = place.description_, !description.isEmpty {
                 GlassCard {
                     Text(description)
                         .font(.body)

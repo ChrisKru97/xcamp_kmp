@@ -163,9 +163,10 @@ struct SpeakerListItem: View {
             Text(speaker.name)
                 .font(.headline)
                 .foregroundColor(.primary)
-            let description = speaker.description
-            if !description.isEmpty {
-                Text(description.prefix(100) + (description.count > 100 ? "..." : ""))
+            // Use description_ to avoid conflict with Swift's built-in .description
+            let speakerDescription = speaker.description_ ?? ""
+            if !speakerDescription.isEmpty {
+                Text(speakerDescription.prefix(100) + (speakerDescription.count > 100 ? "..." : ""))
                     .font(.subheadline)
                     .foregroundColor(.primary)
                     .lineLimit(2)
@@ -206,8 +207,8 @@ struct SpeakerDetailView: View {
 
     private var speakerContent: some View {
         VStack(alignment: .leading, spacing: Spacing.lg) {
-            let description = speaker.description
-            if !description.isEmpty {
+            // Use description_ to avoid conflict with Swift's built-in .description
+            if let description = speaker.description_, !description.isEmpty {
                 GlassCard {
                     Text(description)
                         .font(.body)
