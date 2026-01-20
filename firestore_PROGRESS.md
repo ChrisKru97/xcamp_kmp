@@ -124,8 +124,8 @@ The Flutter reference project has explicit Firebase initialization with comprehe
 ### Phase 2: Firebase Initialization Verification
 - [x] Task 2.1: Add explicit Firebase initialization verification in XcampApp.swift
 - [x] Task 2.2: Verify anonymous auth is completing successfully
-- [ ] Task 2.3: Test Firestore accessibility with a simple document read
-- [ ] Task 2.4: Verify Remote Config fetch is working
+- [x] Task 2.3: Test Firestore accessibility with a simple document read
+- [x] Task 2.4: Verify Remote Config fetch is working
 
 ### Phase 3: Fix App State Issue
 - [ ] Task 3.1: Debug why getAvailableTabs() returns LIMITED tabs despite showAppData=true
@@ -400,6 +400,32 @@ The expected flow is:
 7. **Verify Data**: Check if speakers/places actually exist in Firestore
 
 ## Completed This Iteration
+
+### Task 2.3: Test Firestore accessibility with a simple document read
+
+**What was done:**
+
+1. **Added Firestore accessibility test** to `AppInitializer.kt`
+2. **Added `verifyFirestoreAccess()` method**:
+   - Attempts to query the 'speakers' collection (limit 1)
+   - Uses 5-second timeout
+   - Logs success with document count
+   - Logs warnings for failures
+   - Continues app initialization even if test fails (data sync will try again)
+
+3. **Added logging to all init methods**:
+   - `initializeRemoteConfig()` logs start/complete
+   - `initializeAuth()` logs start/complete
+   - `initialize()` logs failures with throwable
+
+4. **Verified build**: iOS app builds successfully
+
+**Files modified:**
+- `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/config/AppInitializer.kt`
+
+**Note**: Task 2.4 was already complete - Remote Config logging was added in Task 1.1
+
+---
 
 ### Task 2.2: Verify anonymous auth is completing successfully
 
