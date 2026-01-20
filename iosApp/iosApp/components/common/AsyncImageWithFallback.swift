@@ -1,4 +1,64 @@
 import SwiftUI
+import UIKit
+
+// MARK: - Cached Async Image
+
+/// A custom AsyncImage that uses a 1-week disk cache
+struct CachedAsyncImage<Content: View>: View {
+    let url: URL?
+    let content: (Image) -> Content
+
+    @State private var loadedImage: UIImage?
+    @State private var isLoading = false
+
+    init(url: URL?, @ViewBuilder content: @escaping (Image) -> Content) {
+        self.url = url
+        self.content = content
+    }
+
+    var body: some View {
+        Group {
+            if let image = loadedImage {
+                content(Image(uiImage: image))
+            } else {
+                content(Image(systemName: "photo"))
+                    .onAppear {
+                        loadImage()
+                    }
+                    .id(url) // Force refresh when URL changes
+            }
+        }
+    }
+
+    private func loadImage() {
+        guard let url = url else { return }
+
+        // Check cache first
+        if let cachedImage = ImageCache.shared.getCachedImage(for: url) {
+            loadedImage = cachedImage
+            return
+        }
+
+        // If not in cache, download
+        isLoading = true
+        Task {
+            do {
+                let (data, _) = try await URLSession.shared.data(from: url)
+                if let uiImage = UIImage(data: data) {
+                    ImageCache.shared.storeImage(uiImage, for: url)
+                    await MainActor.run {
+                        loadedImage = uiImage
+                        isLoading = false
+                    }
+                }
+            } catch {
+                await MainActor.run {
+                    isLoading = false
+                }
+            }
+        }
+    }
+}
 
 // MARK: - Async Image With Fallback
 
@@ -20,21 +80,10 @@ struct AsyncImageWithFallback: View {
     }
 
     var body: some View {
-        AsyncImage(url: url) { phase in
-            switch phase {
-            case .success(let image):
-                image
-                    .resizable()
-                    .scaledToFill()
-            case .failure:
-                Image(systemName: fallbackIconName)
-                    .foregroundColor(.secondary)
-            case .empty:
-                ProgressView()
-            @unknown default:
-                Image(systemName: fallbackIconName)
-                    .foregroundColor(.secondary)
-            }
+        CachedAsyncImage(url: url) { phase in
+            phase
+                .resizable()
+                .scaledToFill()
         }
         .frame(width: size.width, height: size.height)
     }
@@ -60,31 +109,11 @@ struct HeroAsyncImageWithFallback: View {
     }
 
     var body: some View {
-        AsyncImage(url: url) { phase in
-            switch phase {
-            case .success(let image):
+        CachedAsyncImage(url: url) { image in
+            ZStack {
                 image
                     .resizable()
                     .scaledToFill()
-            case .failure:
-                ZStack {
-                    Color.secondary.opacity(0.3)
-                    Image(systemName: fallbackIconName)
-                        .font(.system(size: 50))
-                        .foregroundColor(.secondary)
-                }
-            case .empty:
-                ZStack {
-                    Color.secondary.opacity(0.3)
-                    ProgressView()
-                }
-            @unknown default:
-                ZStack {
-                    Color.secondary.opacity(0.3)
-                    Image(systemName: fallbackIconName)
-                        .font(.system(size: 50))
-                        .foregroundColor(.secondary)
-                }
             }
         }
         .frame(height: height)
