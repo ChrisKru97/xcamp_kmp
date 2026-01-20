@@ -235,8 +235,7 @@ struct SpeakerDetailView: View {
 #Preview("Speaker List Item") {
     VStack {
         SpeakerListItem(speaker: Speaker(
-            id: 1,
-            uid: "test",
+            id: "test1",
             name: "Jan Novák",
             description: "Pastor a řečník",
             priority: 1,
@@ -244,8 +243,7 @@ struct SpeakerDetailView: View {
             imageUrl: nil
         ))
         SpeakerListItem(speaker: Speaker(
-            id: 2,
-            uid: "test2",
+            id: "test2",
             name: "Marie Svobodová",
             description: nil,
             priority: 2,
@@ -261,8 +259,7 @@ struct SpeakerDetailView: View {
 #Preview("Speaker Detail View") {
     NavigationView {
         SpeakerDetailView(speaker: Speaker(
-            id: 1,
-            uid: "test",
+            id: "test1",
             name: "Jan Novák",
             description: "Pastor a řečník s mnoha lety zkušeností. Slouží církvi a víře již více než 20 let. Jeho posláním je šířit evangelium a pomáhat lidem najít cestu k Bohu.",
             priority: 1,

@@ -3,6 +3,7 @@ package cz.krutsche.xcamp.shared.data.repository
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.domain.model.Speaker
+import cz.krutsche.xcamp.shared.domain.model.toDbSpeaker
 import io.github.aakira.napier.Napier
 
 class SpeakersRepository(
@@ -29,14 +30,15 @@ class SpeakersRepository(
         Napier.d(tag = "SpeakersRepository") { "insertSpeakers() - Inserting ${speakers.size} speakers into database" }
         queries.transaction {
             speakers.forEach { speaker ->
+                val dbSpeaker = speaker.toDbSpeaker()
                 queries.insertSpeaker(
-                    id = speaker.id,
-                    uid = speaker.uid,
-                    name = speaker.name,
-                    description = speaker.description,
-                    priority = speaker.priority,
-                    image = speaker.image,
-                    imageUrl = speaker.imageUrl
+                    id = dbSpeaker.id,
+                    uid = dbSpeaker.uid,
+                    name = dbSpeaker.name,
+                    description = dbSpeaker.description,
+                    priority = dbSpeaker.priority,
+                    image = dbSpeaker.image,
+                    imageUrl = dbSpeaker.imageUrl
                 )
             }
         }
@@ -50,8 +52,7 @@ class SpeakersRepository(
 
     private fun mapToSpeaker(dbSpeaker: cz.krutsche.xcamp.shared.db.Speaker): Speaker =
         cz.krutsche.xcamp.shared.domain.model.Speaker(
-            id = dbSpeaker.id,
-            uid = dbSpeaker.uid,
+            id = dbSpeaker.uid,  // Use uid as id for domain model
             name = dbSpeaker.name,
             description = dbSpeaker.description,
             priority = dbSpeaker.priority,

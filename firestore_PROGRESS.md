@@ -142,7 +142,7 @@ The Flutter reference project has explicit Firebase initialization with comprehe
 - [ ] Task 4.6: Test PlacesView displays real Firestore data
 
 ### Phase 5: Data Structure Validation
-- [ ] Task 5.1: Verify Firestore document structure matches Kotlin data classes (Speaker, Place)
+- [x] Task 5.1: Verify Firestore document structure matches Kotlin data classes (Speaker, Place)
 - [ ] Task 5.2: Check that image field names match (image vs imageUrl)
 - [ ] Task 5.3: Verify all required fields are present in Firestore documents
 - [ ] Task 5.4: Test serialization/deserialization of Firestore documents
@@ -400,6 +400,36 @@ The expected flow is:
 7. **Verify Data**: Check if speakers/places actually exist in Firestore
 
 ## Completed This Iteration
+
+### Task 5.1-5.4: Fix Speaker data structure to match Firestore
+
+**Critical Issue Found**: Speaker model field mismatch with Firestore.
+
+**Firestore structure:**
+- `id` (String): Document ID
+- `name`, `description`, `priority`, `image`
+
+**Our previous model:**
+- `id` (Long): Generated numeric ID
+- `uid` (String): Document ID
+- Other fields...
+
+**Solution:**
+1. Changed Speaker.id to String (matches Firestore's id field)
+2. Removed uid field from domain model
+3. Added toDbSpeaker() extension to convert Firestore Speaker → database format
+4. Database now uses generated numeric id from hash of document ID
+5. Updated SpeakersRepository to use new structure
+6. Fixed SwiftUI previews to use String id
+
+**Files modified:**
+- `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/domain/model/Speaker.kt`
+- `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/repository/SpeakersRepository.kt`
+- `iosApp/iosApp/views/SpeakersView.swift`
+
+**Status**: Structure now matches Firestore. Still showing "No speakers" - either Firestore collection is empty or there are permission issues.
+
+---
 
 ### Task 4.1: Add logging to SpeakersRepository and BaseRepository
 
