@@ -117,9 +117,9 @@ The Flutter reference project has explicit Firebase initialization with comprehe
 
 ### Phase 1: Diagnostics & Logging
 - [x] Task 1.1: Add debug logging to RemoteConfigService to verify showAppData value
-- [ ] Task 1.2: Add debug logging to AppConfigService to trace getAppState() logic
-- [ ] Task 1.3: Add logging to AppViewModel initializeApp() to track initialization flow
-- [ ] Task 1.4: Replace silent error handling in background syncs with logged errors
+- [x] Task 1.2: Add debug logging to AppConfigService to trace getAppState() logic
+- [x] Task 1.3: Add logging to AppViewModel initializeApp() to track initialization flow
+- [x] Task 1.4: Replace silent error handling in background syncs with logged errors
 
 ### Phase 2: Firebase Initialization Verification
 - [ ] Task 2.1: Add explicit Firebase initialization verification in XcampApp.swift
@@ -401,7 +401,38 @@ The expected flow is:
 
 ## Completed This Iteration
 
-### Task 1.1: Add debug logging to RemoteConfigService to verify showAppData value
+### Task 1.3: Add logging to AppViewModel initializeApp() to track initialization flow
+
+**What was done:**
+
+1. **Added OSLog import** to `AppViewModel.swift`
+2. **Added Logger instance** with subsystem and category
+3. **Added comprehensive logging to `initializeApp()`**:
+   - Log when initialization starts
+   - Log when services are created
+   - Log when AppInitializer completes
+   - Log the resulting app state
+   - Log when each background sync starts
+
+4. **Added logging to background sync methods** (`syncPlacesInBackground()`, `syncSpeakersInBackground()`, `syncScheduleInBackground()`):
+   - Log when sync starts
+   - Log when task starts
+   - Log success with result count
+   - Log errors with description
+   - Replaced silent error handling with explicit logging
+
+5. **Verified build**: iOS app builds successfully with warnings only
+
+**Files modified:**
+- `iosApp/iosApp/AppViewModel.swift`
+
+**Note**: Tasks 1.2 and 1.4 were also completed:
+- Task 1.2: AppConfigService already had comprehensive logging (from previous iteration)
+- Task 1.4: Silent error handling in background syncs now logs errors to console
+
+---
+
+### Task 1.1: Add debug logging to RemoteConfigService to verify showAppData value (from previous iteration)
 
 **What was done:**
 
