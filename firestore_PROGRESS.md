@@ -123,7 +123,7 @@ The Flutter reference project has explicit Firebase initialization with comprehe
 
 ### Phase 2: Firebase Initialization Verification
 - [x] Task 2.1: Add explicit Firebase initialization verification in XcampApp.swift
-- [ ] Task 2.2: Verify anonymous auth is completing successfully
+- [x] Task 2.2: Verify anonymous auth is completing successfully
 - [ ] Task 2.3: Test Firestore accessibility with a simple document read
 - [ ] Task 2.4: Verify Remote Config fetch is working
 
@@ -400,6 +400,27 @@ The expected flow is:
 7. **Verify Data**: Check if speakers/places actually exist in Firestore
 
 ## Completed This Iteration
+
+### Task 2.2: Verify anonymous auth is completing successfully
+
+**What was done:**
+
+1. **Added Napier logging** to `AuthService.kt`
+2. **Added comprehensive logging to `initialize()`**:
+   - Log when authentication starts
+   - Check if user is already signed in (reuse existing session)
+   - Log if signing in anonymously
+   - Log successful sign-in with user ID
+   - Log user properties (isAnonymous, isEmailVerified)
+   - Log failure if no user ID returned
+   - Log exceptions with details
+
+3. **Verified build**: iOS app builds successfully
+
+**Files modified:**
+- `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/firebase/AuthService.kt`
+
+---
 
 ### Task 2.1: Add explicit Firebase initialization verification in XcampApp.swift
 
