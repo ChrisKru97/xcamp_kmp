@@ -5,6 +5,9 @@ import OSLog
 struct ContentView: View {
     @EnvironmentObject var appViewModel: AppViewModel
     @State private var selectedTabIndex: Int = 0
+    @State private var previousTabIndex: Int = 0
+    @State private var showingMorePopover = false
+    @State private var isRevertingFromMoreTab = false
 
     private let logger = Logger(subsystem: "com.krutsche.xcamp", category: "ContentView")
 
@@ -17,16 +20,41 @@ struct ContentView: View {
 
             TabView(selection: $selectedTabIndex) {
                 ForEach(Array(availableTabs.enumerated()), id: \.element) { index, tab in
-                    createTabView(tab, availableTabs: availableTabs, selectedIndex: $selectedTabIndex)
+                    createTabView(tab, availableTabs: availableTabs)
                         .tag(index)
                 }
             }
             .tabViewStyle(.automatic)
+            .onChange(of: selectedTabIndex) { newValue in
+                // Skip if we're reverting from More tab (don't update previousTabIndex)
+                if isRevertingFromMoreTab {
+                    isRevertingFromMoreTab = false
+                    return
+                }
+
+                // Check if the newly selected tab is the "More" tab
+                let moreTab = availableTabs.firstIndex { $0 == .more }
+                if newValue == moreTab {
+                    // Show the popover instead of navigating
+                    showingMorePopover = true
+                    // Don't actually navigate to the More tab - stay on previous tab
+                    isRevertingFromMoreTab = true
+                    DispatchQueue.main.async {
+                        selectedTabIndex = previousTabIndex
+                    }
+                } else {
+                    // Update previous index for non-More tabs
+                    previousTabIndex = newValue
+                }
+            }
+            .popover(isPresented: $showingMorePopover) {
+                MorePopoverContentView(selectedTabIndex: $selectedTabIndex, isPresented: $showingMorePopover)
+            }
         }
     }
 
     @ViewBuilder
-    private func createTabView(_ tab: AppTab, availableTabs: [AppTab], selectedIndex: Binding<Int>) -> some View {
+    private func createTabView(_ tab: AppTab, availableTabs: [AppTab]) -> some View {
         switch tab {
             case .home:
                 HomeView()
@@ -78,7 +106,8 @@ struct ContentView: View {
                     }
 
             case .more:
-                MorePopupView(selectedTabIndex: selectedIndex)
+                // More tab is handled via popover - this is just a placeholder
+                EmptyView()
                     .tabItem {
                         Image(systemName: "ellipsis.circle.fill")
                         Text("More")
@@ -88,120 +117,105 @@ struct ContentView: View {
     }
 }
 
-/// A view that displays a popup menu with Media and Info options
+/// A view that displays a popover menu with Media and Info options
 /// Used when tabs would overflow on smaller devices
-/// Shows a popup menu immediately when the More tab is selected
-struct MorePopupView: View {
-    @State private var activeView: MoreViewOption?
+/// Shows as a native popover without triggering navigation
+struct MorePopoverContentView: View {
+    @EnvironmentObject var appViewModel: AppViewModel
     @Binding var selectedTabIndex: Int
-
-    enum MoreViewOption: String, Identifiable {
-        case media
-        case info
-        var id: String { rawValue }
-    }
+    @Binding var isPresented: Bool
 
     var body: some View {
-        ZStack {
-            // Background
-            Color.background.ignoresSafeArea()
+        VStack(spacing: Spacing.md) {
+            // Header
+            Text("More Options")
+                .font(.headline)
+                .foregroundColor(.primary)
+                .padding(.bottom, Spacing.sm)
 
-            // Popup menu
-            VStack(spacing: 0) {
-                Spacer()
-
-                VStack(spacing: Spacing.sm) {
-                    // Media option
-                    Button(action: {
-                        activeView = .media
-                    }) {
-                        HStack {
-                            Image(systemName: "photo.fill")
-                                .foregroundColor(.accentColor)
-                            Text(Strings.Tabs.shared.MEDIA)
-                                .foregroundColor(.primary)
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(.secondary)
-                                .font(.caption)
-                        }
-                        .padding()
-                        .background(
-                            RoundedRectangle(cornerRadius: CornerRadius.medium)
-                                .fill(.ultraThinMaterial)
-                        )
-                    }
-                    .buttonStyle(PlainButtonStyle())
-
-                    // Info option
-                    Button(action: {
-                        activeView = .info
-                    }) {
-                        HStack {
-                            Image(systemName: "info.circle.fill")
-                                .foregroundColor(.accentColor)
-                            Text(Strings.Tabs.shared.INFO)
-                                .foregroundColor(.primary)
-                            Spacer()
-                            Image(systemName: "chevron.right")
-                                .foregroundColor(.secondary)
-                                .font(.caption)
-                        }
-                        .padding()
-                        .background(
-                            RoundedRectangle(cornerRadius: CornerRadius.medium)
-                                .fill(.ultraThinMaterial)
-                        )
-                    }
-                    .buttonStyle(PlainButtonStyle())
-
-                    // Close button
-                    Button(action: {
-                        // Return to Home tab
-                        selectedTabIndex = 0
-                    }) {
-                        HStack {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.secondary)
-                            Text("Close")
-                                .foregroundColor(.secondary)
-                        }
-                        .padding()
-                    }
-                    .buttonStyle(PlainButtonStyle())
+            // Media option
+            Button(action: {
+                // Find the Media tab index and navigate to it
+                let availableTabs = appViewModel.getAvailableTabsForCurrentState()
+                if let mediaIndex = availableTabs.firstIndex(of: .media) {
+                    selectedTabIndex = mediaIndex
+                }
+                isPresented = false
+            }) {
+                HStack {
+                    Image(systemName: "photo.fill")
+                        .foregroundColor(.accentColor)
+                        .frame(width: 24)
+                    Text(Strings.Tabs.shared.MEDIA)
+                        .foregroundColor(.primary)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(.secondary)
+                        .font(.caption)
                 }
                 .padding()
                 .background(
-                    RoundedRectangle(cornerRadius: CornerRadius.large, style: .continuous)
-                        .fill(.regularMaterial)
-                        .shadow(radius: 20)
+                    RoundedRectangle(cornerRadius: CornerRadius.medium)
+                        .fill(.ultraThinMaterial)
                 )
-                .padding(Spacing.md)
             }
-        }
-        .onAppear {
-            // Auto-show the popup when this view appears
-            activeView = nil
-        }
-        .sheet(item: $activeView) { option in
-            Group {
-                switch option {
-                case .media:
-                    MediaView()
-                case .info:
-                    InfoView()
+            .buttonStyle(PlainButtonStyle())
+
+            // Info option
+            Button(action: {
+                // Find the Info tab index and navigate to it
+                let availableTabs = appViewModel.getAvailableTabsForCurrentState()
+                if let infoIndex = availableTabs.firstIndex(of: .info) {
+                    selectedTabIndex = infoIndex
                 }
+                isPresented = false
+            }) {
+                HStack {
+                    Image(systemName: "info.circle.fill")
+                        .foregroundColor(.accentColor)
+                        .frame(width: 24)
+                    Text(Strings.Tabs.shared.INFO)
+                        .foregroundColor(.primary)
+                    Spacer()
+                    Image(systemName: "chevron.right")
+                        .foregroundColor(.secondary)
+                        .font(.caption)
+                }
+                .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: CornerRadius.medium)
+                        .fill(.ultraThinMaterial)
+                )
             }
-            .onDisappear {
-                // When sheet is dismissed, return to Home tab
-                selectedTabIndex = 0
+            .buttonStyle(PlainButtonStyle())
+
+            // Cancel button
+            Button(action: {
+                isPresented = false
+            }) {
+                Text("Cancel")
+                    .foregroundColor(.secondary)
+                    .frame(maxWidth: .infinity)
+                    .padding()
+                    .background(
+                        RoundedRectangle(cornerRadius: CornerRadius.medium)
+                            .fill(.ultraThinMaterial)
+                    )
             }
+            .buttonStyle(PlainButtonStyle())
         }
+        .padding()
+        .frame(width: 280)
     }
 }
 
-#Preview("More Popup View") {
-    MorePopupView(selectedTabIndex: .constant(0))
+#Preview("More Popover Content View") {
+    MorePopoverContentView(selectedTabIndex: .constant(0), isPresented: .constant(true))
+        .environmentObject({
+            let vm = AppViewModel()
+            vm.isLoading = false
+            return vm
+        }())
         .preferredColorScheme(.dark)
 }
 
