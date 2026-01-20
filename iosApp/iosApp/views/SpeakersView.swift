@@ -211,7 +211,7 @@ struct SpeakerDetailView: View {
                 GlassCard {
                     Text(description)
                         .font(.body)
-                        .foregroundColor(.primary)
+                        .foregroundColor(.white)
                         .lineSpacing(4)
                 }
                 .padding(.top, -CornerRadius.large)
@@ -220,7 +220,7 @@ struct SpeakerDetailView: View {
 
             Spacer(minLength: Spacing.xxl)
         }
-        .padding(.top, Spacing.md)
+        .padding(.top, Spacing.xl)
     }
 }
 

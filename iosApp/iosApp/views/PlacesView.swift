@@ -219,7 +219,7 @@ struct PlaceDetailView: View {
                 GlassCard {
                     Text(description)
                         .font(.body)
-                        .foregroundColor(.primary)
+                        .foregroundColor(.white)
                         .lineSpacing(4)
                 }
                 .padding(.top, -CornerRadius.large)
@@ -248,7 +248,7 @@ struct PlaceDetailView: View {
 
             Spacer(minLength: Spacing.xxl)
         }
-        .padding(.top, Spacing.md)
+        .padding(.top, Spacing.xl)
     }
 
     private func openInMaps(latitude: Double, longitude: Double, name: String) {
