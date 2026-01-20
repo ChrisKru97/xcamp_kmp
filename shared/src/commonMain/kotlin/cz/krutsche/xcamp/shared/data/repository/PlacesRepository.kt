@@ -2,6 +2,7 @@ package cz.krutsche.xcamp.shared.data.repository
 
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
+import cz.krutsche.xcamp.shared.domain.model.FirestorePlace
 import cz.krutsche.xcamp.shared.domain.model.Place
 import cz.krutsche.xcamp.shared.domain.model.toDbPlace
 import io.github.aakira.napier.Napier
@@ -49,7 +50,13 @@ class PlacesRepository(
 
     suspend fun syncFromFirestore(): Result<Unit> {
         Napier.d(tag = "PlacesRepository") { "syncFromFirestore() - Starting places sync from Firestore" }
-        return syncFromFirestore(Place.serializer(), ::insertPlaces)
+        return syncFromFirestoreWithIds(
+            deserializer = FirestorePlace.serializer(),
+            injectId = { documentId, firestorePlace ->
+                Place.fromFirestoreData(documentId, firestorePlace)
+            },
+            insertItems = ::insertPlaces
+        )
     }
 
     private fun mapToPlace(dbPlace: cz.krutsche.xcamp.shared.db.Place): Place {

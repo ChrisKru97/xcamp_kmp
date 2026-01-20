@@ -40,6 +40,29 @@ class FirestoreService {
         Result.failure(e)
     }
 
+    /**
+     * Get collection with document IDs included.
+     * Returns pairs of (documentId, deserializedData).
+     * Use this when you need access to the Firestore document ID separately from the document data.
+     */
+    suspend fun <T> getCollectionWithIds(
+        collection: String,
+        deserializer: DeserializationStrategy<T>
+    ): Result<List<Pair<String, T>>> = try {
+        val result = withTimeout(DEFAULT_TIMEOUT) {
+            val querySnapshot = firestore.collection(collection).get()
+            querySnapshot.documents.mapNotNull { document ->
+                if (document.exists) {
+                    val data = document.data(deserializer)
+                    document.id to data
+                } else null
+            }
+        }
+        Result.success(result)
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
+
     suspend fun setDocument(
         collection: String,
         documentId: String,

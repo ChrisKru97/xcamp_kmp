@@ -35,8 +35,39 @@ data class Place(
         fun generateId(uid: String): Long {
             return uid.hashCode().toLong()
         }
+
+        /**
+         * Create a Place from Firestore data with document ID injected
+         */
+        fun fromFirestoreData(documentId: String, data: FirestorePlace): Place {
+            return Place(
+                id = documentId,
+                name = data.name,
+                description = data.description,
+                priority = data.priority,
+                latitude = data.latitude,
+                longitude = data.longitude,
+                image = data.image,
+                imageUrl = null
+            )
+        }
     }
 }
+
+/**
+ * Firestore Place data model (without id field).
+ * Used for deserializing Firestore documents that don't have an explicit 'id' field.
+ * The document ID is injected separately from the DocumentSnapshot.id property.
+ */
+@Serializable
+data class FirestorePlace(
+    val name: String,
+    val description: String? = null,
+    val priority: Long,
+    val latitude: Double? = null,
+    val longitude: Double? = null,
+    val image: String? = null
+)
 
 /**
  * Convert Firestore Place to database format with generated numeric ID
