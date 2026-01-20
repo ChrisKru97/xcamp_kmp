@@ -1,14 +1,18 @@
 import SwiftUI
 import shared
+import OSLog
 
 struct ContentView: View {
     @EnvironmentObject var appViewModel: AppViewModel
+
+    private let logger = Logger(subsystem: "com.krutsche.xcamp", category: "ContentView")
 
     var body: some View {
         if appViewModel.isLoading {
             SplashView()
         } else {
-            let availableTabs = appViewModel.getAppConfigService().getAvailableTabs()
+            // Use the appState from AppViewModel which was set during initialization
+            let availableTabs = appViewModel.getAvailableTabsForCurrentState()
 
             TabView {
                 ForEach(Array(availableTabs.enumerated()), id: \.element) { index, tab in

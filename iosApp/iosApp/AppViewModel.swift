@@ -176,4 +176,12 @@ class AppViewModel: ObservableObject {
         }
         return scheduleService
     }
+
+    /// Get available tabs based on the current app state that was set during initialization
+    func getAvailableTabsForCurrentState() -> [AppTab] {
+        logger.debug("getAvailableTabsForCurrentState() - Current app state: \(self.appState)")
+        let result = getAppConfigService().getAvailableTabs()
+        logger.debug("getAvailableTabsForCurrentState() - Got \(result.count) tabs")
+        return result
+    }
 }

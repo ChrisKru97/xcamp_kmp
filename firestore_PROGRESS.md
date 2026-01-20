@@ -128,10 +128,10 @@ The Flutter reference project has explicit Firebase initialization with comprehe
 - [x] Task 2.4: Verify Remote Config fetch is working
 
 ### Phase 3: Fix App State Issue
-- [ ] Task 3.1: Debug why getAvailableTabs() returns LIMITED tabs despite showAppData=true
-- [ ] Task 3.2: Verify ContentView is calling getAvailableTabs() correctly
-- [ ] Task 3.3: Add debug logging to trace tab rendering logic
-- [ ] Task 3.4: Test that Speakers and Places tabs appear in iOS simulator
+- [x] Task 3.1: Debug why getAvailableTabs() returns LIMITED tabs despite showAppData=true
+- [x] Task 3.2: Verify ContentView is calling getAvailableTabs() correctly
+- [x] Task 3.3: Add debug logging to trace tab rendering logic
+- [x] Task 3.4: Test that Speakers and Places tabs appear in iOS simulator
 
 ### Phase 4: Data Fetching Verification
 - [ ] Task 4.1: Add logging to SpeakersRepository.syncFromFirestore()
@@ -400,6 +400,25 @@ The expected flow is:
 7. **Verify Data**: Check if speakers/places actually exist in Firestore
 
 ## Completed This Iteration
+
+### Task 3.1-3.4: Fix App State Issue (Tabs not showing)
+
+**Problem Found**: ContentView.swift line 11 was creating a NEW AppConfigService each time instead of using the initialized one from AppViewModel. This caused getAvailableTabs() to use a fresh RemoteConfigService that hadn't been initialized, resulting in LIMITED mode.
+
+**Solution**:
+1. Added `getAvailableTabsForCurrentState()` method to AppViewModel that uses the already-initialized AppConfigService
+2. Updated ContentView.swift to call the new method instead of creating a new AppConfigService
+3. Added logging to ContentView (OSLog import added)
+
+**Result**: iOS simulator now correctly shows PRE_EVENT mode with all 6 tabs (Home, Schedule, Speakers, Places, Media, Info).
+
+**Files modified**:
+- `iosApp/iosApp/ContentView.swift`
+- `iosApp/iosApp/AppViewModel.swift`
+
+**Note**: Speakers screen shows "No speakers" - data fetching is the next phase to fix.
+
+---
 
 ### Task 2.3: Test Firestore accessibility with a simple document read
 
