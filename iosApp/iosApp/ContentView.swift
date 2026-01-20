@@ -77,7 +77,7 @@ struct ContentView: View {
                     }
 
             case .more:
-                MoreTabView()
+                MorePopupView()
                     .tabItem {
                         Image(systemName: "ellipsis.circle.fill")
                         Text("More")
@@ -87,31 +87,40 @@ struct ContentView: View {
     }
 }
 
-/// A view that displays a menu with Media and Info options
+/// A view that displays a popup menu with Media and Info options
 /// Used when tabs would overflow on smaller devices
-struct MoreTabView: View {
-    var body: some View {
-        NavigationView {
-            ZStack {
-                Color.background.ignoresSafeArea()
+/// Shows a popup menu immediately when the More tab is selected
+struct MorePopupView: View {
+    @State private var activeView: MoreViewOption?
+    @State private var showingPopup = true
 
-                VStack(spacing: Spacing.xl) {
+    enum MoreViewOption: String, Identifiable {
+        case media
+        case info
+        var id: String { rawValue }
+    }
+
+    var body: some View {
+        ZStack {
+            // Background
+            Color.background.ignoresSafeArea()
+
+            // Popup menu
+            VStack(spacing: 0) {
+                Spacer()
+
+                VStack(spacing: Spacing.sm) {
                     // Media option
-                    NavigationLink(destination: MediaView()) {
+                    Button(action: { activeView = .media }) {
                         HStack {
                             Image(systemName: "photo.fill")
-                                .font(.title2)
                                 .foregroundColor(.accentColor)
-                                .frame(width: 50)
-
                             Text(Strings.Tabs.shared.MEDIA)
-                                .font(.headline)
                                 .foregroundColor(.primary)
-
                             Spacer()
-
                             Image(systemName: "chevron.right")
                                 .foregroundColor(.secondary)
+                                .font(.caption)
                         }
                         .padding()
                         .background(
@@ -122,21 +131,16 @@ struct MoreTabView: View {
                     .buttonStyle(PlainButtonStyle())
 
                     // Info option
-                    NavigationLink(destination: InfoView()) {
+                    Button(action: { activeView = .info }) {
                         HStack {
                             Image(systemName: "info.circle.fill")
-                                .font(.title2)
                                 .foregroundColor(.accentColor)
-                                .frame(width: 50)
-
                             Text(Strings.Tabs.shared.INFO)
-                                .font(.headline)
                                 .foregroundColor(.primary)
-
                             Spacer()
-
                             Image(systemName: "chevron.right")
                                 .foregroundColor(.secondary)
+                                .font(.caption)
                         }
                         .padding()
                         .background(
@@ -146,17 +150,43 @@ struct MoreTabView: View {
                     }
                     .buttonStyle(PlainButtonStyle())
 
-                    Spacer()
+                    // Close button
+                    Button(action: {
+                        // Return to previous tab - handled by TabView
+                        showingPopup = false
+                    }) {
+                        HStack {
+                            Image(systemName: "xmark.circle.fill")
+                                .foregroundColor(.secondary)
+                            Text("Close")
+                                .foregroundColor(.secondary)
+                        }
+                        .padding()
+                    }
+                    .buttonStyle(PlainButtonStyle())
                 }
                 .padding()
+                .background(
+                    RoundedRectangle(cornerRadius: CornerRadius.large, style: .continuous)
+                        .fill(.regularMaterial)
+                        .shadow(radius: 20)
+                )
+                .padding(Spacing.md)
             }
-            .navigationTitle("More")
+        }
+        .sheet(item: $activeView) { option in
+            switch option {
+            case .media:
+                MediaView()
+            case .info:
+                InfoView()
+            }
         }
     }
 }
 
-#Preview("More Tab View") {
-    MoreTabView()
+#Preview("More Popup View") {
+    MorePopupView()
         .preferredColorScheme(.dark)
 }
 
