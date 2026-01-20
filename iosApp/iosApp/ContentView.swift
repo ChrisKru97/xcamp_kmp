@@ -75,9 +75,89 @@ struct ContentView: View {
                         Image(systemName: "info.circle.fill")
                         Text(Strings.Tabs.shared.INFO)
                     }
+
+            case .more:
+                MoreTabView()
+                    .tabItem {
+                        Image(systemName: "ellipsis.circle.fill")
+                        Text("More")
+                    }
             default: EmptyView()
         }
     }
+}
+
+/// A view that displays a menu with Media and Info options
+/// Used when tabs would overflow on smaller devices
+struct MoreTabView: View {
+    var body: some View {
+        NavigationView {
+            ZStack {
+                Color.background.ignoresSafeArea()
+
+                VStack(spacing: Spacing.xl) {
+                    // Media option
+                    NavigationLink(destination: MediaView()) {
+                        HStack {
+                            Image(systemName: "photo.fill")
+                                .font(.title2)
+                                .foregroundColor(.accentColor)
+                                .frame(width: 50)
+
+                            Text(Strings.Tabs.shared.MEDIA)
+                                .font(.headline)
+                                .foregroundColor(.primary)
+
+                            Spacer()
+
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.secondary)
+                        }
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: CornerRadius.medium)
+                                .fill(.ultraThinMaterial)
+                        )
+                    }
+                    .buttonStyle(PlainButtonStyle())
+
+                    // Info option
+                    NavigationLink(destination: InfoView()) {
+                        HStack {
+                            Image(systemName: "info.circle.fill")
+                                .font(.title2)
+                                .foregroundColor(.accentColor)
+                                .frame(width: 50)
+
+                            Text(Strings.Tabs.shared.INFO)
+                                .font(.headline)
+                                .foregroundColor(.primary)
+
+                            Spacer()
+
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.secondary)
+                        }
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: CornerRadius.medium)
+                                .fill(.ultraThinMaterial)
+                        )
+                    }
+                    .buttonStyle(PlainButtonStyle())
+
+                    Spacer()
+                }
+                .padding()
+            }
+            .navigationTitle("More")
+        }
+    }
+}
+
+#Preview("More Tab View") {
+    MoreTabView()
+        .preferredColorScheme(.dark)
 }
 
 #Preview("Loaded state") {
