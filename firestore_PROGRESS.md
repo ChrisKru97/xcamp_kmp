@@ -122,7 +122,7 @@ The Flutter reference project has explicit Firebase initialization with comprehe
 - [x] Task 1.4: Replace silent error handling in background syncs with logged errors
 
 ### Phase 2: Firebase Initialization Verification
-- [ ] Task 2.1: Add explicit Firebase initialization verification in XcampApp.swift
+- [x] Task 2.1: Add explicit Firebase initialization verification in XcampApp.swift
 - [ ] Task 2.2: Verify anonymous auth is completing successfully
 - [ ] Task 2.3: Test Firestore accessibility with a simple document read
 - [ ] Task 2.4: Verify Remote Config fetch is working
@@ -400,6 +400,29 @@ The expected flow is:
 7. **Verify Data**: Check if speakers/places actually exist in Firestore
 
 ## Completed This Iteration
+
+### Task 2.1: Add explicit Firebase initialization verification in XcampApp.swift
+
+**What was done:**
+
+1. **Added FirebaseCore and OSLog imports** to `XcampApp.swift`
+2. **Added Logger instance** with subsystem and category
+3. **Added comprehensive logging to init()**:
+   - Log when initialization starts
+   - Log when Napier logger is initialized
+   - Log when Firebase configuration starts
+   - Log successful Firebase configuration
+   - Verify Firebase app exists after configuration
+   - Log Firebase app properties (name, GoogleAppID, GCM Sender ID, Project ID)
+   - Log if Firebase app is nil (error condition)
+   - Log when initialization is complete
+
+4. **Verified build**: iOS app builds successfully
+
+**Files modified:**
+- `iosApp/iosApp/XcampApp.swift`
+
+---
 
 ### Task 1.3: Add logging to AppViewModel initializeApp() to track initialization flow
 
