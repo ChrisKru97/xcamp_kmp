@@ -2,6 +2,7 @@ package cz.krutsche.xcamp.shared.data.repository
 
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
+import cz.krutsche.xcamp.shared.domain.model.FirestoreSpeaker
 import cz.krutsche.xcamp.shared.domain.model.Speaker
 import cz.krutsche.xcamp.shared.domain.model.toDbSpeaker
 import io.github.aakira.napier.Napier
@@ -46,8 +47,14 @@ class SpeakersRepository(
     }
 
     suspend fun syncFromFirestore(): Result<Unit> {
-        Napier.d(tag = "SpeakersRepository") { "syncFromFirestore() - Starting speakers sync from Firestore" }
-        return syncFromFirestore(Speaker.serializer(), ::insertSpeakers)
+        Napier.d(tag = "SpeakersRepository") { "syncFromFirestore() - Starting speakers sync from Firestore with document ID injection" }
+        return syncFromFirestoreWithIds(
+            deserializer = FirestoreSpeaker.serializer(),
+            injectId = { documentId, firestoreSpeaker ->
+                Speaker.fromFirestoreData(documentId, firestoreSpeaker)
+            },
+            insertItems = ::insertSpeakers
+        )
     }
 
     private fun mapToSpeaker(dbSpeaker: cz.krutsche.xcamp.shared.db.Speaker): Speaker =

@@ -31,8 +31,35 @@ data class Speaker(
         fun generateId(uid: String): Long {
             return uid.hashCode().toLong()
         }
+
+        /**
+         * Create a Speaker from Firestore data with document ID injected
+         */
+        fun fromFirestoreData(documentId: String, data: FirestoreSpeaker): Speaker {
+            return Speaker(
+                id = documentId,
+                name = data.name,
+                description = data.description,
+                priority = data.priority,
+                image = data.image,
+                imageUrl = null
+            )
+        }
     }
 }
+
+/**
+ * Firestore Speaker data model (without id field).
+ * Used for deserializing Firestore documents that don't have an explicit 'id' field.
+ * The document ID is injected separately from the DocumentSnapshot.id property.
+ */
+@Serializable
+data class FirestoreSpeaker(
+    val name: String,
+    val description: String? = null,
+    val priority: Long,
+    val image: String? = null
+)
 
 /**
  * Convert Firestore Speaker to database format with generated numeric ID
