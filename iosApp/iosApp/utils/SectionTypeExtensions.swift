@@ -5,15 +5,15 @@ extension SectionType {
     var color: Color {
         switch self {
         case .main, .basic:
-            return .purple
+            return Color(red: 0.45, green: 0.35, blue: 0.75) // Muted purple
         case .internal:
-            return .green
+            return Color(red: 0.30, green: 0.55, blue: 0.45) // Muted teal-green
         case .gospel:
-            return .pink
+            return Color(red: 0.75, green: 0.40, blue: 0.55) // Muted rose
         case .food:
-            return .yellow
+            return Color(red: 0.70, green: 0.60, blue: 0.25) // Muted gold
         default:
-            return .gray
+            return Color(red: 0.50, green: 0.50, blue: 0.50) // Neutral gray
         }
     }
 
