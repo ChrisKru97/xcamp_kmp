@@ -134,7 +134,7 @@ The Flutter reference project has explicit Firebase initialization with comprehe
 - [x] Task 3.4: Test that Speakers and Places tabs appear in iOS simulator
 
 ### Phase 4: Data Fetching Verification
-- [ ] Task 4.1: Add logging to SpeakersRepository.syncFromFirestore()
+- [x] Task 4.1: Add logging to SpeakersRepository.syncFromFirestore()
 - [ ] Task 4.2: Add logging to PlacesRepository.syncFromFirestore()
 - [ ] Task 4.3: Verify Firestore queries are executing (check for documents in collections)
 - [ ] Task 4.4: Verify data is being inserted into SQLite database
@@ -400,6 +400,37 @@ The expected flow is:
 7. **Verify Data**: Check if speakers/places actually exist in Firestore
 
 ## Completed This Iteration
+
+### Task 4.1: Add logging to SpeakersRepository and BaseRepository
+
+**What was done:**
+
+1. **Added Napier logging to BaseRepository.syncFromFirestore()**:
+   - Log sync start with collection name
+   - Log successful fetch with item count
+   - Log successful insert with item count
+   - log errors with throwable details
+
+2. **Added Napier logging to SpeakersRepository**:
+   - Log getAllSpeakers() - fetch from database and count
+   - Log insertSpeakers() - insert count and completion
+   - Log syncFromFirestore() - start of sync
+
+3. **Added Napier logging to SpeakersService**:
+   - Log getAllSpeakers() - fetch and return count
+   - Log syncFromFirestore() - start
+   - Log refreshSpeakers() - success/failure with counts
+
+4. **Verified build**: iOS app builds successfully
+
+**Files modified:**
+- `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/repository/BaseRepository.kt`
+- `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/repository/SpeakersRepository.kt`
+- `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/config/SpeakersService.kt`
+
+**Current Status**: Speakers screen still shows "No speakers". Logs not visible through MCP due to subsystem filter. Need to investigate Firestore data and permissions.
+
+---
 
 ### Task 3.1-3.4: Fix App State Issue (Tabs not showing)
 

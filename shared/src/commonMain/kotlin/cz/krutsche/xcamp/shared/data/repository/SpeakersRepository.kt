@@ -3,6 +3,7 @@ package cz.krutsche.xcamp.shared.data.repository
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.domain.model.Speaker
+import io.github.aakira.napier.Napier
 
 class SpeakersRepository(
     databaseManager: DatabaseManager,
@@ -11,8 +12,13 @@ class SpeakersRepository(
 
     override val collectionName = "speakers"
 
-    suspend fun getAllSpeakers(): List<Speaker> = withDatabase {
-        queries.selectAllSpeakers().executeAsList().map(::mapToSpeaker)
+    suspend fun getAllSpeakers(): List<Speaker> {
+        Napier.d(tag = "SpeakersRepository") { "getAllSpeakers() - Fetching speakers from local database" }
+        return withDatabase {
+            val result = queries.selectAllSpeakers().executeAsList().map(::mapToSpeaker)
+            Napier.d(tag = "SpeakersRepository") { "getAllSpeakers() - Found ${result.size} speakers in database" }
+            result
+        }
     }
 
     suspend fun getSpeakerById(id: Long): Speaker? = withDatabase {
@@ -20,6 +26,7 @@ class SpeakersRepository(
     }
 
     suspend fun insertSpeakers(speakers: List<Speaker>) = withDatabase {
+        Napier.d(tag = "SpeakersRepository") { "insertSpeakers() - Inserting ${speakers.size} speakers into database" }
         queries.transaction {
             speakers.forEach { speaker ->
                 queries.insertSpeaker(
@@ -33,10 +40,13 @@ class SpeakersRepository(
                 )
             }
         }
+        Napier.d(tag = "SpeakersRepository") { "insertSpeakers() - Insert complete" }
     }
 
-    suspend fun syncFromFirestore(): Result<Unit> =
-        syncFromFirestore(Speaker.serializer(), ::insertSpeakers)
+    suspend fun syncFromFirestore(): Result<Unit> {
+        Napier.d(tag = "SpeakersRepository") { "syncFromFirestore() - Starting speakers sync from Firestore" }
+        return syncFromFirestore(Speaker.serializer(), ::insertSpeakers)
+    }
 
     private fun mapToSpeaker(dbSpeaker: cz.krutsche.xcamp.shared.db.Speaker): Speaker =
         cz.krutsche.xcamp.shared.domain.model.Speaker(
