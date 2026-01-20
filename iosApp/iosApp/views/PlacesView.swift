@@ -166,7 +166,7 @@ struct PlaceListItem: View {
             if !description.isEmpty {
                 Text(description.prefix(100) + (description.count > 100 ? "..." : ""))
                     .font(.subheadline)
-                    .foregroundColor(.secondary)
+                    .foregroundColor(.primary)
                     .lineLimit(2)
             }
             if place.latitude != nil && place.longitude != nil {
