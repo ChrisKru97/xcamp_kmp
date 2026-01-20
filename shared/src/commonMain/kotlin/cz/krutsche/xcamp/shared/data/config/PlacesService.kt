@@ -11,7 +11,8 @@ class PlacesService {
     private val repository: PlacesRepository by lazy {
         PlacesRepository(
             databaseManager = databaseManager,
-            firestoreService = ServiceFactory.getFirestoreService()
+            firestoreService = ServiceFactory.getFirestoreService(),
+            storageService = ServiceFactory.getStorageService()
         )
     }
 

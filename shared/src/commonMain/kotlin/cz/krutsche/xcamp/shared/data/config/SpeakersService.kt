@@ -12,7 +12,8 @@ class SpeakersService {
     private val repository: SpeakersRepository by lazy {
         SpeakersRepository(
             databaseManager = databaseManager,
-            firestoreService = ServiceFactory.getFirestoreService()
+            firestoreService = ServiceFactory.getFirestoreService(),
+            storageService = ServiceFactory.getStorageService()
         )
     }
 

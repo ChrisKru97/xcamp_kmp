@@ -1,6 +1,7 @@
 package cz.krutsche.xcamp.shared.data.repository
 
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
+import cz.krutsche.xcamp.shared.data.firebase.StorageService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.domain.model.FirestoreSpeaker
 import cz.krutsche.xcamp.shared.domain.model.Speaker
@@ -9,7 +10,8 @@ import io.github.aakira.napier.Napier
 
 class SpeakersRepository(
     databaseManager: DatabaseManager,
-    firestoreService: FirestoreService
+    firestoreService: FirestoreService,
+    private val storageService: StorageService
 ) : BaseRepository<Speaker>(databaseManager, firestoreService) {
 
     override val collectionName = "speakers"
@@ -53,7 +55,26 @@ class SpeakersRepository(
             injectId = { documentId, firestoreSpeaker ->
                 Speaker.fromFirestoreData(documentId, firestoreSpeaker)
             },
-            insertItems = ::insertSpeakers
+            insertItems = { speakers ->
+                // Populate imageUrls for speakers with images
+                val speakersWithUrls = speakers.map { speaker ->
+                    if (speaker.image != null) {
+                        val urlResult = storageService.getDownloadUrl(speaker.image)
+                        speaker.copy(
+                            imageUrl = urlResult.getOrNull()
+                        ).also {
+                            if (urlResult.isFailure) {
+                                Napier.w(tag = "SpeakersRepository") { "syncFromFirestore() - Failed to get download URL for speaker ${speaker.id}: ${urlResult.exceptionOrNull()?.message}" }
+                            } else {
+                                Napier.d(tag = "SpeakersRepository") { "syncFromFirestore() - Got download URL for speaker ${speaker.id}: ${urlResult.getOrNull()}" }
+                            }
+                        }
+                    } else {
+                        speaker
+                    }
+                }
+                insertSpeakers(speakersWithUrls)
+            }
         )
     }
 
