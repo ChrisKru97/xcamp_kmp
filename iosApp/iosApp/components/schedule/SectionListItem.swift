@@ -14,15 +14,17 @@ struct SectionListItem: View {
                     Text(section.name)
                         .font(.headline)
                         .foregroundColor(.primary)
+                        .fixedSize(horizontal: false, vertical: true)
                     let description = section.description
                     if !description.isEmpty {
                         Text(description.prefix(80) + (description.count > 80 ? "..." : ""))
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                             .lineLimit(2)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                 }
-                Spacer()
+                Spacer(minLength: Spacing.xs)
                 if section.favorite {
                     Image(systemName: "star.fill")
                         .foregroundColor(.yellow)
@@ -32,7 +34,9 @@ struct SectionListItem: View {
                     .foregroundColor(.secondary)
                     .font(.caption)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private func formatTime(_ millis: Int64) -> String {

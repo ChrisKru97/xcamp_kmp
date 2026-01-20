@@ -22,6 +22,7 @@ struct ScheduleDayTab: View {
                 }
             }
             .padding(.horizontal, Spacing.md)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding(.vertical, Spacing.sm)
         .background(Color.background)
