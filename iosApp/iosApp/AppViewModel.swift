@@ -8,12 +8,15 @@ class AppViewModel: ObservableObject {
     @Published var isLoading: Bool = true
 
     private let logger = Logger(subsystem: "com.krutsche.xcamp", category: "AppViewModel")
-    private var appConfigService: AppConfigService?
-    private var remoteConfigService: RemoteConfigService?
-    private var linksService: LinksService?
-    private var placesService: PlacesService?
-    private var speakersService: SpeakersService?
-    private var scheduleService: ScheduleService?
+
+    // Cached services - lazy initialization without nil-checks on each access
+    // Note: remoteConfigService must be declared before services that depend on it
+    private lazy var remoteConfigService = RemoteConfigService()
+    private lazy var appConfigService: AppConfigService = AppConfigService(remoteConfigService: remoteConfigService)
+    private lazy var linksService: LinksService = LinksService(remoteConfigService: remoteConfigService)
+    private lazy var placesService = PlacesService()
+    private lazy var speakersService = SpeakersService()
+    private lazy var scheduleService = ScheduleService()
 
     func initializeApp() {
         logger.debug("initializeApp() - Starting app initialization")
@@ -121,60 +124,30 @@ class AppViewModel: ObservableObject {
         }
     }
 
+    // Cached service accessors - no nil-checks needed due to lazy initialization
+
     func getAppConfigService() -> AppConfigService {
-        guard let appConfigService = appConfigService else {
-            let newAppConfigService = AppConfigService(remoteConfigService: getRemoteConfigService())
-            appConfigService = newAppConfigService
-            return newAppConfigService
-        }
-        return appConfigService
+        appConfigService
     }
 
     func getRemoteConfigService() -> RemoteConfigService {
-        guard let remoteConfigService = remoteConfigService else {
-            let newRemoteConfigService = RemoteConfigService()
-            remoteConfigService = newRemoteConfigService
-            return newRemoteConfigService
-        }
-        return remoteConfigService
+        remoteConfigService
     }
 
     func getLinksService() -> LinksService {
-        guard let linksService = linksService else {
-            let newLinksService = LinksService(
-                remoteConfigService: getRemoteConfigService()
-            )
-            self.linksService = newLinksService
-            return newLinksService
-        }
-        return linksService
+        linksService
     }
 
     func getPlacesService() -> PlacesService {
-        guard let placesService = placesService else {
-            let newPlacesService = PlacesService()
-            self.placesService = newPlacesService
-            return newPlacesService
-        }
-        return placesService
+        placesService
     }
 
     func getSpeakersService() -> SpeakersService {
-        guard let speakersService = speakersService else {
-            let newSpeakersService = SpeakersService()
-            self.speakersService = newSpeakersService
-            return newSpeakersService
-        }
-        return speakersService
+        speakersService
     }
 
     func getScheduleService() -> ScheduleService {
-        guard let scheduleService = scheduleService else {
-            let newScheduleService = ScheduleService()
-            self.scheduleService = newScheduleService
-            return newScheduleService
-        }
-        return scheduleService
+        scheduleService
     }
 
     /// Get available tabs based on the current app state that was set during initialization
