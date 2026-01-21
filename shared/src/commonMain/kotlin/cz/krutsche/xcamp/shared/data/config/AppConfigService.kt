@@ -106,19 +106,20 @@ class AppConfigService(
             }
 
             AppState.PRE_EVENT, AppState.ACTIVE_EVENT -> {
-                Napier.d(tag = "AppConfigService") { "getAvailableTabs() -> FULL tabs (state=$state): HOME, SCHEDULE, SPEAKERS, PLACES, MORE" }
+                Napier.d(tag = "AppConfigService") { "getAvailableTabs() -> FULL tabs (state=$state): HOME, SCHEDULE, SPEAKERS, PLACES, MEDIA, INFO" }
                 listOf(
                     AppTab.HOME,
                     AppTab.SCHEDULE,
                     AppTab.SPEAKERS,
                     AppTab.PLACES,
-                    AppTab.MORE
+                    AppTab.MEDIA,
+                    AppTab.INFO
                 )
             }
 
             AppState.POST_EVENT -> {
-                Napier.d(tag = "AppConfigService") { "getAvailableTabs() -> POST_EVENT tabs: HOME, SCHEDULE, RATING, MORE" }
-                listOf(AppTab.HOME, AppTab.SCHEDULE, AppTab.RATING, AppTab.MORE)
+                Napier.d(tag = "AppConfigService") { "getAvailableTabs() -> POST_EVENT tabs: HOME, SCHEDULE, RATING, MEDIA, INFO" }
+                listOf(AppTab.HOME, AppTab.SCHEDULE, AppTab.RATING, AppTab.MEDIA, AppTab.INFO)
             }
         }
         Napier.i(tag = "AppConfigService") { "getAvailableTabs() returning ${result.size} tabs" }

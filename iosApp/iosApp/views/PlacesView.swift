@@ -24,6 +24,7 @@ struct PlacesView: View {
                 }
             }
             .navigationTitle(Strings.Tabs.shared.PLACES)
+            .modifier(iOS16ToolbarBackgroundModifier())
             .task {
                 await viewModel.loadPlaces(service: appViewModel.getPlacesService())
             }
@@ -246,6 +247,20 @@ struct PlaceDetailView: View {
         guard let encodedName = name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return }
         guard let url = URL(string: "http://maps.apple.com/?\(region)&q=\(encodedName)") else { return }
         UIApplication.shared.open(url)
+    }
+}
+
+// MARK: - iOS 16+ Toolbar Background Modifier
+
+private struct iOS16ToolbarBackgroundModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 16.0, *) {
+            content
+                .toolbarBackground(.hidden, for: .navigationBar)
+                .toolbarBackground(.hidden, for: .tabBar)
+        } else {
+            content
+        }
     }
 }
 

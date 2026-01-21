@@ -10,6 +10,7 @@ struct RatingView: View {
                 Text("TODO")
             }
             .navigationTitle(Strings.Tabs.shared.RATING)
+            .modifier(iOS16TabBarBackgroundModifier())
         }
     }
 }

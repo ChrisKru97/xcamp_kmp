@@ -25,6 +25,7 @@ struct ContentView: View {
                 }
             }
             .tabViewStyle(.automatic)
+            .tint(.accentColor)
             .onChange(of: selectedTabIndex) { newValue in
                 // Skip if we're reverting from More tab (don't update previousTabIndex)
                 if isRevertingFromMoreTab {
@@ -48,8 +49,26 @@ struct ContentView: View {
                     previousTabIndex = newValue
                 }
             }
-            .popover(isPresented: $showingMorePopover) {
-                MorePopoverContentView(selectedTabIndex: $selectedTabIndex, isPresented: $showingMorePopover)
+            .confirmationDialog(
+                Strings.Common.shared.MORE_OPTIONS,
+                isPresented: $showingMorePopover,
+                titleVisibility: .visible
+            ) {
+                Button(Strings.Tabs.shared.MEDIA) {
+                    let availableTabs = appViewModel.getAvailableTabsForCurrentState()
+                    if let mediaIndex = availableTabs.firstIndex(of: .media) {
+                        selectedTabIndex = mediaIndex
+                    }
+                }
+
+                Button(Strings.Tabs.shared.INFO) {
+                    let availableTabs = appViewModel.getAvailableTabsForCurrentState()
+                    if let infoIndex = availableTabs.firstIndex(of: .info) {
+                        selectedTabIndex = infoIndex
+                    }
+                }
+
+                Button(Strings.Common.shared.CANCEL, role: .cancel) { }
             }
         }
     }
@@ -116,111 +135,6 @@ struct ContentView: View {
             default: EmptyView()
         }
     }
-}
-
-/// A view that displays a popover menu with Media and Info options
-/// Used when tabs would overflow on smaller devices
-/// Shows as a native popover without triggering navigation
-struct MorePopoverContentView: View {
-    @EnvironmentObject var appViewModel: AppViewModel
-    @Binding var selectedTabIndex: Int
-    @Binding var isPresented: Bool
-
-    var body: some View {
-        VStack(spacing: Spacing.md) {
-            // Header
-            Text(Strings.Common.shared.MORE_OPTIONS)
-                .font(.headline)
-                .foregroundColor(.primary)
-                .padding(.bottom, Spacing.sm)
-
-            // Media option
-            Button(action: {
-                // Find the Media tab index and navigate to it
-                let availableTabs = appViewModel.getAvailableTabsForCurrentState()
-                if let mediaIndex = availableTabs.firstIndex(of: .media) {
-                    selectedTabIndex = mediaIndex
-                }
-                isPresented = false
-            }) {
-                HStack {
-                    Image(systemName: "photo.fill")
-                        .foregroundColor(.accentColor)
-                        .frame(width: 24)
-                    Text(Strings.Tabs.shared.MEDIA)
-                        .foregroundColor(.primary)
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(.secondary)
-                        .font(.caption)
-                }
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: CornerRadius.medium)
-                        .fill(.ultraThinMaterial)
-                )
-            }
-            .buttonStyle(PlainButtonStyle())
-            .accessibilityLabel(Strings.Tabs.shared.MEDIA)
-
-            // Info option
-            Button(action: {
-                // Find the Info tab index and navigate to it
-                let availableTabs = appViewModel.getAvailableTabsForCurrentState()
-                if let infoIndex = availableTabs.firstIndex(of: .info) {
-                    selectedTabIndex = infoIndex
-                }
-                isPresented = false
-            }) {
-                HStack {
-                    Image(systemName: "info.circle.fill")
-                        .foregroundColor(.accentColor)
-                        .frame(width: 24)
-                    Text(Strings.Tabs.shared.INFO)
-                        .foregroundColor(.primary)
-                    Spacer()
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(.secondary)
-                        .font(.caption)
-                }
-                .padding()
-                .background(
-                    RoundedRectangle(cornerRadius: CornerRadius.medium)
-                        .fill(.ultraThinMaterial)
-                )
-            }
-            .buttonStyle(PlainButtonStyle())
-            .accessibilityLabel(Strings.Tabs.shared.INFO)
-
-            // Cancel button
-            Button(action: {
-                isPresented = false
-            }) {
-                Text(Strings.Common.shared.CANCEL)
-                    .foregroundColor(.secondary)
-                    .frame(maxWidth: .infinity)
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: CornerRadius.medium)
-                            .fill(.ultraThinMaterial)
-                    )
-            }
-            .buttonStyle(PlainButtonStyle())
-            .accessibilityLabel(Strings.Common.shared.CANCEL)
-        }
-        .padding()
-        .frame(width: 280)
-    }
-}
-
-#Preview("More Popover Content View") {
-    MorePopoverContentView(selectedTabIndex: .constant(0), isPresented: .constant(true))
-        .environmentObject({
-            let vm = AppViewModel()
-            vm.isLoading = false
-            return vm
-        }())
-        .preferredColorScheme(.dark)
 }
 
 #Preview("Loaded state") {

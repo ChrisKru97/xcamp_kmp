@@ -35,6 +35,7 @@ struct ScheduleView: View {
                 }
             }
             .navigationTitle(Strings.Tabs.shared.SCHEDULE)
+            .modifier(iOS16TabBarBackgroundModifier())
             .onAppear {
                 viewModel.setRemoteConfigService(appViewModel.getRemoteConfigService())
             }

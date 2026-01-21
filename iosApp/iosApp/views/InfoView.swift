@@ -17,6 +17,7 @@ struct InfoView: View {
             }
             .background(Color.background)
             .navigationTitle(Strings.Tabs.shared.INFO)
+            .modifier(iOS16TabBarBackgroundModifier())
         }
     }
 

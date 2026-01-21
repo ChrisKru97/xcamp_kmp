@@ -24,6 +24,7 @@ struct SpeakersView: View {
                 }
             }
             .navigationTitle(Strings.Tabs.shared.SPEAKERS)
+            .modifier(iOS16ToolbarBackgroundModifier())
             .task {
                 await viewModel.loadSpeakers(service: appViewModel.getSpeakersService())
             }
@@ -31,19 +32,18 @@ struct SpeakersView: View {
     }
 
     private func speakersList(_ speakers: [Speaker]) -> some View {
-        ScrollView {
-            LazyVStack(spacing: Spacing.md) {
-                ForEach(speakers, id: \.id) { speaker in
-                    NavigationLink(destination: SpeakerDetailView(speaker: speaker)) {
-                        SpeakerListItem(speaker: speaker)
-                    }
-                    .buttonStyle(PlainButtonStyle())
+        List {
+            ForEach(speakers, id: \.id) { speaker in
+                NavigationLink(destination: SpeakerDetailView(speaker: speaker)) {
+                    SpeakerListItem(speaker: speaker)
                 }
+                .listRowSeparator(.hidden)
+                .listRowInsets(EdgeInsets(top: Spacing.xs, leading: Spacing.md, bottom: Spacing.xs, trailing: Spacing.md))
+                .listRowBackground(Color.clear)
             }
-            .padding(.horizontal, Spacing.md)
-            .padding(.top, Spacing.md)
-            .padding(.bottom, Spacing.xxl)
         }
+        .listStyle(.plain)
+        .modifier(ListScrollContentBackgroundModifier())
         .refreshable {
             await viewModel.refreshSpeakers(service: appViewModel.getSpeakersService())
         }
@@ -212,6 +212,30 @@ struct SpeakerDetailView: View {
             Spacer(minLength: Spacing.xxl)
         }
         .padding(.top, Spacing.xl)
+    }
+}
+
+// MARK: - iOS 16+ Toolbar Background Modifier
+
+private struct iOS16ToolbarBackgroundModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 16.0, *) {
+            content
+                .toolbarBackground(.hidden, for: .navigationBar)
+                .toolbarBackground(.hidden, for: .tabBar)
+        } else {
+            content
+        }
+    }
+}
+
+private struct ListScrollContentBackgroundModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 16.0, *) {
+            content.scrollContentBackground(.hidden)
+        } else {
+            content
+        }
     }
 }
 
