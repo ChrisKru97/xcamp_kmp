@@ -87,6 +87,7 @@ struct ScheduleView: View {
                             }
                         )) {
                             SectionListItem(section: section)
+                                .equatable()
                         }
                         .buttonStyle(PlainButtonStyle())
                     }

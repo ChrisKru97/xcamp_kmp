@@ -1,8 +1,12 @@
 import SwiftUI
 import shared
 
-struct SectionListItem: View {
+struct SectionListItem: View, Equatable {
     let section: shared.Section
+
+    static func == (lhs: SectionListItem, rhs: SectionListItem) -> Bool {
+        lhs.section.id == rhs.section.id && lhs.section.favorite == rhs.section.favorite
+    }
 
     var body: some View {
         GlassCard {
