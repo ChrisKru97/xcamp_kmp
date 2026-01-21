@@ -3,10 +3,48 @@ import Firebase
 import FirebaseCore
 import shared
 import OSLog
+import Combine
+
+// MARK: - Memory Warning Handler
+
+/// Handles memory warnings by clearing the image cache
+private class MemoryWarningHandler: ObservableObject {
+    private var cancellable: AnyCancellable?
+    private let logger = Logger(subsystem: "com.krutsche.xcamp", category: "MemoryWarningHandler")
+
+    init() {
+        setupObserver()
+    }
+
+    private func setupObserver() {
+        logger.debug("MemoryWarningHandler.setupObserver() - Setting up memory warning observer")
+
+        cancellable = NotificationCenter.default.publisher(
+            for: UIApplication.didReceiveMemoryWarningNotification
+        )
+        .sink { [weak self] _ in
+            guard let self = self else { return }
+
+            self.logger.warning("MemoryWarningHandler.didReceiveMemoryWarning() - Memory warning received, clearing ImageCache")
+            ImageCache.shared.clearCache()
+
+            // Also clean up expired entries
+            self.logger.debug("MemoryWarningHandler.didReceiveMemoryWarning() - Cleaning up expired entries")
+            ImageCache.shared.cleanupExpiredEntries()
+        }
+
+        logger.info("MemoryWarningHandler.setupObserver() - Memory warning observer registered")
+    }
+
+    deinit {
+        cancellable?.cancel()
+    }
+}
 
 @main
 struct XcampApp: App {
     @StateObject private var appViewModel = AppViewModel()
+    @StateObject private var memoryWarningHandler = MemoryWarningHandler()
 
     private let logger = Logger(subsystem: "com.krutsche.xcamp", category: "XcampApp")
 
