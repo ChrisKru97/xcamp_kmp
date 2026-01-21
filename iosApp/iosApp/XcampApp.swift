@@ -4,6 +4,7 @@ import FirebaseCore
 import shared
 import OSLog
 import Combine
+import os.signpost
 
 // MARK: - Memory Warning Handler
 
@@ -41,6 +42,16 @@ private class MemoryWarningHandler: ObservableObject {
     }
 }
 
+// MARK: - Startup Performance Signposts
+
+private extension OSLog {
+    /// Signpost log for startup performance instrumentation
+    static let startup = OSLog(subsystem: "com.krutsche.xcamp", category: "StartupPerformance")
+}
+
+/// Signpost IDs for tracking startup events
+private let startupSignpostID = OSSignpostID(log: OSLog.startup)
+
 @main
 struct XcampApp: App {
     @StateObject private var appViewModel = AppViewModel()
@@ -49,17 +60,25 @@ struct XcampApp: App {
     private let logger = Logger(subsystem: "com.krutsche.xcamp", category: "XcampApp")
 
     init() {
+        // MARK: - App Initialization Start
+        let initStart = DispatchTime.now()
+        os_signpost(.begin, log: OSLog.startup, name: "AppInitialization", signpostID: startupSignpostID)
+
         logger.debug("XcampApp.init() - Starting app initialization")
 
         // Initialize Napier logging first so we can see debug output
+        os_signpost(.begin, log: OSLog.startup, name: "NapierInit", signpostID: startupSignpostID)
         logger.debug("XcampApp.init() - Initializing Napier logger")
         LoggerInitializerKt.initializeLogger()
         logger.debug("XcampApp.init() - Napier logger initialized")
+        os_signpost(.end, log: OSLog.startup, name: "NapierInit", signpostID: startupSignpostID)
 
         // Then initialize Firebase
+        os_signpost(.begin, log: OSLog.startup, name: "FirebaseInit", signpostID: startupSignpostID)
         logger.debug("XcampApp.init() - Configuring Firebase...")
         FirebaseApp.configure()
         logger.info("XcampApp.init() - Firebase configured successfully")
+        os_signpost(.end, log: OSLog.startup, name: "FirebaseInit", signpostID: startupSignpostID)
 
         // Verify Firebase is configured
         if let firebaseApp = FirebaseApp.app() {
@@ -76,11 +95,14 @@ struct XcampApp: App {
             logger.error("XcampApp.init() - Firebase app is nil after configuration!")
         }
 
-        logger.debug("XcampApp.init() - App initialization complete")
-
         // Clean up expired image cache entries on app launch
         logger.debug("XcampApp.init() - Cleaning up expired image cache entries")
         ImageCache.shared.cleanupExpiredEntries()
+
+        let initEnd = DispatchTime.now()
+        let initTime = Double(initEnd.uptimeNanoseconds - initStart.uptimeNanoseconds) / 1_000_000
+        logger.info("XcampApp.init() - App initialization complete in \(initTime, format: .fixed(precision: 2))ms")
+        os_signpost(.end, log: OSLog.startup, name: "AppInitialization", signpostID: startupSignpostID)
     }
 
     var body: some Scene {

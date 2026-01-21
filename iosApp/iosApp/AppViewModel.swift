@@ -1,6 +1,14 @@
 import SwiftUI
 import shared
 import OSLog
+import os.signpost
+
+// MARK: - App Initialization Signposts
+
+private extension OSLog {
+    /// Signpost log for app initialization performance instrumentation
+    static let appInit = OSLog(subsystem: "com.krutsche.xcamp", category: "AppInitialization")
+}
 
 @MainActor
 class AppViewModel: ObservableObject {
@@ -19,6 +27,9 @@ class AppViewModel: ObservableObject {
     private lazy var scheduleService = ScheduleService()
 
     func initializeApp() {
+        let signpostID = OSSignpostID(log: OSLog.appInit)
+        os_signpost(.begin, log: OSLog.appInit, name: "InitializeApp", signpostID: signpostID)
+
         logger.debug("initializeApp() - Starting app initialization")
 
         let authService = AuthService()
@@ -32,9 +43,11 @@ class AppViewModel: ObservableObject {
         logger.debug("initializeApp() - Created AppInitializer")
 
         Task {
+            os_signpost(.begin, log: OSLog.appInit, name: "AppInitializerInit", signpostID: signpostID)
             logger.debug("initializeApp() - Calling appInitializer.initialize()...")
             do {
                 try await appInitializer.initialize()
+                os_signpost(.end, log: OSLog.appInit, name: "AppInitializerInit", signpostID: signpostID)
                 logger.info("initializeApp() - AppInitializer completed successfully")
 
                 await MainActor.run {
@@ -42,11 +55,16 @@ class AppViewModel: ObservableObject {
                     self.logger.info("initializeApp() - Got app state: \(self.appState)")
                     self.isLoading = false
                     self.logger.debug("initializeApp() - Set isLoading = false, main initialization complete")
+                    os_signpost(.event, log: OSLog.appInit, name: "FirstInteractiveFrame", signpostID: signpostID)
                 }
                 // Lazy load places, speakers, and schedule in parallel after Remote Config loads
                 logger.debug("initializeApp() - Starting parallel background sync")
+                os_signpost(.begin, log: OSLog.appInit, name: "BackgroundSync", signpostID: signpostID)
                 await syncAllDataInBackground()
+                os_signpost(.end, log: OSLog.appInit, name: "BackgroundSync", signpostID: signpostID)
+                os_signpost(.end, log: OSLog.appInit, name: "InitializeApp", signpostID: signpostID)
             } catch {
+                os_signpost(.end, log: OSLog.appInit, name: "AppInitializerInit", signpostID: signpostID)
                 logger.error("initializeApp() - AppInitializer failed: \(error.localizedDescription)")
                 await MainActor.run {
                     isLoading = false
