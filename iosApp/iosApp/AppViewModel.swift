@@ -43,15 +43,9 @@ class AppViewModel: ObservableObject {
                     self.isLoading = false
                     self.logger.debug("initializeApp() - Set isLoading = false, main initialization complete")
                 }
-                // Lazy load places in background after Remote Config loads
-                logger.debug("initializeApp() - Starting background sync for places")
-                syncPlacesInBackground()
-                // Lazy load speakers in background after Remote Config loads
-                logger.debug("initializeApp() - Starting background sync for speakers")
-                syncSpeakersInBackground()
-                // Lazy load schedule in background after Remote Config loads
-                logger.debug("initializeApp() - Starting background sync for schedule")
-                syncScheduleInBackground()
+                // Lazy load places, speakers, and schedule in parallel after Remote Config loads
+                logger.debug("initializeApp() - Starting parallel background sync")
+                await syncAllDataInBackground()
             } catch {
                 logger.error("initializeApp() - AppInitializer failed: \(error.localizedDescription)")
                 await MainActor.run {
@@ -61,67 +55,51 @@ class AppViewModel: ObservableObject {
         }
     }
 
-    /// Syncs places data in the background after app initialization
-    /// Uses Task.detached to avoid blocking the main initialization flow
-    private func syncPlacesInBackground() {
-        logger.debug("syncPlacesInBackground() - Starting places sync in background")
-        Task(priority: .background) { [weak self] in
-            guard let self = self else {
-                print("AppViewModel.syncPlacesInBackground() - self was nil")
-                return
-            }
-            print("AppViewModel.syncPlacesInBackground() - Task started, getting PlacesService")
-            let placesService = await self.getPlacesService()
-            do {
-                print("AppViewModel.syncPlacesInBackground() - Calling refreshPlaces()...")
-                let result = try await placesService.refreshPlaces()
-                print("AppViewModel.syncPlacesInBackground() - Successfully refreshed places, got \(result ?? 0) items")
-            } catch {
-                print("AppViewModel.syncPlacesInBackground() - Failed to refresh places: \(error.localizedDescription)")
-            }
-        }
-    }
+    /// Syncs all data (places, speakers, schedule) in parallel using TaskGroup
+    /// This is more efficient than launching separate tasks as TaskGroup provides
+    /// structured concurrency with proper cancellation and error handling
+    private func syncAllDataInBackground() async {
+        logger.debug("syncAllDataInBackground() - Starting parallel sync with TaskGroup")
 
-    /// Syncs speakers data in the background after app initialization
-    /// Uses Task.detached to avoid blocking the main initialization flow
-    private func syncSpeakersInBackground() {
-        logger.debug("syncSpeakersInBackground() - Starting speakers sync in background")
-        Task(priority: .background) { [weak self] in
-            guard let self = self else {
-                print("AppViewModel.syncSpeakersInBackground() - self was nil")
-                return
+        await withTaskGroup(of: Void.self) { group in
+            // Add places sync task
+            group.addTask(priority: .background) {
+                self.logger.debug("syncAllDataInBackground() - Places sync task started")
+                let placesService = self.getPlacesService()
+                do {
+                    let result = try await placesService.refreshPlaces()
+                    self.logger.info("syncAllDataInBackground() - Places sync completed: \(result ?? 0) items")
+                } catch {
+                    self.logger.error("syncAllDataInBackground() - Places sync failed: \(error.localizedDescription)")
+                }
             }
-            print("AppViewModel.syncSpeakersInBackground() - Task started, getting SpeakersService")
-            let speakersService = await self.getSpeakersService()
-            do {
-                print("AppViewModel.syncSpeakersInBackground() - Calling refreshSpeakers()...")
-                let result = try await speakersService.refreshSpeakers()
-                print("AppViewModel.syncSpeakersInBackground() - Successfully refreshed speakers, got \(result ?? 0) items")
-            } catch {
-                print("AppViewModel.syncSpeakersInBackground() - Failed to refresh speakers: \(error.localizedDescription)")
-            }
-        }
-    }
 
-    /// Syncs schedule data in the background after app initialization
-    /// Uses Task.detached to avoid blocking the main initialization flow
-    private func syncScheduleInBackground() {
-        logger.debug("syncScheduleInBackground() - Starting schedule sync in background")
-        Task(priority: .background) { [weak self] in
-            guard let self = self else {
-                print("AppViewModel.syncScheduleInBackground() - self was nil")
-                return
+            // Add speakers sync task
+            group.addTask(priority: .background) {
+                self.logger.debug("syncAllDataInBackground() - Speakers sync task started")
+                let speakersService = self.getSpeakersService()
+                do {
+                    let result = try await speakersService.refreshSpeakers()
+                    self.logger.info("syncAllDataInBackground() - Speakers sync completed: \(result ?? 0) items")
+                } catch {
+                    self.logger.error("syncAllDataInBackground() - Speakers sync failed: \(error.localizedDescription)")
+                }
             }
-            print("AppViewModel.syncScheduleInBackground() - Task started, getting ScheduleService")
-            let scheduleService = await self.getScheduleService()
-            do {
-                print("AppViewModel.syncScheduleInBackground() - Calling refreshSections()...")
-                let result = try await scheduleService.refreshSections()
-                print("AppViewModel.syncScheduleInBackground() - Successfully refreshed schedule, got \(result ?? 0) items")
-            } catch {
-                print("AppViewModel.syncScheduleInBackground() - Failed to refresh schedule: \(error.localizedDescription)")
+
+            // Add schedule sync task
+            group.addTask(priority: .background) {
+                self.logger.debug("syncAllDataInBackground() - Schedule sync task started")
+                let scheduleService = self.getScheduleService()
+                do {
+                    let result = try await scheduleService.refreshSections()
+                    self.logger.info("syncAllDataInBackground() - Schedule sync completed: \(result ?? 0) items")
+                } catch {
+                    self.logger.error("syncAllDataInBackground() - Schedule sync failed: \(error.localizedDescription)")
+                }
             }
         }
+
+        logger.info("syncAllDataInBackground() - All parallel sync tasks completed")
     }
 
     // Cached service accessors - no nil-checks needed due to lazy initialization
