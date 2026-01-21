@@ -293,7 +293,23 @@ After fixes are implemented:
 
 ## Completed This Iteration
 
+- **TASK-011**: Fixed HeroAsyncImageWithFallback to use fallbackIconName - added fallbackIconName parameter to CachedAsyncImage and updated all callers
+- **TASK-012**: Extracted duplicate imageUrl computed property - created EntityExtensions.swift with HasImageUrl protocol and imageUrlURL extension
 - **TASK-009**: Created RepositoryService base class - extracted common lazy initialization pattern from PlacesService, SpeakersService, and ScheduleService into generic base class
+
+## Notes
+
+### TASK-010 Blocked - Swift 6 Concurrency Issue
+Attempting to replace `print()` with `logger.error()` in AppViewModel's background sync methods (syncPlacesInBackground, syncSpeakersInBackground, syncScheduleInBackground) fails with Swift 6 concurrency compiler error: "type of expression is ambiguous without a type annotation".
+
+This occurs when accessing `Logger` from within `Task(priority:)` closures with `[weak self]` capture in an `@MainActor` class. Multiple approaches were attempted:
+- Using `self.logger` - fails with type ambiguity
+- Capturing logger in capture list `[weak self, logger]` - fails with type ambiguity
+- Creating local Logger instance inside Task - fails with type ambiguity
+- Using `@MainActor` annotation on closure - fails with type ambiguity
+- Using explicit `Task<Void, Never>` type annotation - fails with type ambiguity
+
+Current code uses `print()` which works correctly. This is a low-priority improvement since errors are still being logged to console.
 - **TASK-002**: Fixed hashCode() negative ID issue - added `kotlin.math.abs()` wrapper in Speaker.kt and Place.kt generateId() methods
 - **TASK-003**: Fixed ImageCache memory leak - added thread-safe concurrent queue with barrier flags and cleanupExpiredEntries() method
 - **TASK-004**: Fixed toggleFavorite to return Result<Unit> - wrapped repository call in try-catch for proper error feedback
