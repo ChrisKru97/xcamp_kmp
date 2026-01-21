@@ -39,8 +39,11 @@ data class Place(
 
         /**
          * Create a Place from Firestore data with document ID injected
+         * @throws IllegalArgumentException if required fields are invalid
          */
         fun fromFirestoreData(documentId: String, data: FirestorePlace): Place {
+            require(documentId.isNotBlank()) { "Place document ID cannot be blank" }
+            require(data.name.isNotBlank()) { "Place name cannot be blank" }
             return Place(
                 id = documentId,
                 name = data.name,

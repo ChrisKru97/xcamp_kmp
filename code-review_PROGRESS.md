@@ -228,9 +228,10 @@ Using `kotlin.time.ExperimentalTime` in production.
   - Added .accessibilityLabel() modifiers to Media, Info, and Cancel buttons
   - Buttons now properly accessible with VoiceOver using localized strings
 
-- [ ] **TASK-017**: Add validation to fromFirestoreData factory methods (MEDIUM)
+- [x] **TASK-017**: Add validation to fromFirestoreData factory methods (MEDIUM)
   - Files: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/domain/model/Speaker.kt`, `Place.kt`
-  - Validate required fields
+  - Added require() checks for documentId and name fields to prevent blank values
+  - Added @throws IllegalArgumentException documentation to KDoc
 
 ### Phase 3: Low Priority & Documentation
 
@@ -301,6 +302,7 @@ After fixes are implemented:
 
 - **TASK-016**: Add accessibility labels to More tab buttons - added `.accessibilityLabel()` modifiers to Media, Info, and Cancel buttons in MorePopoverContentView (ContentView.swift)
 - **TASK-015**: Marked as blocked (same Swift 6 concurrency issue as TASK-010)
+- **TASK-017**: Add validation to fromFirestoreData factory methods - added require() checks for documentId and name in Speaker.kt and Place.kt
 
 ## Notes
 

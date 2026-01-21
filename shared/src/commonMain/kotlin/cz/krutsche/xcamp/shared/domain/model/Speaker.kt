@@ -35,8 +35,11 @@ data class Speaker(
 
         /**
          * Create a Speaker from Firestore data with document ID injected
+         * @throws IllegalArgumentException if required fields are invalid
          */
         fun fromFirestoreData(documentId: String, data: FirestoreSpeaker): Speaker {
+            require(documentId.isNotBlank()) { "Speaker document ID cannot be blank" }
+            require(data.name.isNotBlank()) { "Speaker name cannot be blank" }
             return Speaker(
                 id = documentId,
                 name = data.name,
