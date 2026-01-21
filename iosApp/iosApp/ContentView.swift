@@ -28,7 +28,6 @@ struct ContentView: View {
             .onChange(of: selectedTabIndex) { newValue in
                 // Skip if we're reverting from More tab (don't update previousTabIndex)
                 if isRevertingFromMoreTab {
-                    isRevertingFromMoreTab = false
                     return
                 }
 
@@ -39,8 +38,10 @@ struct ContentView: View {
                     showingMorePopover = true
                     // Don't actually navigate to the More tab - stay on previous tab
                     isRevertingFromMoreTab = true
+                    selectedTabIndex = previousTabIndex
+                    // Reset flag after the state update completes
                     DispatchQueue.main.async {
-                        selectedTabIndex = previousTabIndex
+                        isRevertingFromMoreTab = false
                     }
                 } else {
                     // Update previous index for non-More tabs

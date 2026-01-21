@@ -166,9 +166,11 @@ Using `kotlin.time.ExperimentalTime` in production.
   - Replaced `?? ""` fallback in openInMaps() with proper guard statements
   - Now uses guard for both addingPercentEncoding and URL validation
 
-- [ ] **TASK-007**: Fix tab selection infinite loop risk (HIGH)
+- [x] **TASK-007**: Fix tab selection infinite loop risk (HIGH)
   - File: `iosApp/iosApp/ContentView.swift`
-  - Use more robust state management pattern
+  - Removed flag reset from early return to prevent race condition
+  - Changed async dispatch to synchronous state assignment
+  - Flag now resets after state update completes
 
 - [ ] **TASK-008**: Remove experimental Time API opt-in (HIGH)
   - File: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/config/ScheduleService.kt`
@@ -285,4 +287,5 @@ After fixes are implemented:
 - **TASK-004**: Fixed toggleFavorite to return Result<Unit> - wrapped repository call in try-catch for proper error feedback
 - **TASK-005**: Extracted duplicate image URL fetching logic - created generic populateImageUrls() extension in HasImage.kt
 - **TASK-006**: Fixed unsafe URL handling in openInMaps() - replaced `?? ""` fallback with proper guard statements for addingPercentEncoding and URL validation
+- **TASK-007**: Fixed tab selection infinite loop risk - removed flag reset from early return, changed to synchronous state assignment, flag resets after state update completes
 
