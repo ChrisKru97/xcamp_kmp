@@ -120,7 +120,7 @@ struct ScheduleView: View {
                 .font(.body)
                 .foregroundColor(.secondary)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .fillMaxSize()
         .background(Color.background)
     }
 
@@ -139,7 +139,7 @@ struct ScheduleView: View {
             }
             .buttonStyle(.bordered)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .fillMaxSize()
         .background(Color.background)
     }
 
@@ -157,7 +157,7 @@ struct ScheduleView: View {
             }
             .buttonStyle(.bordered)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .fillMaxSize()
         .background(Color.background)
     }
 }

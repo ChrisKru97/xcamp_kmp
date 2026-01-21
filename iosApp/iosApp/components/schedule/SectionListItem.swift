@@ -34,9 +34,9 @@ struct SectionListItem: View {
                     .foregroundColor(.secondary)
                     .font(.caption)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .fillMaxWidthLeading()
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .fillMaxWidthLeading()
     }
 
     private func formatTime(_ millis: Int64) -> String {

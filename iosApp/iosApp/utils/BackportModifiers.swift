@@ -43,3 +43,21 @@ extension Backport where Content: View {
         }
     }
 }
+
+// MARK: - Common Layout Modifiers
+
+extension View {
+    /// Expands the view to fill the maximum available width with leading alignment
+    /// Commonly used for list items and cards
+    @ViewBuilder
+    func fillMaxWidthLeading() -> some View {
+        frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    /// Expands the view to fill the maximum available width and height
+    /// Commonly used for full-screen views
+    @ViewBuilder
+    func fillMaxSize() -> some View {
+        frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+}

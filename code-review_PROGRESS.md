@@ -235,9 +235,10 @@ Using `kotlin.time.ExperimentalTime` in production.
 
 ### Phase 3: Low Priority & Documentation
 
-- [ ] **TASK-018**: Refactor duplicate frame modifiers (LOW)
-  - Files: `iosApp/iosApp/components/schedule/ScheduleDayTab.swift`, `SectionListItem.swift`, `ScheduleView.swift`
-  - Extract to shared view modifier
+- [x] **TASK-018**: Refactor duplicate frame modifiers (LOW)
+  - Files: `iosApp/iosApp/utils/BackportModifiers.swift`, `ScheduleDayTab.swift`, `SectionListItem.swift`, `ScheduleView.swift`
+  - Created `fillMaxWidthLeading()` and `fillMaxSize()` view modifiers
+  - Updated 5 usages across Schedule components to use the new modifiers
 
 - [ ] **TASK-019**: Add KDoc to all public service methods (LOW)
   - Files: All service classes
@@ -303,6 +304,7 @@ After fixes are implemented:
 - **TASK-016**: Add accessibility labels to More tab buttons - added `.accessibilityLabel()` modifiers to Media, Info, and Cancel buttons in MorePopoverContentView (ContentView.swift)
 - **TASK-015**: Marked as blocked (same Swift 6 concurrency issue as TASK-010)
 - **TASK-017**: Add validation to fromFirestoreData factory methods - added require() checks for documentId and name in Speaker.kt and Place.kt
+- **TASK-018**: Refactor duplicate frame modifiers - created `fillMaxWidthLeading()` and `fillMaxSize()` view modifiers in BackportModifiers.swift
 
 ## Notes
 
