@@ -161,6 +161,7 @@ struct MorePopoverContentView: View {
                 )
             }
             .buttonStyle(PlainButtonStyle())
+            .accessibilityLabel(Strings.Tabs.shared.MEDIA)
 
             // Info option
             Button(action: {
@@ -189,6 +190,7 @@ struct MorePopoverContentView: View {
                 )
             }
             .buttonStyle(PlainButtonStyle())
+            .accessibilityLabel(Strings.Tabs.shared.INFO)
 
             // Cancel button
             Button(action: {
@@ -204,6 +206,7 @@ struct MorePopoverContentView: View {
                     )
             }
             .buttonStyle(PlainButtonStyle())
+            .accessibilityLabel(Strings.Common.shared.CANCEL)
         }
         .padding()
         .frame(width: 280)

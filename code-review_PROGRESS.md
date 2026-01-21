@@ -217,13 +217,16 @@ Using `kotlin.time.ExperimentalTime` in production.
   - Updated SectionTypeExtensions.swift to use the new color constants
   - Used backtick escaping for `internal` keyword (Swift reserved word)
 
-- [ ] **TASK-015**: Fix mixed logging in AppViewModel (MEDIUM)
+- [ ] **TASK-015**: Fix mixed logging in AppViewModel (MEDIUM) - BLOCKED (same issue as TASK-010)
   - File: `iosApp/iosApp/AppViewModel.swift`
-  - Replace all print() with logger.debug/error/info
+  - Issue: Swift 6 concurrency compiler limitation prevents replacing `print()` with `logger` in `Task(priority:)` closures
+  - Same issue as TASK-010 - see notes section for details
+  - The file already uses `logger` consistently where possible
 
-- [ ] **TASK-016**: Add accessibility labels to More tab buttons (MEDIUM)
+- [x] **TASK-016**: Add accessibility labels to More tab buttons (MEDIUM)
   - File: `iosApp/iosApp/ContentView.swift`
-  - Add .accessibilityLabel() modifiers
+  - Added .accessibilityLabel() modifiers to Media, Info, and Cancel buttons
+  - Buttons now properly accessible with VoiceOver using localized strings
 
 - [ ] **TASK-017**: Add validation to fromFirestoreData factory methods (MEDIUM)
   - Files: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/domain/model/Speaker.kt`, `Place.kt`
@@ -296,7 +299,27 @@ After fixes are implemented:
 
 ## Completed This Iteration
 
-- **TASK-014**: Extract color constants for schedule filters - created `Color.Section` struct in ColorExtension.swift with main, internal, gospel, food, other colors; updated SectionTypeExtensions.swift to use the new constants
+- **TASK-016**: Add accessibility labels to More tab buttons - added `.accessibilityLabel()` modifiers to Media, Info, and Cancel buttons in MorePopoverContentView (ContentView.swift)
+
+## Notes
+
+### TASK-010 Blocked - Swift 6 Concurrency Issue
+Attempting to replace `print()` with `logger.error()` in AppViewModel's background sync methods (syncPlacesInBackground, syncSpeakersInBackground, syncScheduleInBackground) fails with Swift 6 concurrency compiler error: "type of expression is ambiguous without a type annotation".
+
+This occurs when accessing `Logger` from within `Task(priority:)` closures with `[weak self]` capture in an `@MainActor` class. Multiple approaches were attempted:
+- Using `self.logger` - fails with type ambiguity
+- Capturing logger in capture list `[weak self, logger]` - fails with type ambiguity
+- Creating local Logger instance inside Task - fails with type ambiguity
+- Using `@MainActor` annotation on closure - fails with type ambiguity
+- Using explicit `Task<Void, Never>` type annotation - fails with type ambiguity
+
+Current code uses `print()` which works correctly. This is a low-priority improvement since errors are still being logged to console.
+
+### TASK-015 Also Blocked - Same Issue as TASK-010
+TASK-015 "Fix mixed logging in AppViewModel" is the same issue as TASK-010. The file already uses `logger` consistently in all places where it's possible (outside of `Task(priority:)` closures). The remaining `print()` statements in background sync methods cannot be replaced with `logger` due to the Swift 6 concurrency compiler limitation described above.
+
+### TASK-015 Status Update
+TASK-015 is now marked as blocked (same as TASK-010) due to Swift 6 concurrency compiler limitations. The current implementation uses `print()` inside `Task(priority:)` closures, which is a reasonable workaround given the compiler constraints.
 
 ## Notes
 
