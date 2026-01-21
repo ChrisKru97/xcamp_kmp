@@ -253,9 +253,9 @@ struct PlaceDetailView: View {
 
     private func openInMaps(latitude: Double, longitude: Double, name: String) {
         let region = "ll=\(latitude),\(longitude)"
-        if let url = URL(string: "http://maps.apple.com/?\(region)&q=\(name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")") {
-            UIApplication.shared.open(url)
-        }
+        guard let encodedName = name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return }
+        guard let url = URL(string: "http://maps.apple.com/?\(region)&q=\(encodedName)") else { return }
+        UIApplication.shared.open(url)
     }
 }
 

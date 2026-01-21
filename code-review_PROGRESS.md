@@ -162,9 +162,9 @@ Using `kotlin.time.ExperimentalTime` in production.
   - Updated SpeakersRepository and PlacesRepository to use the shared extension
   - Eliminated ~30 lines of duplicate code
 
-- [ ] **TASK-006**: Fix unsafe URL force unwrap in PlacesView (HIGH)
-  - File: `iosApp/iosApp/views/PlacesView.swift`
-  - Add proper validation for URL creation
+- [x] **TASK-006**: Fix unsafe URL force unwrap in PlacesView (HIGH)
+  - Replaced `?? ""` fallback in openInMaps() with proper guard statements
+  - Now uses guard for both addingPercentEncoding and URL validation
 
 - [ ] **TASK-007**: Fix tab selection infinite loop risk (HIGH)
   - File: `iosApp/iosApp/ContentView.swift`
@@ -284,4 +284,5 @@ After fixes are implemented:
 - **TASK-003**: Fixed ImageCache memory leak - added thread-safe concurrent queue with barrier flags and cleanupExpiredEntries() method
 - **TASK-004**: Fixed toggleFavorite to return Result<Unit> - wrapped repository call in try-catch for proper error feedback
 - **TASK-005**: Extracted duplicate image URL fetching logic - created generic populateImageUrls() extension in HasImage.kt
+- **TASK-006**: Fixed unsafe URL handling in openInMaps() - replaced `?? ""` fallback with proper guard statements for addingPercentEncoding and URL validation
 
