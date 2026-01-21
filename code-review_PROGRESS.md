@@ -245,8 +245,10 @@ Using `kotlin.time.ExperimentalTime` in production.
   - Added comprehensive KDoc documentation to all public methods and classes
   - Documented parameters, return types, and behavior for each method
 
-- [ ] **TASK-020**: Add SwiftUI preview for CachedAsyncImage (LOW)
+- [x] **TASK-020**: Add SwiftUI preview for CachedAsyncImage (LOW)
   - File: `iosApp/iosApp/components/common/AsyncImageWithFallback.swift`
+  - Added two new previews for CachedAsyncImage component (light and dark mode)
+  - Demonstrates various usage patterns: with URL, nil URL, rounded corners
 
 - [ ] **TASK-021**: Document KMP property naming conflicts (LOW)
   - Files: `iosApp/iosApp/views/PlacesView.swift`, `SpeakersView.swift`
@@ -307,6 +309,7 @@ After fixes are implemented:
 - **TASK-017**: Add validation to fromFirestoreData factory methods - added require() checks for documentId and name in Speaker.kt and Place.kt
 - **TASK-018**: Refactor duplicate frame modifiers - created `fillMaxWidthLeading()` and `fillMaxSize()` view modifiers in BackportModifiers.swift
 - **TASK-019**: Add KDoc to public service methods - added comprehensive KDoc to PlacesService, SpeakersService, and ScheduleService
+- **TASK-020**: Add SwiftUI preview for CachedAsyncImage - added two new previews (light/dark mode) for CachedAsyncImage component
 
 ## Notes
 

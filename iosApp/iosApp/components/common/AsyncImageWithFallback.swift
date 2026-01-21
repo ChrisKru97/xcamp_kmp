@@ -133,6 +133,49 @@ struct HeroAsyncImageWithFallback: View {
 
 // MARK: - Previews
 
+#Preview("CachedAsyncImage") {
+    VStack(spacing: 20) {
+        // With valid URL (using a public placeholder image service)
+        CachedAsyncImage(url: URL(string: "https://via.placeholder.com/300"), fallbackIconName: "photo") { image in
+            image
+                .frame(width: 300, height: 200)
+        }
+
+        // With nil URL (shows fallback icon)
+        CachedAsyncImage(url: nil, fallbackIconName: "person.fill") { image in
+            image
+                .frame(width: 100, height: 100)
+        }
+
+        // Rounded rectangle variant
+        CachedAsyncImage(url: URL(string: "https://via.placeholder.com/300"), fallbackIconName: "photo") { image in
+            image
+                .frame(width: 150, height: 150)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+        }
+    }
+    .padding()
+    .background(Color.background)
+}
+
+#Preview("CachedAsyncImage - Dark Mode") {
+    VStack(spacing: 20) {
+        CachedAsyncImage(url: URL(string: "https://via.placeholder.com/300"), fallbackIconName: "photo") { image in
+            image
+                .frame(width: 300, height: 200)
+        }
+
+        CachedAsyncImage(url: nil, fallbackIconName: "star.fill") { image in
+            image
+                .frame(width: 100, height: 100)
+                .foregroundColor(.yellow)
+        }
+    }
+    .padding()
+    .background(Color.background)
+    .preferredColorScheme(.dark)
+}
+
 #Preview("AsyncImageWithFallback - Thumbnail") {
     HStack(spacing: 20) {
         AsyncImageWithFallback(
