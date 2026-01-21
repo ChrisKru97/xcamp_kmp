@@ -211,9 +211,11 @@ Using `kotlin.time.ExperimentalTime` in production.
   - Added: Strings.Tabs.MORE ("Více"), Strings.Common.MORE_OPTIONS ("Další možnosti"), Strings.Common.CANCEL ("Zrušit")
   - Updated ContentView.swift to use the new strings
 
-- [ ] **TASK-014**: Extract color constants for schedule filters (MEDIUM)
-  - File: `iosApp/iosApp/utils/SectionTypeExtensions.swift`
-  - Create design system colors
+- [x] **TASK-014**: Extract color constants for schedule filters (MEDIUM)
+  - File: `iosApp/iosApp/utils/ColorExtension.swift`
+  - Created `Color.Section` struct with color constants for main, internal, gospel, food, other
+  - Updated SectionTypeExtensions.swift to use the new color constants
+  - Used backtick escaping for `internal` keyword (Swift reserved word)
 
 - [ ] **TASK-015**: Fix mixed logging in AppViewModel (MEDIUM)
   - File: `iosApp/iosApp/AppViewModel.swift`
@@ -294,7 +296,7 @@ After fixes are implemented:
 
 ## Completed This Iteration
 
-- **TASK-013**: Move hardcoded strings to Strings.kt - added Strings.Tabs.MORE ("Více"), Strings.Common.MORE_OPTIONS ("Další možnosti"), Strings.Common.CANCEL ("Zrušit"), updated ContentView.swift to use the new strings
+- **TASK-014**: Extract color constants for schedule filters - created `Color.Section` struct in ColorExtension.swift with main, internal, gospel, food, other colors; updated SectionTypeExtensions.swift to use the new constants
 
 ## Notes
 
