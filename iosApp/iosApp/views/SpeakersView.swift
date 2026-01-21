@@ -36,6 +36,7 @@ struct SpeakersView: View {
             ForEach(speakers, id: \.id) { speaker in
                 NavigationLink(destination: SpeakerDetailView(speaker: speaker)) {
                     SpeakerListItem(speaker: speaker)
+                        .equatable()
                 }
                 .listRowSeparator(.hidden)
                 .listRowInsets(EdgeInsets(top: Spacing.xs, leading: Spacing.md, bottom: Spacing.xs, trailing: Spacing.md))
@@ -128,7 +129,7 @@ enum SpeakersState {
 
 // MARK: - Speaker List Item
 
-struct SpeakerListItem: View {
+struct SpeakerListItem: View, Equatable {
     let speaker: Speaker
 
     var body: some View {
@@ -167,6 +168,10 @@ struct SpeakerListItem: View {
                     .lineLimit(2)
             }
         }
+    }
+
+    static func == (lhs: SpeakerListItem, rhs: SpeakerListItem) -> Bool {
+        lhs.speaker.id == rhs.speaker.id
     }
 }
 
