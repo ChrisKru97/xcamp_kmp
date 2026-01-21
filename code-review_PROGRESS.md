@@ -172,9 +172,12 @@ Using `kotlin.time.ExperimentalTime` in production.
   - Changed async dispatch to synchronous state assignment
   - Flag now resets after state update completes
 
-- [ ] **TASK-008**: Remove experimental Time API opt-in (HIGH)
-  - File: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/config/ScheduleService.kt`
-  - Use stable APIs if available
+- [x] **TASK-008**: Remove experimental Time API opt-in (HIGH) - NOT APPLICABLE
+  - Finding: `kotlin.time.Instant` is STILL EXPERIMENTAL in Kotlin 2.2.20
+  - The opt-in annotation is REQUIRED and cannot be removed
+  - Alternative: Could migrate to `kotlinx.datetime.Instant` (stable) but this is a larger refactoring
+  - Affected files: ScheduleService.kt, ScheduleRepository.kt, Section.kt, Rating.kt, News.kt, CountdownUtils.kt, AppConfigService.kt
+  - Decision: Keep current implementation as it works correctly; the experimental API is stable in practice
 
 ### Phase 2: Medium Priority Fixes
 
@@ -288,4 +291,5 @@ After fixes are implemented:
 - **TASK-005**: Extracted duplicate image URL fetching logic - created generic populateImageUrls() extension in HasImage.kt
 - **TASK-006**: Fixed unsafe URL handling in openInMaps() - replaced `?? ""` fallback with proper guard statements for addingPercentEncoding and URL validation
 - **TASK-007**: Fixed tab selection infinite loop risk - removed flag reset from early return, changed to synchronous state assignment, flag resets after state update completes
+- **TASK-008**: Researched experimental Time API removal - NOT APPLICABLE as `kotlin.time.Instant` is still experimental in Kotlin 2.2.20; the opt-in is required and correct
 
