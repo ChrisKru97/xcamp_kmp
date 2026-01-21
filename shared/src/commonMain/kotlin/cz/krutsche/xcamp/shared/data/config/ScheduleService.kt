@@ -53,7 +53,12 @@ class ScheduleService {
         }
     }
 
-    suspend fun toggleFavorite(sectionId: Long, favorite: Boolean) {
-        repository.toggleFavorite(sectionId, favorite)
+    suspend fun toggleFavorite(sectionId: Long, favorite: Boolean): Result<Unit> {
+        return try {
+            repository.toggleFavorite(sectionId, favorite)
+            Result.success(Unit)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 }
