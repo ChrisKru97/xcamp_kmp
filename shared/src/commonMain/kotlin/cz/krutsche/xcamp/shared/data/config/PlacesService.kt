@@ -4,7 +4,20 @@ import cz.krutsche.xcamp.shared.data.ServiceFactory
 import cz.krutsche.xcamp.shared.data.repository.PlacesRepository
 import cz.krutsche.xcamp.shared.domain.model.Place
 
+/**
+ * Service for managing Place entities.
+ *
+ * Provides access to Place data from both local database and remote Firestore.
+ * Extends [RepositoryService] for common repository initialization and sync functionality.
+ *
+ * @property repository The lazily initialized PlacesRepository instance
+ */
 class PlacesService : RepositoryService<PlacesRepository>() {
+    /**
+     * Creates a new PlacesRepository instance.
+     *
+     * @return A new PlacesRepository with all required dependencies injected
+     */
     override fun createRepository(): PlacesRepository {
         return PlacesRepository(
             databaseManager = databaseManager,
@@ -13,18 +26,41 @@ class PlacesService : RepositoryService<PlacesRepository>() {
         )
     }
 
+    /**
+     * Retrieves all places from the local database.
+     *
+     * @return List of all places, empty list if none exist
+     */
     suspend fun getAllPlaces(): List<Place> {
         return repository.getAllPlaces()
     }
 
+    /**
+     * Retrieves a specific place by its numeric ID.
+     *
+     * @param id The numeric ID of the place (generated from document ID)
+     * @return The place if found, null otherwise
+     */
     suspend fun getPlaceById(id: Long): Place? {
         return repository.getPlaceById(id)
     }
 
+    /**
+     * Synchronizes place data from Firestore to the local database.
+     *
+     * @return Result.Success on success, Result.Failure on error
+     */
     override suspend fun syncFromFirestore(): Result<Unit> {
         return repository.syncFromFirestore()
     }
 
+    /**
+     * Refreshes places from Firestore and returns the updated list.
+     *
+     * Performs a sync from Firestore and returns all places from the local database.
+     *
+     * @return Result.Success containing the list of places, or Result.Failure on error
+     */
     suspend fun refreshPlaces(): Result<List<Place>> {
         return try {
             val syncResult = syncFromFirestore()

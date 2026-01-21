@@ -240,9 +240,10 @@ Using `kotlin.time.ExperimentalTime` in production.
   - Created `fillMaxWidthLeading()` and `fillMaxSize()` view modifiers
   - Updated 5 usages across Schedule components to use the new modifiers
 
-- [ ] **TASK-019**: Add KDoc to all public service methods (LOW)
-  - Files: All service classes
-  - Document parameters and return types
+- [x] **TASK-019**: Add KDoc to all public service methods (LOW)
+  - Files: `PlacesService.kt`, `SpeakersService.kt`, `ScheduleService.kt`
+  - Added comprehensive KDoc documentation to all public methods and classes
+  - Documented parameters, return types, and behavior for each method
 
 - [ ] **TASK-020**: Add SwiftUI preview for CachedAsyncImage (LOW)
   - File: `iosApp/iosApp/components/common/AsyncImageWithFallback.swift`
@@ -305,6 +306,7 @@ After fixes are implemented:
 - **TASK-015**: Marked as blocked (same Swift 6 concurrency issue as TASK-010)
 - **TASK-017**: Add validation to fromFirestoreData factory methods - added require() checks for documentId and name in Speaker.kt and Place.kt
 - **TASK-018**: Refactor duplicate frame modifiers - created `fillMaxWidthLeading()` and `fillMaxSize()` view modifiers in BackportModifiers.swift
+- **TASK-019**: Add KDoc to public service methods - added comprehensive KDoc to PlacesService, SpeakersService, and ScheduleService
 
 ## Notes
 
