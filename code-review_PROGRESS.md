@@ -1,337 +1,285 @@
 # Progress: code-review
 
-Started: Mon Jan 19 15:07:43 CET 2026
-Analysis Complete: Mon Jan 19 15:45:00 CET 2026
-Phase 1-4 Complete: Mon Jan 19 23:06:00 CET 2026
+Started: Tue Jan 20 18:44:50 CET 2026
 
 ## Status
 
-RALPH_DONE
+IN_PROGRESS
 
 ## Analysis
 
-### Commits Reviewed
-Total commits analyzed: 17 commits from `7ed9af795cb6bd193446d6af0f784e798f76aef1` to `HEAD`
+Reviewed **60 commits** from `7ed9af7` (swiftui restricted mode refactor) to `5cfc2bc` (current HEAD).
 
-**Places Feature (7 commits)**:
-- 27886a3 Implement PlacesRepository for Places feature
-- c841508 Implement PlacesService and DatabaseFactory for shared Kotlin layer
-- d84cddf Fix PlacesView Kotlin-Swift interop issues and add debug override
-- fbc3d23 Update places_PROGRESS.md with completed tasks status
-- ee8505c Implement lazy loading for places on app startup
-- 7f61f0d Complete Task 5.3 - UI states and edge cases testing for Places
-- 24a685d Complete Places feature - Tasks 5.4 and 5.5
+### Codebase Overview
 
-**Speakers Feature (5 commits)**:
-- e19e8f7 Add SpeakersService to shared module
-- ebbc0bc Add getSpeakersService() to AppViewModel.swift
-- 2ddbd99 Implement Speakers feature for iOS
-- 0606121 Mark speakers feature as RALPH_DONE - all tasks verified complete
-- 1e80b29 Mark speakers feature as RALPH_DONE - all tasks verified complete
+The XcamP KMP project follows clean architecture with:
+- **Shared Module**: Kotlin business logic (data/, domain/, localization/)
+- **Android Module**: Jetpack Compose UI
+- **iOS Module**: SwiftUI views and components
 
-**Schedule Feature (6 commits)**:
-- e801d9a Implement ScheduleService in shared module
-- 3edefb6 Add ScheduleService to AppViewModel with background sync
-- 8d4a32a Implement Schedule feature iOS UI (Tasks 2.1, 3.1, 4.1, 4.2, 5.1, 6.2, 8.1)
-- 9e3d945 Implement ScheduleDayTab component (Task 4.3)
-- d3174b4 Implement ScheduleFilterView (Task 4.4)
-- 09aa4ba Verify Schedule feature implementation (Tasks 2-8)
+Key patterns:
+- Repository pattern with BaseRepository for Firestore sync
+- Service pattern (PlacesService, SpeakersService, ScheduleService)
+- MVVM with ObservableObject ViewModels (iOS)
+- SQLDelight for local caching
+- Result<T> error handling
 
-### Issues Summary
+### Issues Summary by Severity
 
-| Severity | Count | Files Affected |
-|----------|-------|----------------|
-| Critical | 6 | 3 files |
-| High | 8 | 5 files |
-| Medium | 7 | 4 files |
-| Low | 4 | 3 files |
+| Severity | Count | Category |
+|----------|-------|----------|
+| CRITICAL | 2 | Debug overrides, experimental APIs |
+| HIGH | 8 | Memory leaks, DRY violations, unsafe unwraps |
+| MEDIUM | 25 | Hardcoded strings, silent errors, code duplication |
+| LOW | 18 | Missing documentation, minor inconsistencies |
+
+### Cross-Cutting Issues Identified
+
+#### 1. Service Pattern Duplication (DRY Violation)
+**Affected Commits:** e19e8f7, ebbc0bc, e801d9a, 3edefb6, c841508
+
+PlacesService, SpeakersService, and ScheduleService all follow identical pattern:
+```kotlin
+class SomeService {
+    private val databaseManager: DatabaseManager by lazy { DatabaseFactory.getDatabaseManager() }
+    private val repository: SomeRepository by lazy { ... }
+    // identical structure
+}
+```
+
+#### 2. Silent Error Handling in Background Sync
+**Affected Commits:** ee8505c, 2ddbd99, 3edefb6, d84cddf
+
+All background sync methods silently swallow errors without logging:
+```swift
+do {
+    _ = try await service.refresh()
+} catch {
+    // Silently handle errors
+}
+```
+
+#### 3. Hardcoded Strings Not in Strings.kt
+**Affected Commits:** d84cddf (fixed later), b1202a6, 755d797, 7647522
+
+- "More", "More Options", "Cancel" in ContentView
+- Czech strings in various views (later fixed)
+- Schedule filter colors use magic RGB values
+
+#### 4. Image URL Fetching Duplication
+**Affected Commits:** d081694, fb4e42c, 210c5a9
+
+Same pattern duplicated in SpeakersRepository and PlacesRepository:
+```kotlin
+val withUrls = entities.map { entity ->
+    if (entity.image != null) {
+        val urlResult = storageService.getDownloadUrl(entity.image)
+        entity.copy(imageUrl = urlResult.getOrNull())
+    } else {
+        entity
+    }
+}
+```
+
+#### 5. Memory Leak Risk in ImageCache
+**Affected Commit:** a0dd98d
+
+`storageTimes` dictionary grows unbounded, no cleanup of expired entries.
+
+#### 6. hashCode() Negative ID Issue
+**Affected Commits:** 2f1eef2, 305f444
+
+Speaker and Place use `hashCode()` for ID generation, can return negative values.
+
+#### 7. Duplicate ViewModels
+**Affected Commit:** 2ddbd99
+
+PlacesViewModel and SpeakersViewModel are identical except for naming.
+
+#### 8. DRY Violation in Frame Modifiers
+**Affected Commits:** 22118ca, 20b2ef9
+
+Duplicate `.frame(maxWidth: .infinity)` modifiers throughout Schedule components.
+
+#### 9. Mixed Logging Approaches
+**Affected Commits:** a8a4c42
+
+AppViewModel uses both `print()` and `Logger` inconsistently.
+
+#### 10. toggleFavorite Returns Unit
+**Affected Commit:** e801d9a
+
+No error feedback for favorite toggle operations.
+
+#### 11. HeroAsyncImageWithFallback Ignores Parameter
+**Affected Commit:** 99231aa
+
+`fallbackIconName` parameter accepted but never used.
+
+#### 12. Unsafe URL Force Unwrap
+**Affected Commit:** d84cddf
+
+URL creation with `?? ""` could create invalid URLs.
+
+#### 13. Tab Selection Infinite Loop Risk
+**Affected Commit:** 7647522
+
+`DispatchQueue.main.async` modifying selectedTabIndex could trigger onChange again.
+
+#### 14. Debug Override in Production
+**Affected Commit:** 2ddbd99
+
+Active debug code forcing PRE_EVENT mode.
+
+#### 15. Experimental Time API
+**Affected Commit:** e801d9a
+
+Using `kotlin.time.ExperimentalTime` in production.
+
+---
 
 ## Task List
 
-### Critical Issues (Must Fix)
+### Phase 1: Critical & High Priority Fixes
 
-- [x] **CRITICAL-001**: Disable active debug override in AppConfigService.kt:43-45
-  - **File**: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/config/AppConfigService.kt`
-  - **Issue**: Line 45 `return AppState.PRE_EVENT` is active, bypassing Remote Config
-  - **Fix**: Comment out the debug override line
+- [x] **TASK-001**: Remove debug override from AppConfigService (CRITICAL)
+  - Already completed in commit 210a290
 
-- [x] **CRITICAL-002**: Extract database mapping duplication in ScheduleRepository.kt
-  - **File**: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/repository/ScheduleRepository.kt`
-  - **Issue**: 5 identical mapping blocks (18 lines each) in lines 20-145
-  - **Fix**: Create `toDomain()` extension function, reduce file from 218 to ~120 lines
+- [x] **TASK-002**: Fix hashCode() negative ID issue in Speaker and Place (HIGH)
+  - Fixed using `kotlin.math.abs(uid.hashCode()).toLong()`
+  - Files: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/domain/model/Speaker.kt`, `Place.kt`
+  - Use `kotlin.math.abs(uid.hashCode()).toLong()` or proper hash function
 
-- [x] **CRITICAL-003**: Add timeout protection to ScheduleRepository.syncFromFirestore()
-  - **File**: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/repository/ScheduleRepository.kt`
-  - **Lines**: 196-211
-  - **Issue**: Missing 5-second timeout wrapper on Firestore operations
+- [ ] **TASK-003**: Fix ImageCache memory leak (HIGH)
+  - File: `iosApp/iosApp/components/common/ImageCache.swift`
+  - Implement cleanup or use NSCache with automatic eviction
+  - Add thread safety with actor or serial queue
 
-- [x] **CRITICAL-004**: Split ScheduleView.swift (812 lines) into separate files
-  - **File**: `iosApp/iosApp/views/ScheduleView.swift`
-  - **Issue**: Contains 7 components in one file (8x the 100-line guideline)
-  - **Fix**: Create directory structure with separate files for each component
+- [ ] **TASK-004**: Fix toggleFavorite to return Result<Unit> (HIGH)
+  - File: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/config/ScheduleService.kt`
+  - Add error feedback to callers
 
-- [x] **CRITICAL-005**: Fix hardcoded Czech strings in ScheduleView.swift
-  - **File**: `iosApp/iosApp/views/ScheduleView.swift`, `iosApp/iosApp/components/schedule/SectionDetailView.swift`, `iosApp/iosApp/utils/SectionTypeExtensions.swift`
-  - **Lines**: 93-102, SectionDetailView.swift:62,83, SectionTypeExtensions.swift:38-46
-  - **Issue**: Day names, "Čas", "Popis", type labels hardcoded
-  - **Fix**: Moved to Strings.kt, updated to use localized constants
+- [ ] **TASK-005**: Extract duplicate image URL fetching logic (HIGH)
+  - Files: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/repository/SpeakersRepository.kt`, `PlacesRepository.kt`
+  - Create generic extension function for HasImage entities
 
-- [x] **CRITICAL-006**: Implement or remove TODO in calculateDayIndex()
-  - **File**: `iosApp/iosApp/components/schedule/ScheduleViewModel.swift`
-  - **Line**: 123-162 (previously ScheduleView.swift:261)
-  - **Issue**: TODO with incomplete implementation, always returns 0
-  - **Fix**: Implemented proper day calculation using Remote Config startDate with ISO-8601 date parsing, day difference calculation, and proper clamping for 8-day event
+- [ ] **TASK-006**: Fix unsafe URL force unwrap in PlacesView (HIGH)
+  - File: `iosApp/iosApp/views/PlacesView.swift`
+  - Add proper validation for URL creation
 
-### High Priority Issues
+- [ ] **TASK-007**: Fix tab selection infinite loop risk (HIGH)
+  - File: `iosApp/iosApp/ContentView.swift`
+  - Use more robust state management pattern
 
-- [x] **HIGH-001**: Fix SectionDetailView favorite toggle persistence
-  - **File**: `iosApp/iosApp/components/schedule/SectionDetailView.swift`
-  - **Lines**: 4-11 (init), 24-36 (toolbar)
-  - **Issue**: Toggle only updates local @State, doesn't call service.toggleFavorite()
-  - **Fix**: Added service and onFavoriteToggled callback parameters to SectionDetailView, persist favorite toggle via service.toggleFavorite() and refresh parent view
+- [ ] **TASK-008**: Remove experimental Time API opt-in (HIGH)
+  - File: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/config/ScheduleService.kt`
+  - Use stable APIs if available
 
-- [x] **HIGH-002**: Remove redundant client-side sorting in SpeakersViewModel
-  - **File**: `iosApp/iosApp/views/SpeakersView.swift`
-  - **Lines**: 105-111 (removed)
-  - **Issue**: O(n log n) sort on data already sorted by SQL
-  - **Fix**: Removed redundant sorting; SQL query already includes `ORDER BY priority, name`
+### Phase 2: Medium Priority Fixes
 
-- [x] **HIGH-003**: Consolidate multiple FirestoreService instances
-  - **Files**: SpeakersService.kt:13, PlacesService.kt:13, ScheduleService.kt:15
-  - **Issue**: Each service creates its own FirestoreService instance
-  - **Fix**: Created ServiceFactory with getFirestoreService() singleton, following DatabaseFactory pattern. All three services now use ServiceFactory.getFirestoreService()
+- [ ] **TASK-009**: Create generic Service base class (MEDIUM)
+  - Extract common pattern from PlacesService, SpeakersService, ScheduleService
+  - New file: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/config/RepositoryService.kt`
 
-- [x] **HIGH-004**: Add error state to ScheduleViewModel
-  - **File**: `iosApp/iosApp/components/schedule/ScheduleViewModel.swift`
-  - **Lines**: 17, 23, 69-71, 79-81 (updated)
-  - **Issue**: Empty catch blocks silently swallow errors
-  - **Fix**: Added @Published var lastError: Error? and clearError() method, set lastError in catch blocks
+- [ ] **TASK-010**: Add error logging to all background sync methods (MEDIUM)
+  - Files: `iosApp/iosApp/AppViewModel.swift`
+  - Replace silent error handling with proper logger.error() calls
 
-- [x] **HIGH-005**: Add missing SwiftUI previews for Schedule components
-  - **Files**: `iosApp/iosApp/components/schedule/SectionListItem.swift`, `SectionDetailView.swift`
-  - **Issue**: Preview placeholders don't show actual component rendering
-  - **Fix**: Enhanced SectionListItem and SectionDetailView previews with simulated data showing full component layout in both light and dark modes. ScheduleDayTab and ScheduleFilterView already had comprehensive previews.
+- [ ] **TASK-011**: Fix HeroAsyncImageWithFallback to use fallbackIconName (MEDIUM)
+  - File: `iosApp/iosApp/components/common/AsyncImageWithFallback.swift`
+  - Implement parameter usage in CachedAsyncImage
 
-- [x] **HIGH-006**: Revert LinkTile.swift color changes for dark mode
-  - **File**: `iosApp/iosApp/components/common/LinkTile.swift`
-  - **Lines**: 26, 31
-  - **Issue**: Changed from `.primary` to `.black` (doesn't work in dark mode)
-  - **Fix**: Already using `.primary.opacity(0.8)` - no changes needed, task already complete
+- [ ] **TASK-012**: Extract duplicate imageUrl computed property (MEDIUM)
+  - Files: `iosApp/iosApp/views/SpeakersView.swift`, `PlacesView.swift`
+  - Create View extension for shared logic
 
-- [x] **HIGH-007**: Add nil-safe URL wrapper for AsyncImage
-  - **Files**: SpeakersView.swift:148,207, PlacesView.swift:147,215
-  - **Issue**: Using `URL(string: imageUrl ?? "")` can create invalid URLs
-  - **Fix**: Created computed properties `imageUrl` that safely return optional URL in SpeakerListItem, SpeakerDetailView, PlaceListItem, and PlaceDetailView
+- [ ] **TASK-013**: Move hardcoded strings to Strings.kt (MEDIUM)
+  - Files: `iosApp/iosApp/ContentView.swift`, `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/localization/Strings.kt`
+  - Add: "More", "More Options", "Cancel"
 
-- [x] **HIGH-008**: Extract SectionType mappings to reusable extension
-  - **File**: `iosApp/iosApp/utils/SectionTypeExtensions.swift`
-  - **Issue**: colorForSectionType, iconForSectionType, labelForType duplicated
-  - **Fix**: Already implemented - SectionTypeExtensions.swift exists with color, icon, and label computed properties
+- [ ] **TASK-014**: Extract color constants for schedule filters (MEDIUM)
+  - File: `iosApp/iosApp/utils/SectionTypeExtensions.swift`
+  - Create design system colors
 
-### Medium Priority Issues
+- [ ] **TASK-015**: Fix mixed logging in AppViewModel (MEDIUM)
+  - File: `iosApp/iosApp/AppViewModel.swift`
+  - Replace all print() with logger.debug/error/info
 
-- [x] **MEDIUM-001**: Extract duplicate AsyncImage phase handling
-  - **Files**: SpeakersView.swift, PlacesView.swift
-  - **Issue**: 60+ lines of identical AsyncImage phase handling code
-  - **Fix**: Created AsyncImageWithFallback component with HeroAsyncImageWithFallback variant
+- [ ] **TASK-016**: Add accessibility labels to More tab buttons (MEDIUM)
+  - File: `iosApp/iosApp/ContentView.swift`
+  - Add .accessibilityLabel() modifiers
 
-- [x] **MEDIUM-002**: Create shared date formatting utilities
-  - **Files**: ScheduleView.swift:308-314, 503-509
-  - **Issue**: formatTime() duplicated, creates new DateFormatter on every call
-  - **Fix**: Create Date+Extensions.swift with cached static formatter
-  - **Status**: Already complete - DateFormatter+Shared.swift exists with static timeFormatter and formatTime() method
+- [ ] **TASK-017**: Add validation to fromFirestoreData factory methods (MEDIUM)
+  - Files: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/domain/model/Speaker.kt`, `Place.kt`
+  - Validate required fields
 
-- [x] **MEDIUM-003**: Add "Skrýt vše" to Strings.kt
-  - **File**: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/util/Strings.kt`
-  - **Fix**: Add to Strings.Schedule object
-  - **Status**: Already complete - HIDE_ALL = "Skrýt vše" exists in Strings.kt line 84
+### Phase 3: Low Priority & Documentation
 
-- [x] **MEDIUM-004**: Update debug comment in AppConfigService
-  - **File**: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/config/AppConfigService.kt`
-  - **Line**: 43
-  - **Issue**: Comment mentions "Speakers tab" only, should mention "Speakers/Places tabs"
-  - **Status**: Already complete - Debug override removed in CRITICAL-001, no debug comments remain
+- [ ] **TASK-018**: Refactor duplicate frame modifiers (LOW)
+  - Files: `iosApp/iosApp/components/schedule/ScheduleDayTab.swift`, `SectionListItem.swift`, `ScheduleView.swift`
+  - Extract to shared view modifier
 
-- [x] **MEDIUM-005**: Optimize insertPlaces() batch insert pattern
-  - **File**: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/repository/PlacesRepository.kt`
-  - **Lines**: 22-38
-  - **Issue**: Individual inserts in loop vs batch operation
-  - **Note**: Codebase-wide pattern, not a violation
-  - **Status**: Already acceptable - Consistent pattern across all repositories (SpeakersRepository, PlacesRepository, ScheduleRepository, SongsRepository), uses transaction wrapper for atomicity
+- [ ] **TASK-019**: Add KDoc to all public service methods (LOW)
+  - Files: All service classes
+  - Document parameters and return types
 
-### Low Priority Issues
+- [ ] **TASK-020**: Add SwiftUI preview for CachedAsyncImage (LOW)
+  - File: `iosApp/iosApp/components/common/AsyncImageWithFallback.swift`
 
-- [x] **LOW-001**: Consider file organization for 300+ line view files
-  - **Files**: SpeakersView.swift (314 lines), PlacesView.swift (349 lines)
-  - **Status**: Acceptable with clear MARK comments, future consideration
-  - **Verified**: Current line counts are 274 (SpeakersView) and 315 (PlacesView), both have clear MARK comments (ViewModel, List Item, Detail View, Previews)
+- [ ] **TASK-021**: Document KMP property naming conflicts (LOW)
+  - Files: `iosApp/iosApp/views/PlacesView.swift`, `SpeakersView.swift`
+  - Add comment explaining description_ usage
 
-## Implementation Order
+- [ ] **TASK-022**: Consider generic ViewModel for list views (LOW)
+  - Create `ListViewModel<T>` protocol to eliminate duplication
 
-### Phase 1: Critical Fixes (Blocks Production)
-1. CRITICAL-001: Disable debug override
-2. CRITICAL-002: Extract database mapping
-3. CRITICAL-003: Add timeout protection
-4. CRITICAL-006: Implement calculateDayIndex
+- [ ] **TASK-023**: Standardize error handling patterns (LOW)
+  - Review and standardize Result vs exception usage
 
-### Phase 2: Architecture & Structure
-5. CRITICAL-004: Split ScheduleView.swift into separate files
-6. CRITICAL-005: Fix hardcoded strings (requires Phase 5 first)
-7. HIGH-003: Consolidate FirestoreService instances
-
-### Phase 3: Functionality Fixes
-8. HIGH-001: Fix favorite toggle persistence
-9. HIGH-002: Remove redundant sorting
-10. HIGH-006: Fix LinkTile dark mode colors
-11. HIGH-007: Add nil-safe URL wrappers
-
-### Phase 4: Developer Experience
-12. HIGH-004: Add error state handling
-13. HIGH-005: Add missing SwiftUI previews
-14. MEDIUM-004: Update debug comment
-
-### Phase 5: Code Quality & DRY
-15. HIGH-008: Create SectionType extensions
-16. MEDIUM-001: Extract AsyncImage component
-17. MEDIUM-002: Create date formatting utilities
-18. MEDIUM-003: Add missing strings
-
-## Completed This Iteration
-- **CRITICAL-001**: Disabled debug override in AppConfigService.kt - removed `return AppState.PRE_EVENT` bypass, restored proper Remote Config-based app state determination
-- **CRITICAL-002**: Fixed DRY violation in insertSections() - now uses existing toDbInsert() helper instead of inline duplication
-- **CRITICAL-003**: Added timeout protection to ScheduleRepository.syncFromFirestore() - wrapped entire sync operation (fetch + insert) in withTimeout(5.seconds) to ensure total operation completes within 5 seconds
-- **CRITICAL-004**: Split ScheduleView.swift (720 lines → 150 lines) into separate component files in `iosApp/iosApp/components/schedule/`:
-  - Created `ScheduleViewModel.swift` - ViewModel and ScheduleState enum
-  - Created `SectionListItem.swift` - List item component
-  - Created `ScheduleDayTab.swift` - Day tab and DayTabItem components
-  - Created `SectionDetailView.swift` - Detail view component
-  - Created `ScheduleFilterView.swift` - Filter view and filter row components
-  - Fixed ScheduleRepository.kt bug: Changed `XcampDatabase.Section` to correct `cz.krutsche.xcamp.shared.db.Section` import
-  - Fixed ScheduleRepository.kt bug: Changed `XcampDatabase` parameter type to `XcampDatabaseQueries` in `toDbInsert()`
-  - Fixed ScheduleRepository.kt bug: Removed incorrect `suspend` modifier from `toDbInsert()` function
-  - Build successful, app running in iOS simulator
-- **CRITICAL-005**: Fixed hardcoded Czech strings in Schedule components:
-  - Updated `Strings.kt` to add SECTIONTYPE_*, DAYS_*, and DETAIL_* constants with proper naming
-  - Updated `ScheduleView.swift` to use `Strings.ScheduleDays.shared.DAYS_*` for day names
-  - Updated `SectionDetailView.swift` to use `Strings.ScheduleDetail.shared.DETAIL_*` for labels
-  - Updated `SectionTypeExtensions.swift` to use `Strings.ScheduleSectionType.shared.SECTIONTYPE_*` for type labels
-  - All hardcoded strings now use Strings.kt for consistency and easier localization
-  - Build successful, app verified running in iOS simulator
-- **CRITICAL-006**: Implemented calculateDayIndex() to properly calculate day index based on event start date from Remote Config:
-  - Added `remoteConfigService` property to ScheduleViewModel
-  - Added `setRemoteConfigService()` method to inject dependency
-  - Implemented day calculation using ISO-8601 date parsing with fallback
-  - Clamped result to valid range [0, 7] for 8-day event
-  - Updated ScheduleView to pass Remote Config service on appear
-  - Build verified successful
-  - Created `ScheduleViewModel.swift` - ViewModel and ScheduleState enum
-  - Created `SectionListItem.swift` - List item component
-  - Created `ScheduleDayTab.swift` - Day tab and DayTabItem components
-  - Created `SectionDetailView.swift` - Detail view component
-  - Created `ScheduleFilterView.swift` - Filter view and filter row components
-  - Fixed ScheduleRepository.kt bug: Changed `XcampDatabase.Section` to correct `cz.krutsche.xcamp.shared.db.Section` import
-  - Fixed ScheduleRepository.kt bug: Changed `XcampDatabase` parameter type to `XcampDatabaseQueries` in `toDbInsert()`
-  - Fixed ScheduleRepository.kt bug: Removed incorrect `suspend` modifier from `toDbInsert()` function
-  - Build successful, app running in iOS simulator
-- **CRITICAL-005**: Fixed hardcoded Czech strings in Schedule components:
-  - Updated `Strings.kt` to add SECTIONTYPE_*, DAYS_*, and DETAIL_* constants with proper naming
-  - Updated `ScheduleView.swift` to use `Strings.ScheduleDays.shared.DAYS_*` for day names
-  - Updated `SectionDetailView.swift` to use `Strings.ScheduleDetail.shared.DETAIL_*` for labels
-  - Updated `SectionTypeExtensions.swift` to use `Strings.ScheduleSectionType.shared.SECTIONTYPE_*` for type labels
-  - All hardcoded strings now use Strings.kt for consistency and easier localization
-  - Build successful, app verified running in iOS simulator
-- **HIGH-006**: Verified LinkTile.swift already uses `.primary.opacity(0.8)` for dark mode compatibility - no changes needed
-- **HIGH-007**: Added nil-safe URL wrappers for AsyncImage in Speakers and Places views:
-  - Added `imageUrl` computed property in SpeakerListItem (SpeakersView.swift:148-150)
-  - Added `imageUrl` computed property in SpeakerDetailView (SpeakersView.swift:195-197)
-  - Added `imageUrl` computed property in PlaceListItem (PlacesView.swift:147-149)
-  - Added `imageUrl` computed property in PlaceDetailView (PlacesView.swift:215-217)
-  - Replaced unsafe `URL(string: imageUrl ?? "")` with nil-safe computed property
-  - Build verified successful
-- **MEDIUM-001**: Extracted duplicate AsyncImage phase handling into reusable components:
-  - Created `iosApp/iosApp/components/common/AsyncImageWithFallback.swift` with two components:
-    - `AsyncImageWithFallback` - for thumbnail images (80x80), handles all phases with fallback icon
-    - `HeroAsyncImageWithFallback` - for hero/detail view images, includes gradient overlay
-  - Updated `SpeakerListItem.speakerImage` to use AsyncImageWithFallback (reduced from 20 to 5 lines)
-  - Updated `SpeakerDetailView.speakerHeroImage` to use HeroAsyncImageWithFallback (reduced from 38 to 5 lines)
-  - Updated `PlaceListItem.placeImage` to use AsyncImageWithFallback (reduced from 20 to 5 lines)
-  - Updated `PlaceDetailView.placeHeroImage` to use HeroAsyncImageWithFallback (reduced from 38 to 5 lines)
-  - Total code reduction: ~70 lines of duplicated code eliminated
-  - Build successful, app verified running in iOS simulator
+---
 
 ## Notes
 
-### Dependencies Between Tasks
-- **CRITICAL-005 depends on HIGH-008**: SectionType extensions should be created before fixing hardcoded strings
-- **CRITICAL-004 enables HIGH-005**: Splitting files makes adding previews easier
-- **MEDIUM-001 requires completion of**: AsyncImage component can be created after fixing nil-safe URLs (HIGH-007)
+### Architecture Observations
 
-### Good Patterns Found
-- Proper repository pattern with BaseRepository extension
-- Good timeout protection via FirestoreService inheritance
-- Excellent localization practices (Strings.kt)
-- Comprehensive SwiftUI previews in most places
-- Clean Result<T> error handling pattern
-- Proper @MainActor and async/await usage
+**Positive:**
+- Clean separation of concerns between shared and platform code
+- Good use of Result<T> types for error handling
+- Comprehensive offline-first architecture with SQLite caching
+- Good SwiftUI preview coverage (after fixes)
+- Consistent repository pattern implementation
 
-### Code Quality Grade: B+ (Good with known issues)
-The codebase is well-architected but has accumulated some technical debt during rapid feature development. The critical issues are straightforward fixes that don't require architectural changes.
+**Needs Improvement:**
+- Heavy code duplication in service layer
+- Silent error handling throughout background sync
+- Inconsistent logging (print vs Logger)
+- Some hardcoded strings not centralized
+- Memory management in ImageCache needs attention
 
-### Current Status (Mon Jan 19 23:12 CET 2026)
-**Progress: 15/20 tasks complete (75%)**
+### Testing Recommendations
 
-**Completed:**
-- All 6 Critical issues (CRITICAL-001 through CRITICAL-006)
-- All 8 High priority issues (HIGH-001 through HIGH-008)
+After fixes are implemented:
+1. Run iOS app with Instruments to verify memory leak fix
+2. Test favorite toggle with network errors to verify error handling
+3. Test tab switching to verify no infinite loop
+4. Test with negative hashCode values to verify ID generation fix
+5. Test background sync failures to verify error logging
 
-**Remaining:**
-- 4 Medium priority issues (MEDIUM-002 through MEDIUM-005)
-- 1 Low priority issue (LOW-001)
-
-The codebase is now in a much better state with all critical and high-priority issues resolved. The remaining medium/low priority tasks are optional improvements that can be addressed in future iterations.
-
-### Final Verification (Mon Jan 19 23:15 CET 2026)
-**All 20 tasks verified complete:**
-- **MEDIUM-002**: Verified complete - DateFormatter+Shared.swift exists with static timeFormatter and formatTime() method, used by SectionListItem and SectionDetailView
-- **MEDIUM-003**: Verified complete - HIDE_ALL = "Skrýt vše" exists in Strings.kt line 84
-- **MEDIUM-004**: Verified complete - Debug override removed in CRITICAL-001, no debug comments remain in AppConfigService.kt
-- **MEDIUM-005**: Verified acceptable - Consistent transaction-based insert pattern across all repositories (SpeakersRepository, PlacesRepository, ScheduleRepository, SongsRepository)
-- **LOW-001**: Verified acceptable - Files have clear MARK comments (ViewModel, List Item, Detail View, Previews), line counts are reasonable (274, 315)
-
-**Final Status: 20/20 tasks complete (100%)**
-- 6 Critical issues: Complete
-- 8 High priority issues: Complete
-- 5 Medium priority issues: Complete (4 verified already done, 1 fixed in MEDIUM-001)
-- 1 Low priority issue: Complete (verified acceptable)
-
-### Estimated Effort
-- Phase 1 (Critical): 2-3 hours
-- Phase 2 (Architecture): 4-5 hours
-- Phase 3 (Functionality): 2-3 hours
-- Phase 4 (Dev Experience): 3-4 hours
-- Phase 5 (Code Quality): 4-5 hours
-
-**Total**: ~15-20 hours for complete remediation
-
-### Files Requiring Changes
-
-| File | Issues | Priority |
-|------|--------|----------|
-| `AppConfigService.kt` | 2 | Critical, Medium |
-| `ScheduleRepository.kt` | 2 | Critical |
-| `ScheduleView.swift` | 8 | Critical, High, High, High, Medium |
-| `SpeakersView.swift` | 3 | High, Medium, High |
-| `PlacesView.swift` | 2 | High, Medium |
-| `LinkTile.swift` | 1 | High |
-| `Strings.kt` | 1 | Medium |
-| `SectionType+Extensions.swift` | 1 | High (new file) |
-| `AsyncImageWithFallback.swift` | 1 | Medium (new file) |
-| `Date+Extensions.swift` | 1 | Medium (new file) |
+---
 
 ## Next Steps
 
-1. Review and approve this task list
-2. Begin Phase 1 implementation (Critical fixes)
-3. Complete each phase in order
-4. Test changes after each phase
-5. Create single comprehensive commit when all tasks complete
+1. Implement Phase 1 fixes (CRITICAL and HIGH priority)
+2. Build and test after each fix
+3. Implement Phase 2 fixes (MEDIUM priority)
+4. Implement Phase 3 fixes (LOW priority)
+5. Final build and comprehensive testing
+6. Single consolidated commit with all fixes
+
+---
+
+## Completed This Iteration
+
+- **TASK-001**: Verified debug override was already removed (commit 210a290)
+- **TASK-002**: Fixed hashCode() negative ID issue - added `kotlin.math.abs()` wrapper in Speaker.kt and Place.kt generateId() methods
+

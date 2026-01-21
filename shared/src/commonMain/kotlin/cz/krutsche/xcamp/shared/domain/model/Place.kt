@@ -1,6 +1,7 @@
 package cz.krutsche.xcamp.shared.domain.model
 
 import kotlinx.serialization.Serializable
+import kotlin.math.abs
 
 /**
  * Place domain model
@@ -33,7 +34,7 @@ data class Place(
          * Uses a simple hash of the document ID
          */
         fun generateId(uid: String): Long {
-            return uid.hashCode().toLong()
+            return abs(uid.hashCode()).toLong()
         }
 
         /**
