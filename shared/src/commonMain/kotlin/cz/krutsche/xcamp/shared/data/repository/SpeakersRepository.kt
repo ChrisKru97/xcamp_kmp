@@ -5,6 +5,7 @@ import cz.krutsche.xcamp.shared.data.firebase.StorageService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.domain.model.FirestoreSpeaker
 import cz.krutsche.xcamp.shared.domain.model.Speaker
+import cz.krutsche.xcamp.shared.domain.model.populateImageUrls
 import cz.krutsche.xcamp.shared.domain.model.toDbSpeaker
 import io.github.aakira.napier.Napier
 
@@ -56,23 +57,12 @@ class SpeakersRepository(
                 Speaker.fromFirestoreData(documentId, firestoreSpeaker)
             },
             insertItems = { speakers ->
-                // Populate imageUrls for speakers with images
-                val speakersWithUrls = speakers.map { speaker ->
-                    if (speaker.image != null) {
-                        val urlResult = storageService.getDownloadUrl(speaker.image)
-                        speaker.copy(
-                            imageUrl = urlResult.getOrNull()
-                        ).also {
-                            if (urlResult.isFailure) {
-                                Napier.w(tag = "SpeakersRepository") { "syncFromFirestore() - Failed to get download URL for speaker ${speaker.id}: ${urlResult.exceptionOrNull()?.message}" }
-                            } else {
-                                Napier.d(tag = "SpeakersRepository") { "syncFromFirestore() - Got download URL for speaker ${speaker.id}: ${urlResult.getOrNull()}" }
-                            }
-                        }
-                    } else {
-                        speaker
-                    }
-                }
+                // Populate imageUrls for speakers with images using shared extension
+                val speakersWithUrls = speakers.populateImageUrls(
+                    storageService = storageService,
+                    entityName = "speaker",
+                    copyWithUrl = { imageUrl -> this.copy(imageUrl = imageUrl) }
+                )
                 insertSpeakers(speakersWithUrls)
             }
         )

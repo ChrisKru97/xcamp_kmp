@@ -156,12 +156,11 @@ Using `kotlin.time.ExperimentalTime` in production.
 - [x] **TASK-004**: Fix toggleFavorite to return Result<Unit> (HIGH)
   - Wrapped repository call in try-catch returning Result<Unit>
   - Swift callers continue to work with existing error handling patterns
-  - File: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/config/ScheduleService.kt`
-  - Add error feedback to callers
 
-- [ ] **TASK-005**: Extract duplicate image URL fetching logic (HIGH)
-  - Files: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/repository/SpeakersRepository.kt`, `PlacesRepository.kt`
-  - Create generic extension function for HasImage entities
+- [x] **TASK-005**: Extract duplicate image URL fetching logic (HIGH)
+  - Created HasImage.kt with generic populateImageUrls() extension function
+  - Updated SpeakersRepository and PlacesRepository to use the shared extension
+  - Eliminated ~30 lines of duplicate code
 
 - [ ] **TASK-006**: Fix unsafe URL force unwrap in PlacesView (HIGH)
   - File: `iosApp/iosApp/views/PlacesView.swift`
@@ -284,4 +283,5 @@ After fixes are implemented:
 - **TASK-002**: Fixed hashCode() negative ID issue - added `kotlin.math.abs()` wrapper in Speaker.kt and Place.kt generateId() methods
 - **TASK-003**: Fixed ImageCache memory leak - added thread-safe concurrent queue with barrier flags and cleanupExpiredEntries() method
 - **TASK-004**: Fixed toggleFavorite to return Result<Unit> - wrapped repository call in try-catch for proper error feedback
+- **TASK-005**: Extracted duplicate image URL fetching logic - created generic populateImageUrls() extension in HasImage.kt
 

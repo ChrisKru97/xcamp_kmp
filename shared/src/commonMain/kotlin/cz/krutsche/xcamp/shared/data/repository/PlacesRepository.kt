@@ -5,6 +5,7 @@ import cz.krutsche.xcamp.shared.data.firebase.StorageService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.domain.model.FirestorePlace
 import cz.krutsche.xcamp.shared.domain.model.Place
+import cz.krutsche.xcamp.shared.domain.model.populateImageUrls
 import cz.krutsche.xcamp.shared.domain.model.toDbPlace
 import io.github.aakira.napier.Napier
 
@@ -58,23 +59,12 @@ class PlacesRepository(
                 Place.fromFirestoreData(documentId, firestorePlace)
             },
             insertItems = { places ->
-                // Populate imageUrls for places with images
-                val placesWithUrls = places.map { place ->
-                    if (place.image != null) {
-                        val urlResult = storageService.getDownloadUrl(place.image)
-                        place.copy(
-                            imageUrl = urlResult.getOrNull()
-                        ).also {
-                            if (urlResult.isFailure) {
-                                Napier.w(tag = "PlacesRepository") { "syncFromFirestore() - Failed to get download URL for place ${place.id}: ${urlResult.exceptionOrNull()?.message}" }
-                            } else {
-                                Napier.d(tag = "PlacesRepository") { "syncFromFirestore() - Got download URL for place ${place.id}: ${urlResult.getOrNull()}" }
-                            }
-                        }
-                    } else {
-                        place
-                    }
-                }
+                // Populate imageUrls for places with images using shared extension
+                val placesWithUrls = places.populateImageUrls(
+                    storageService = storageService,
+                    entityName = "place",
+                    copyWithUrl = { imageUrl -> this.copy(imageUrl = imageUrl) }
+                )
                 insertPlaces(placesWithUrls)
             }
         )
