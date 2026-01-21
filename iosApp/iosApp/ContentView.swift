@@ -15,62 +15,78 @@ struct ContentView: View {
         if appViewModel.isLoading {
             SplashView()
         } else {
-            // Use the appState from AppViewModel which was set during initialization
-            let availableTabs = appViewModel.getAvailableTabsForCurrentState()
+            mainTabView
+        }
+    }
 
-            TabView(selection: $selectedTabIndex) {
-                ForEach(Array(availableTabs.enumerated()), id: \.element) { index, tab in
-                    createTabView(tab, availableTabs: availableTabs)
-                        .tag(index)
-                }
-            }
-            .tabViewStyle(.automatic)
-            .tint(.accentColor)
-            .onChange(of: selectedTabIndex) { newValue in
-                // Skip if we're reverting from More tab (don't update previousTabIndex)
-                if isRevertingFromMoreTab {
-                    return
-                }
+    // MARK: - Computed Properties for View Optimization
 
-                // Check if the newly selected tab is the "More" tab
-                let moreTab = availableTabs.firstIndex { $0 == .more }
-                if newValue == moreTab {
-                    // Show the popover instead of navigating
-                    showingMorePopover = true
-                    // Don't actually navigate to the More tab - stay on previous tab
-                    isRevertingFromMoreTab = true
-                    selectedTabIndex = previousTabIndex
-                    // Reset flag after the state update completes
-                    Task { @MainActor in
-                        isRevertingFromMoreTab = false
-                    }
-                } else {
-                    // Update previous index for non-More tabs
-                    previousTabIndex = newValue
-                }
-            }
-            .confirmationDialog(
-                Strings.Common.shared.MORE_OPTIONS,
-                isPresented: $showingMorePopover,
-                titleVisibility: .visible
-            ) {
-                Button(Strings.Tabs.shared.MEDIA) {
-                    let availableTabs = appViewModel.getAvailableTabsForCurrentState()
-                    if let mediaIndex = availableTabs.firstIndex(of: .media) {
-                        selectedTabIndex = mediaIndex
-                    }
-                }
+    private var availableTabs: [AppTab] {
+        appViewModel.getAvailableTabsForCurrentState()
+    }
 
-                Button(Strings.Tabs.shared.INFO) {
-                    let availableTabs = appViewModel.getAvailableTabsForCurrentState()
-                    if let infoIndex = availableTabs.firstIndex(of: .info) {
-                        selectedTabIndex = infoIndex
-                    }
-                }
-
-                Button(Strings.Common.shared.CANCEL, role: .cancel) { }
+    @ViewBuilder
+    private var mainTabView: some View {
+        TabView(selection: $selectedTabIndex) {
+            ForEach(Array(availableTabs.enumerated()), id: \.element) { index, tab in
+                createTabView(tab, availableTabs: availableTabs)
+                    .tag(index)
             }
         }
+        .tabViewStyle(.automatic)
+        .tint(.accentColor)
+        .onChange(of: selectedTabIndex, handleTabChange)
+        .confirmationDialog(
+            Strings.Common.shared.MORE_OPTIONS,
+            isPresented: $showingMorePopover,
+            titleVisibility: .visible,
+            presenting: availableTabs
+        ) { _ in
+            moreOptionsButtons
+        }
+    }
+
+    // MARK: - Tab Change Handler
+
+    private func handleTabChange(newValue: Int) {
+        // Skip if we're reverting from More tab (don't update previousTabIndex)
+        guard !isRevertingFromMoreTab else { return }
+
+        // Check if the newly selected tab is the "More" tab
+        let moreTab = availableTabs.firstIndex { $0 == .more }
+        if newValue == moreTab {
+            // Show the popover instead of navigating
+            showingMorePopover = true
+            // Don't actually navigate to the More tab - stay on previous tab
+            isRevertingFromMoreTab = true
+            selectedTabIndex = previousTabIndex
+            // Reset flag after the state update completes
+            Task { @MainActor in
+                isRevertingFromMoreTab = false
+            }
+        } else {
+            // Update previous index for non-More tabs
+            previousTabIndex = newValue
+        }
+    }
+
+    // MARK: - More Options Dialog Buttons
+
+    @ViewBuilder
+    private var moreOptionsButtons: some View {
+        Button(Strings.Tabs.shared.MEDIA) {
+            if let mediaIndex = availableTabs.firstIndex(of: .media) {
+                selectedTabIndex = mediaIndex
+            }
+        }
+
+        Button(Strings.Tabs.shared.INFO) {
+            if let infoIndex = availableTabs.firstIndex(of: .info) {
+                selectedTabIndex = infoIndex
+            }
+        }
+
+        Button(Strings.Common.shared.CANCEL, role: .cancel) { }
     }
 
     @ViewBuilder
