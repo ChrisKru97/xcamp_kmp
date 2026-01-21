@@ -300,6 +300,7 @@ After fixes are implemented:
 ## Completed This Iteration
 
 - **TASK-016**: Add accessibility labels to More tab buttons - added `.accessibilityLabel()` modifiers to Media, Info, and Cancel buttons in MorePopoverContentView (ContentView.swift)
+- **TASK-015**: Marked as blocked (same Swift 6 concurrency issue as TASK-010)
 
 ## Notes
 
