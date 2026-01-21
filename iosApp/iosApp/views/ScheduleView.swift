@@ -10,7 +10,7 @@ struct ScheduleView: View {
     @State private var showingFilter = false
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack(alignment: .bottomTrailing) {
                 Color.background.ignoresSafeArea()
 

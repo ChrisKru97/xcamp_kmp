@@ -41,7 +41,7 @@ struct ContentView: View {
                     isRevertingFromMoreTab = true
                     selectedTabIndex = previousTabIndex
                     // Reset flag after the state update completes
-                    DispatchQueue.main.async {
+                    Task { @MainActor in
                         isRevertingFromMoreTab = false
                     }
                 } else {

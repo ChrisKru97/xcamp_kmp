@@ -5,7 +5,7 @@ struct RatingView: View {
     @EnvironmentObject var appViewModel: AppViewModel
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ScrollView {
                 Text("TODO")
             }

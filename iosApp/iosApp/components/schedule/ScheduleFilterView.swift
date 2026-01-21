@@ -9,7 +9,7 @@ struct ScheduleFilterView: View {
     private let allTypes: [SectionType] = [.main, .internal, .gospel, .food]
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             VStack(spacing: 0) {
                 // Drag handle
                 RoundedRectangle(cornerRadius: 2.5)

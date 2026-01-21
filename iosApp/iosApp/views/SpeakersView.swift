@@ -6,7 +6,7 @@ struct SpeakersView: View {
     @StateObject private var viewModel = SpeakersViewModel()
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 Color.background.ignoresSafeArea()
 
@@ -272,7 +272,7 @@ private struct ListScrollContentBackgroundModifier: ViewModifier {
 }
 
 #Preview("Speaker Detail View") {
-    NavigationView {
+    NavigationStack {
         SpeakerDetailView(speaker: Speaker(
             id: "test1",
             name: "Jan Novák",

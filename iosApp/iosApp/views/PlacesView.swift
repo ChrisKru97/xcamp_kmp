@@ -6,7 +6,7 @@ struct PlacesView: View {
     @StateObject private var viewModel = PlacesViewModel()
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack {
                 Color.background.ignoresSafeArea()
 
@@ -301,7 +301,7 @@ private struct iOS16ToolbarBackgroundModifier: ViewModifier {
 }
 
 #Preview("Place Detail View") {
-    NavigationView {
+    NavigationStack {
         PlaceDetailView(place: Place(
             id: "test",
             name: "Test Place",

@@ -118,7 +118,7 @@ struct SectionDetailView: View {
 // MARK: - Previews
 
 #Preview("Section Detail View - Main") {
-    NavigationView {
+    NavigationStack {
         ScrollView {
             VStack(spacing: 0) {
                 // Hero section simulation
@@ -197,7 +197,7 @@ struct SectionDetailView: View {
 }
 
 #Preview("Section Detail View - Gospel") {
-    NavigationView {
+    NavigationStack {
         ScrollView {
             VStack(spacing: 0) {
                 // Hero section simulation
