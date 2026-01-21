@@ -24,7 +24,7 @@ struct CachedAsyncImage<Content: View>: View {
                 content(Image(uiImage: image))
             } else {
                 content(Image(systemName: fallbackIconName))
-                    .onAppear {
+                    .task {
                         loadImage()
                     }
                     .id(url) // Force refresh when URL changes
