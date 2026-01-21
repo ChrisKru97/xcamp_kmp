@@ -147,13 +147,11 @@ Using `kotlin.time.ExperimentalTime` in production.
 
 - [x] **TASK-002**: Fix hashCode() negative ID issue in Speaker and Place (HIGH)
   - Fixed using `kotlin.math.abs(uid.hashCode()).toLong()`
-  - Files: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/domain/model/Speaker.kt`, `Place.kt`
-  - Use `kotlin.math.abs(uid.hashCode()).toLong()` or proper hash function
 
-- [ ] **TASK-003**: Fix ImageCache memory leak (HIGH)
-  - File: `iosApp/iosApp/components/common/ImageCache.swift`
-  - Implement cleanup or use NSCache with automatic eviction
-  - Add thread safety with actor or serial queue
+- [x] **TASK-003**: Fix ImageCache memory leak (HIGH)
+  - Added thread-safe concurrent queue with barrier flags for storageTimes access
+  - Added cleanupExpiredEntries() method to remove expired/orphaned entries
+  - Added cleanup call in XcampApp.init() on app launch
 
 - [ ] **TASK-004**: Fix toggleFavorite to return Result<Unit> (HIGH)
   - File: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/config/ScheduleService.kt`
@@ -282,4 +280,5 @@ After fixes are implemented:
 
 - **TASK-001**: Verified debug override was already removed (commit 210a290)
 - **TASK-002**: Fixed hashCode() negative ID issue - added `kotlin.math.abs()` wrapper in Speaker.kt and Place.kt generateId() methods
+- **TASK-003**: Fixed ImageCache memory leak - added thread-safe concurrent queue with barrier flags and cleanupExpiredEntries() method
 

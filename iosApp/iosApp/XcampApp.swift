@@ -39,6 +39,10 @@ struct XcampApp: App {
         }
 
         logger.debug("XcampApp.init() - App initialization complete")
+
+        // Clean up expired image cache entries on app launch
+        logger.debug("XcampApp.init() - Cleaning up expired image cache entries")
+        ImageCache.shared.cleanupExpiredEntries()
     }
 
     var body: some Scene {
