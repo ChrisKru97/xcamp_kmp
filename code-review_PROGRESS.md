@@ -186,17 +186,25 @@ Using `kotlin.time.ExperimentalTime` in production.
   - Refactored PlacesService, SpeakersService, ScheduleService to extend RepositoryService
   - Reduced code duplication by ~40 lines across three service files
 
-- [ ] **TASK-010**: Add error logging to all background sync methods (MEDIUM)
+- [ ] **TASK-010**: Add error logging to all background sync methods (MEDIUM) - BLOCKED
   - Files: `iosApp/iosApp/AppViewModel.swift`
-  - Replace silent error handling with proper logger.error() calls
+  - Issue: Swift 6 concurrency compiler limitation prevents replacing `print()` with `logger` in `Task(priority:)` closures
+  - Error: "type of expression is ambiguous without a type annotation" when accessing Logger
+  - Current code uses `print()` which works correctly; migrating to Logger requires further investigation
+  - Note: This is a low-priority improvement since errors are still being logged to console
 
-- [ ] **TASK-011**: Fix HeroAsyncImageWithFallback to use fallbackIconName (MEDIUM)
+- [x] **TASK-011**: Fix HeroAsyncImageWithFallback to use fallbackIconName (MEDIUM)
   - File: `iosApp/iosApp/components/common/AsyncImageWithFallback.swift`
-  - Implement parameter usage in CachedAsyncImage
+  - Added `fallbackIconName` parameter to `CachedAsyncImage` with default value "photo"
+  - Updated `AsyncImageWithFallback` and `HeroAsyncImageWithFallback` to pass `fallbackIconName` to `CachedAsyncImage`
+  - The fallback icon is now properly used when image fails to load or is nil
 
-- [ ] **TASK-012**: Extract duplicate imageUrl computed property (MEDIUM)
-  - Files: `iosApp/iosApp/views/SpeakersView.swift`, `PlacesView.swift`
-  - Create View extension for shared logic
+- [x] **TASK-012**: Extract duplicate imageUrl computed property (MEDIUM)
+  - Created `EntityExtensions.swift` with `HasImageUrl` protocol
+  - Added `imageUrlURL` computed property extension for Speaker and Place
+  - Updated `SpeakersView.swift`: Removed duplicate `imageUrl` properties from `SpeakerListItem` and `SpeakerDetailView`
+  - Updated `PlacesView.swift`: Removed duplicate `imageUrl` properties from `PlaceListItem` and `PlaceDetailView`
+  - Eliminated ~12 lines of duplicate code
 
 - [ ] **TASK-013**: Move hardcoded strings to Strings.kt (MEDIUM)
   - Files: `iosApp/iosApp/ContentView.swift`, `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/localization/Strings.kt`

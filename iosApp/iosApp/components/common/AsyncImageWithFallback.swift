@@ -6,13 +6,15 @@ import UIKit
 /// A custom AsyncImage that uses a 1-week disk cache
 struct CachedAsyncImage<Content: View>: View {
     let url: URL?
+    let fallbackIconName: String
     let content: (Image) -> Content
 
     @State private var loadedImage: UIImage?
     @State private var isLoading = false
 
-    init(url: URL?, @ViewBuilder content: @escaping (Image) -> Content) {
+    init(url: URL?, fallbackIconName: String = "photo", @ViewBuilder content: @escaping (Image) -> Content) {
         self.url = url
+        self.fallbackIconName = fallbackIconName
         self.content = content
     }
 
@@ -21,7 +23,7 @@ struct CachedAsyncImage<Content: View>: View {
             if let image = loadedImage {
                 content(Image(uiImage: image))
             } else {
-                content(Image(systemName: "photo"))
+                content(Image(systemName: fallbackIconName))
                     .onAppear {
                         loadImage()
                     }
@@ -80,7 +82,7 @@ struct AsyncImageWithFallback: View {
     }
 
     var body: some View {
-        CachedAsyncImage(url: url) { phase in
+        CachedAsyncImage(url: url, fallbackIconName: fallbackIconName) { phase in
             phase
                 .resizable()
                 .scaledToFill()
@@ -109,7 +111,7 @@ struct HeroAsyncImageWithFallback: View {
     }
 
     var body: some View {
-        CachedAsyncImage(url: url) { image in
+        CachedAsyncImage(url: url, fallbackIconName: fallbackIconName) { image in
             ZStack {
                 image
                     .resizable()

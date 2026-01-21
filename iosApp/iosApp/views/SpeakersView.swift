@@ -144,14 +144,9 @@ struct SpeakerListItem: View {
         }
     }
 
-    private var imageUrl: URL? {
-        guard let urlString = speaker.imageUrl, !urlString.isEmpty else { return nil }
-        return URL(string: urlString)
-    }
-
     private var speakerImage: some View {
         AsyncImageWithFallback(
-            url: imageUrl,
+            url: speaker.imageUrlURL,
             fallbackIconName: "person.fill",
             size: CGSize(width: 80, height: 80)
         )
@@ -192,14 +187,9 @@ struct SpeakerDetailView: View {
         .background(Color.background)
     }
 
-    private var imageUrl: URL? {
-        guard let urlString = speaker.imageUrl, !urlString.isEmpty else { return nil }
-        return URL(string: urlString)
-    }
-
     private var speakerHeroImage: some View {
         HeroAsyncImageWithFallback(
-            url: imageUrl,
+            url: speaker.imageUrlURL,
             fallbackIconName: "person.fill",
             height: 300
         )
