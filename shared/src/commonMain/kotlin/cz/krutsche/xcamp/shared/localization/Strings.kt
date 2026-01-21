@@ -14,6 +14,12 @@ object Strings {
         const val MEDIA = "Média"
         const val INFO = "Info"
         const val RATING = "Hodnocení"
+        const val MORE = "Více"
+    }
+
+    object Common {
+        const val MORE_OPTIONS = "Další možnosti"
+        const val CANCEL = "Zrušit"
     }
 
     object Countdown {

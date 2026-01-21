@@ -206,9 +206,10 @@ Using `kotlin.time.ExperimentalTime` in production.
   - Updated `PlacesView.swift`: Removed duplicate `imageUrl` properties from `PlaceListItem` and `PlaceDetailView`
   - Eliminated ~12 lines of duplicate code
 
-- [ ] **TASK-013**: Move hardcoded strings to Strings.kt (MEDIUM)
+- [x] **TASK-013**: Move hardcoded strings to Strings.kt (MEDIUM)
   - Files: `iosApp/iosApp/ContentView.swift`, `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/localization/Strings.kt`
-  - Add: "More", "More Options", "Cancel"
+  - Added: Strings.Tabs.MORE ("Více"), Strings.Common.MORE_OPTIONS ("Další možnosti"), Strings.Common.CANCEL ("Zrušit")
+  - Updated ContentView.swift to use the new strings
 
 - [ ] **TASK-014**: Extract color constants for schedule filters (MEDIUM)
   - File: `iosApp/iosApp/utils/SectionTypeExtensions.swift`
@@ -293,9 +294,7 @@ After fixes are implemented:
 
 ## Completed This Iteration
 
-- **TASK-011**: Fixed HeroAsyncImageWithFallback to use fallbackIconName - added fallbackIconName parameter to CachedAsyncImage and updated all callers
-- **TASK-012**: Extracted duplicate imageUrl computed property - created EntityExtensions.swift with HasImageUrl protocol and imageUrlURL extension
-- **TASK-009**: Created RepositoryService base class - extracted common lazy initialization pattern from PlacesService, SpeakersService, and ScheduleService into generic base class
+- **TASK-013**: Move hardcoded strings to Strings.kt - added Strings.Tabs.MORE ("Více"), Strings.Common.MORE_OPTIONS ("Další možnosti"), Strings.Common.CANCEL ("Zrušit"), updated ContentView.swift to use the new strings
 
 ## Notes
 

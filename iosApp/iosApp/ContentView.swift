@@ -111,7 +111,7 @@ struct ContentView: View {
                 EmptyView()
                     .tabItem {
                         Image(systemName: "ellipsis.circle.fill")
-                        Text("More")
+                        Text(Strings.Tabs.shared.MORE)
                     }
             default: EmptyView()
         }
@@ -129,7 +129,7 @@ struct MorePopoverContentView: View {
     var body: some View {
         VStack(spacing: Spacing.md) {
             // Header
-            Text("More Options")
+            Text(Strings.Common.shared.MORE_OPTIONS)
                 .font(.headline)
                 .foregroundColor(.primary)
                 .padding(.bottom, Spacing.sm)
@@ -194,7 +194,7 @@ struct MorePopoverContentView: View {
             Button(action: {
                 isPresented = false
             }) {
-                Text("Cancel")
+                Text(Strings.Common.shared.CANCEL)
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity)
                     .padding()
