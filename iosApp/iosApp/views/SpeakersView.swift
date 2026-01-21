@@ -133,7 +133,7 @@ struct SpeakerListItem: View, Equatable {
     let speaker: Speaker
 
     var body: some View {
-        GlassCard {
+        GlassCard(isScrollable: true) {
             HStack(spacing: Spacing.md) {
                 speakerImage
                 speakerInfo

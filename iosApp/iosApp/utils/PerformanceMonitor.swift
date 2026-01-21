@@ -161,19 +161,20 @@ private struct MeasureRenderTimeView<Content: View>: View {
     let label: String
     let content: Content
 
-    @State private var renderTime: TimeInterval = 0
+    @State private var hasAppeared = false
     private let logger = Logger(subsystem: PerformanceMonitor.subsystem, category: "MeasureRenderTime")
 
     var body: some View {
+        let signpostID = PerformanceMonitor.makeSignpostID()
+        _ = os_signpost(.begin, log: PerformanceMonitor.signposts, name: "ViewRender", signpostID: signpostID, "%{public}s", label)
+
         content
             .onAppear {
-                let startTime = CFAbsoluteTimeGetCurrent()
-                // Force a layout pass to measure actual rendering time
-                DispatchQueue.main.async {
-                    let endTime = CFAbsoluteTimeGetCurrent()
-                    renderTime = endTime - startTime
-                    logger.debug("\(label): Rendered in \(String(format: "%.2f", renderTime * 1000)) ms")
-                }
+                os_signpost(.end, log: PerformanceMonitor.signposts, name: "ViewRender", signpostID: signpostID, "%{public}s", label)
+                hasAppeared = true
+                #if DEBUG
+                logger.debug("\(label): View appeared - use Instruments Time Profiler for accurate render metrics")
+                #endif
             }
     }
 }

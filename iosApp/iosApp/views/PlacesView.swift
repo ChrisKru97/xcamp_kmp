@@ -37,6 +37,7 @@ struct PlacesView: View {
                 ForEach(places, id: \.id) { place in
                     NavigationLink(destination: PlaceDetailView(place: place)) {
                         PlaceListItem(place: place)
+                            .equatable()
                     }
                     .buttonStyle(PlainButtonStyle())
                 }
@@ -128,11 +129,15 @@ enum PlacesState {
 
 // MARK: - Place List Item
 
-struct PlaceListItem: View {
+struct PlaceListItem: View, Equatable {
     let place: Place
 
+    static func == (lhs: PlaceListItem, rhs: PlaceListItem) -> Bool {
+        lhs.place.id == rhs.place.id
+    }
+
     var body: some View {
-        GlassCard {
+        GlassCard(isScrollable: true) {
             HStack(spacing: Spacing.md) {
                 placeImage
                 placeInfo

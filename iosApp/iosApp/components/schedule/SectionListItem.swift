@@ -9,7 +9,7 @@ struct SectionListItem: View, Equatable {
     }
 
     var body: some View {
-        GlassCard {
+        GlassCard(isScrollable: true) {
             HStack(spacing: Spacing.md) {
                 VStack(alignment: .leading, spacing: Spacing.xs) {
                     Text(formatTime(section.startTime.epochMillis))
