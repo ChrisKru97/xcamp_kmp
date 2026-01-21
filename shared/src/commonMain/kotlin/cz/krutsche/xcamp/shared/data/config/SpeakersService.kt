@@ -1,16 +1,13 @@
 package cz.krutsche.xcamp.shared.data.config
 
-import cz.krutsche.xcamp.shared.data.DatabaseFactory
 import cz.krutsche.xcamp.shared.data.ServiceFactory
-import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.data.repository.SpeakersRepository
 import cz.krutsche.xcamp.shared.domain.model.Speaker
 import io.github.aakira.napier.Napier
 
-class SpeakersService {
-    private val databaseManager: DatabaseManager by lazy { DatabaseFactory.getDatabaseManager() }
-    private val repository: SpeakersRepository by lazy {
-        SpeakersRepository(
+class SpeakersService : RepositoryService<SpeakersRepository>() {
+    override fun createRepository(): SpeakersRepository {
+        return SpeakersRepository(
             databaseManager = databaseManager,
             firestoreService = ServiceFactory.getFirestoreService(),
             storageService = ServiceFactory.getStorageService()
@@ -29,7 +26,7 @@ class SpeakersService {
         return repository.getSpeakerById(id)
     }
 
-    suspend fun syncFromFirestore(): Result<Unit> {
+    override suspend fun syncFromFirestore(): Result<Unit> {
         Napier.d(tag = "SpeakersService") { "syncFromFirestore() - Starting sync" }
         return repository.syncFromFirestore()
     }

@@ -1,17 +1,14 @@
 @file:OptIn(kotlin.time.ExperimentalTime::class)
 package cz.krutsche.xcamp.shared.data.config
 
-import cz.krutsche.xcamp.shared.data.DatabaseFactory
 import cz.krutsche.xcamp.shared.data.ServiceFactory
-import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.data.repository.ScheduleRepository
 import cz.krutsche.xcamp.shared.domain.model.Section
 import cz.krutsche.xcamp.shared.domain.model.SectionType
 
-class ScheduleService {
-    private val databaseManager: DatabaseManager by lazy { DatabaseFactory.getDatabaseManager() }
-    private val repository: ScheduleRepository by lazy {
-        ScheduleRepository(
+class ScheduleService : RepositoryService<ScheduleRepository>() {
+    override fun createRepository(): ScheduleRepository {
+        return ScheduleRepository(
             databaseManager = databaseManager,
             firestoreService = ServiceFactory.getFirestoreService()
         )
@@ -37,7 +34,7 @@ class ScheduleService {
         return repository.getSectionsByDateRange(startTime, endTime)
     }
 
-    suspend fun syncFromFirestore(): Result<Unit> {
+    override suspend fun syncFromFirestore(): Result<Unit> {
         return repository.syncFromFirestore()
     }
 

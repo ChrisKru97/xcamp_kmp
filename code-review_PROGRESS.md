@@ -181,9 +181,10 @@ Using `kotlin.time.ExperimentalTime` in production.
 
 ### Phase 2: Medium Priority Fixes
 
-- [ ] **TASK-009**: Create generic Service base class (MEDIUM)
-  - Extract common pattern from PlacesService, SpeakersService, ScheduleService
-  - New file: `shared/src/commonMain/kotlin/cz/krutsche/xcamp/shared/data/config/RepositoryService.kt`
+- [x] **TASK-009**: Create generic Service base class (MEDIUM)
+  - Created `RepositoryService.kt` base class with lazy initialization pattern
+  - Refactored PlacesService, SpeakersService, ScheduleService to extend RepositoryService
+  - Reduced code duplication by ~40 lines across three service files
 
 - [ ] **TASK-010**: Add error logging to all background sync methods (MEDIUM)
   - Files: `iosApp/iosApp/AppViewModel.swift`
@@ -284,7 +285,7 @@ After fixes are implemented:
 
 ## Completed This Iteration
 
-- **TASK-001**: Verified debug override was already removed (commit 210a290)
+- **TASK-009**: Created RepositoryService base class - extracted common lazy initialization pattern from PlacesService, SpeakersService, and ScheduleService into generic base class
 - **TASK-002**: Fixed hashCode() negative ID issue - added `kotlin.math.abs()` wrapper in Speaker.kt and Place.kt generateId() methods
 - **TASK-003**: Fixed ImageCache memory leak - added thread-safe concurrent queue with barrier flags and cleanupExpiredEntries() method
 - **TASK-004**: Fixed toggleFavorite to return Result<Unit> - wrapped repository call in try-catch for proper error feedback

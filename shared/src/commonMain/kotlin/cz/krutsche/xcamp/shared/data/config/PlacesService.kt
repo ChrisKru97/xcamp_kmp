@@ -1,15 +1,12 @@
 package cz.krutsche.xcamp.shared.data.config
 
-import cz.krutsche.xcamp.shared.data.DatabaseFactory
 import cz.krutsche.xcamp.shared.data.ServiceFactory
-import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.data.repository.PlacesRepository
 import cz.krutsche.xcamp.shared.domain.model.Place
 
-class PlacesService {
-    private val databaseManager: DatabaseManager by lazy { DatabaseFactory.getDatabaseManager() }
-    private val repository: PlacesRepository by lazy {
-        PlacesRepository(
+class PlacesService : RepositoryService<PlacesRepository>() {
+    override fun createRepository(): PlacesRepository {
+        return PlacesRepository(
             databaseManager = databaseManager,
             firestoreService = ServiceFactory.getFirestoreService(),
             storageService = ServiceFactory.getStorageService()
@@ -24,7 +21,7 @@ class PlacesService {
         return repository.getPlaceById(id)
     }
 
-    suspend fun syncFromFirestore(): Result<Unit> {
+    override suspend fun syncFromFirestore(): Result<Unit> {
         return repository.syncFromFirestore()
     }
 
