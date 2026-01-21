@@ -250,15 +250,24 @@ Using `kotlin.time.ExperimentalTime` in production.
   - Added two new previews for CachedAsyncImage component (light and dark mode)
   - Demonstrates various usage patterns: with URL, nil URL, rounded corners
 
-- [ ] **TASK-021**: Document KMP property naming conflicts (LOW)
+- [x] **TASK-021**: Document KMP property naming conflicts (LOW)
   - Files: `iosApp/iosApp/views/PlacesView.swift`, `SpeakersView.swift`
-  - Add comment explaining description_ usage
+  - Already documented - comments already in place explaining description_ usage
+  - Comment: "Use description_ to avoid conflict with Swift's built-in .description" appears at all usage sites
 
-- [ ] **TASK-022**: Consider generic ViewModel for list views (LOW)
-  - Create `ListViewModel<T>` protocol to eliminate duplication
+- [x] **TASK-022**: Consider generic ViewModel for list views (LOW) - DOCUMENTED AS NOT WORTH IMPLEMENTING
+  - Reviewed PlacesViewModel and SpeakersViewModel for duplication
+  - Finding: While similar, these ViewModels have intentional differences in error handling
+  - Creating a generic `ListViewModel<T>` would add complexity for ~50 lines of duplicate code
+  - Recommendation: Keep current implementation - the duplication is minimal and improves readability
 
-- [ ] **TASK-023**: Standardize error handling patterns (LOW)
-  - Review and standardize Result vs exception usage
+- [x] **TASK-023**: Standardize error handling patterns (LOW) - REVIEWED AND CONFIRMED STANDARD
+  - Reviewed error handling across Repository, Service, and ViewModel layers
+  - Finding: Error handling is already standardized and follows best practices
+  - Pattern: `Result<T>` for external operations (Firestore, network), exceptions for unexpected errors
+  - All sync/refresh methods consistently return `Result<Unit>` or `Result<List<T>>`
+  - ViewModels consistently use try-catch with state management
+  - No changes needed - current implementation is correct
 
 ---
 
@@ -310,6 +319,9 @@ After fixes are implemented:
 - **TASK-018**: Refactor duplicate frame modifiers - created `fillMaxWidthLeading()` and `fillMaxSize()` view modifiers in BackportModifiers.swift
 - **TASK-019**: Add KDoc to public service methods - added comprehensive KDoc to PlacesService, SpeakersService, and ScheduleService
 - **TASK-020**: Add SwiftUI preview for CachedAsyncImage - added two new previews (light/dark mode) for CachedAsyncImage component
+- **TASK-021**: Document KMP property naming conflicts - confirmed existing documentation is complete
+- **TASK-022**: Consider generic ViewModel for list views - documented as not worth implementing
+- **TASK-023**: Standardize error handling patterns - reviewed and confirmed current implementation is already standardized
 
 ## Notes
 
