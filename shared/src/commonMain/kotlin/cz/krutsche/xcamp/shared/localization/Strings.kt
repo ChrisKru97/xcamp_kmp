@@ -9,12 +9,15 @@ object Strings {
     object Tabs {
         const val HOME = "Domů"
         const val SCHEDULE = "Program"
-        const val SPEAKERS = "Řečníci"
-        const val PLACES = "Místa"
+        const val SPEAKERS_AND_PLACES = "Informace"  // Merged tab
         const val MEDIA = "Média"
-        const val INFO = "Info"
+        const val ABOUT_FESTIVAL = "O festivalu"     // Renamed from INFO
         const val RATING = "Hodnocení"
         const val MORE = "Více"
+        // Keep for use in top tabs
+        const val SPEAKERS = "Řečníci"
+        const val PLACES = "Místa"
+        const val INFO = "Info"  // Keep for backward compatibility
     }
 
     object Common {
@@ -60,6 +63,9 @@ object Strings {
         const val RETRY = "Zkusit znovu"
         const val SHOW_ON_MAP = "Zobrazit na mapě"
         const val OPEN_IN_MAPS = "Otevřít v mapách"
+        const val RETRY_HINT = "Tap to retry loading places"
+        const val DETAIL_HINT = "Tap to view place details"
+        const val DETAIL_DESCRIPTION_HINT = "Place description and information"
     }
 
     object Speakers {
@@ -67,6 +73,10 @@ object Strings {
         const val EMPTY_TITLE = "Žádní řečníci"
         const val ERROR_TITLE = "Nepodařilo se načíst řečníky"
         const val RETRY = "Zkusit znovu"
+        const val RETRY_HINT = "Tap to retry loading speakers"
+        const val DETAIL_HINT = "Tap to view speaker details"
+        const val DETAIL_BIO_HINT = "Speaker biography and information"
+        const val BIOGRAPHY = "Biografie"
     }
 
     object Schedule {

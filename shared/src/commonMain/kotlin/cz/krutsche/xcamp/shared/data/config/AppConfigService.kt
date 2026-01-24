@@ -101,25 +101,24 @@ class AppConfigService(
         val state = getAppState()
         val result = when (state) {
             AppState.LIMITED -> {
-                Napier.d(tag = "AppConfigService") { "getAvailableTabs() -> LIMITED tabs: HOME, MEDIA, INFO" }
-                listOf(AppTab.HOME, AppTab.MEDIA, AppTab.INFO)
+                Napier.d(tag = "AppConfigService") { "getAvailableTabs() -> LIMITED tabs: HOME, MEDIA, ABOUT_FESTIVAL" }
+                listOf(AppTab.HOME, AppTab.MEDIA, AppTab.ABOUT_FESTIVAL)
             }
 
             AppState.PRE_EVENT, AppState.ACTIVE_EVENT -> {
-                Napier.d(tag = "AppConfigService") { "getAvailableTabs() -> FULL tabs (state=$state): HOME, SCHEDULE, SPEAKERS, PLACES, MEDIA, INFO" }
+                Napier.d(tag = "AppConfigService") { "getAvailableTabs() -> FULL tabs (state=$state): HOME, SCHEDULE, SPEAKERS_AND_PLACES, MEDIA, ABOUT_FESTIVAL" }
                 listOf(
                     AppTab.HOME,
                     AppTab.SCHEDULE,
-                    AppTab.SPEAKERS,
-                    AppTab.PLACES,
+                    AppTab.SPEAKERS_AND_PLACES,
                     AppTab.MEDIA,
-                    AppTab.INFO
+                    AppTab.ABOUT_FESTIVAL
                 )
             }
 
             AppState.POST_EVENT -> {
-                Napier.d(tag = "AppConfigService") { "getAvailableTabs() -> POST_EVENT tabs: HOME, SCHEDULE, RATING, MEDIA, INFO" }
-                listOf(AppTab.HOME, AppTab.SCHEDULE, AppTab.RATING, AppTab.MEDIA, AppTab.INFO)
+                Napier.d(tag = "AppConfigService") { "getAvailableTabs() -> POST_EVENT tabs: HOME, SCHEDULE, RATING, MEDIA, ABOUT_FESTIVAL" }
+                listOf(AppTab.HOME, AppTab.SCHEDULE, AppTab.RATING, AppTab.MEDIA, AppTab.ABOUT_FESTIVAL)
             }
         }
         Napier.i(tag = "AppConfigService") { "getAvailableTabs() returning ${result.size} tabs" }
@@ -144,10 +143,9 @@ enum class AppState {
 enum class AppTab {
     HOME,
     SCHEDULE,
-    SPEAKERS,
-    PLACES,
+    SPEAKERS_AND_PLACES,
     RATING,
     MEDIA,
-    INFO,
-    MORE  // Combined Media + Info tab for smaller screens
+    ABOUT_FESTIVAL,
+    MORE
 }

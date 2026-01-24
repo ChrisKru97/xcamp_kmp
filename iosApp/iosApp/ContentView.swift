@@ -4,10 +4,8 @@ import OSLog
 
 struct ContentView: View {
     @EnvironmentObject var appViewModel: AppViewModel
-    @State private var selectedTabIndex: Int = 0
-    @State private var previousTabIndex: Int = 0
+    @State private var selectedTab: AppTab = .home
     @State private var showingMorePopover = false
-    @State private var isRevertingFromMoreTab = false
 
     private let logger = Logger(subsystem: "com.krutsche.xcamp", category: "ContentView")
 
@@ -15,7 +13,7 @@ struct ContentView: View {
         if appViewModel.isLoading {
             SplashView()
         } else {
-            mainTabView
+            mainContentView
         }
     }
 
@@ -25,141 +23,215 @@ struct ContentView: View {
         appViewModel.getAvailableTabsForCurrentState()
     }
 
+    // Determine if we need the "More" overflow tab
+    // iOS shows 5 tabs max before moving overflow to "More" list
+    private var needsMoreTab: Bool {
+        availableTabs.count > 5
+    }
+
+    // Get tabs that should be visible in the tab bar (excluding overflow)
+    private var visibleTabs: [AppTab] {
+        if needsMoreTab {
+            // First 5 tabs + More tab
+            return Array(availableTabs.prefix(5)) + [.more]
+        } else {
+            return availableTabs
+        }
+    }
+
+    // Get overflow tabs that go in the More menu
+    private var overflowTabs: [AppTab] {
+        if needsMoreTab {
+            return Array(availableTabs.dropFirst(5))
+        } else {
+            return []
+        }
+    }
+
     @ViewBuilder
-    private var mainTabView: some View {
-        TabView(selection: $selectedTabIndex) {
-            ForEach(Array(availableTabs.enumerated()), id: \.element) { index, tab in
-                createTabView(tab, availableTabs: availableTabs)
-                    .tag(index)
+    private var mainContentView: some View {
+        TabView(selection: $selectedTab) {
+            // All tab views (needed for navigation regardless of visibility)
+            tabView(for: .home) {
+                HomeView()
+            }
+
+            if availableTabs.contains(.schedule) {
+                tabView(for: .schedule) {
+                    ScheduleView()
+                }
+            }
+
+            if availableTabs.contains(.speakersAndPlaces) {
+                tabView(for: .speakersAndPlaces) {
+                    SpeakersAndPlacesView()
+                }
+            }
+
+            if availableTabs.contains(.rating) {
+                tabView(for: .rating) {
+                    RatingView()
+                }
+            }
+
+            if availableTabs.contains(.media) {
+                tabView(for: .media) {
+                    MediaView()
+                }
+            }
+
+            if availableTabs.contains(.aboutFestival) {
+                tabView(for: .aboutFestival) {
+                    InfoView()
+                }
+            }
+
+            // More tab (only visible when needed)
+            if needsMoreTab {
+                Color.clear
+                    .tabItem {
+                        Label(Strings.Tabs.shared.MORE, systemImage: "ellipsis")
+                    }
+                    .tag(AppTab.more)
             }
         }
         .tabViewStyle(.automatic)
-        .tint(.accentColor)
-        .onChange(of: selectedTabIndex) { newValue in
-            handleTabChange(newValue: newValue)
-        }
-        .confirmationDialog(
-            Strings.Common.shared.MORE_OPTIONS,
-            isPresented: $showingMorePopover,
-            titleVisibility: .visible,
-            presenting: availableTabs
-        ) { _ in
-            moreOptionsButtons
-        }
-    }
-
-    // MARK: - Tab Change Handler
-
-    private func handleTabChange(newValue: Int) {
-        // Skip if we're reverting from More tab (don't update previousTabIndex)
-        guard !isRevertingFromMoreTab else { return }
-
-        // Check if the newly selected tab is the "More" tab
-        let moreTab = availableTabs.firstIndex { $0 == .more }
-        if newValue == moreTab {
-            // Show the popover instead of navigating
-            showingMorePopover = true
-            // Don't actually navigate to the More tab - stay on previous tab
-            isRevertingFromMoreTab = true
-            selectedTabIndex = previousTabIndex
-            // Reset flag after the state update completes
-            Task { @MainActor in
-                isRevertingFromMoreTab = false
+        .onChange(of: selectedTab) { newValue in
+            // Handle "More" tab tap - show popover instead of navigating
+            if newValue == .more {
+                showingMorePopover = true
             }
-        } else {
-            // Update previous index for non-More tabs
-            previousTabIndex = newValue
+        }
+        .popover(isPresented: $showingMorePopover) {
+            MoreOptionsMenu(
+                overflowTabs: overflowTabs,
+                selectedTab: $selectedTab
+            )
         }
     }
 
-    // MARK: - More Options Dialog Buttons
-
+    // Helper to create a tab view with proper labeling
     @ViewBuilder
-    private var moreOptionsButtons: some View {
-        Button(Strings.Tabs.shared.MEDIA) {
-            if let mediaIndex = availableTabs.firstIndex(of: .media) {
-                selectedTabIndex = mediaIndex
+    private func tabView<Content: View>(for tab: AppTab, @ViewBuilder content: () -> Content) -> some View {
+        content()
+            .tabItem {
+                Label(label(for: tab), systemImage: icon(for: tab))
             }
-        }
-
-        Button(Strings.Tabs.shared.INFO) {
-            if let infoIndex = availableTabs.firstIndex(of: .info) {
-                selectedTabIndex = infoIndex
-            }
-        }
-
-        Button(Strings.Common.shared.CANCEL, role: .cancel) { }
+            .tag(tab)
     }
 
-    @ViewBuilder
-    private func createTabView(_ tab: AppTab, availableTabs: [AppTab]) -> some View {
+    private func icon(for tab: AppTab) -> String {
         switch tab {
-            case .home:
-                HomeView()
-                    .tabItem {
-                        Image(systemName: "house.fill")
-                        Text(Strings.Tabs.shared.HOME)
-                    }
+        case .home: return "house.fill"
+        case .schedule: return "calendar"
+        case .speakersAndPlaces: return "info.circle.fill"
+        case .rating: return "star.fill"
+        case .media: return "photo.fill"
+        case .aboutFestival: return "questionmark.circle.fill"
+        case .more: return "ellipsis"
+        default: return "circle"
+        }
+    }
 
-            case .schedule:
-                ScheduleView()
-                    .tabItem {
-                        Image(systemName: "calendar")
-                        Text(Strings.Tabs.shared.SCHEDULE)
-                    }
-
-            case .speakers:
-                SpeakersView()
-                    .tabItem {
-                        Image(systemName: "person.2.fill")
-                        Text(Strings.Tabs.shared.SPEAKERS)
-                    }
-
-            case .places:
-                PlacesView()
-                    .tabItem {
-                        Image(systemName: "location.fill")
-                        Text(Strings.Tabs.shared.PLACES)
-                    }
-
-            case .rating:
-                RatingView()
-                    .tabItem {
-                        Image(systemName: "star.fill")
-                        Text(Strings.Tabs.shared.RATING)
-                    }
-
-            case .media:
-                MediaView()
-                    .tabItem {
-                        Image(systemName: "photo.fill")
-                        Text(Strings.Tabs.shared.MEDIA)
-                    }
-
-            case .info:
-                InfoView()
-                    .tabItem {
-                        Image(systemName: "info.circle.fill")
-                        Text(Strings.Tabs.shared.INFO)
-                    }
-
-            case .more:
-                // More tab is handled via popover - this is just a placeholder
-                EmptyView()
-                    .tabItem {
-                        Image(systemName: "ellipsis.circle.fill")
-                        Text(Strings.Tabs.shared.MORE)
-                    }
-            default: EmptyView()
+    private func label(for tab: AppTab) -> String {
+        switch tab {
+        case .home: return Strings.Tabs.shared.HOME
+        case .schedule: return Strings.Tabs.shared.SCHEDULE
+        case .speakersAndPlaces: return Strings.Tabs.shared.SPEAKERS_AND_PLACES
+        case .rating: return Strings.Tabs.shared.RATING
+        case .media: return Strings.Tabs.shared.MEDIA
+        case .aboutFestival: return Strings.Tabs.shared.ABOUT_FESTIVAL
+        case .more: return Strings.Tabs.shared.MORE
+        default: return ""
         }
     }
 }
 
-#Preview("Loaded state") {
+// MARK: - More Options Menu
+
+struct MoreOptionsMenu: View {
+    let overflowTabs: [AppTab]
+    @Binding var selectedTab: AppTab
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(spacing: 0) {
+            ForEach(Array(overflowTabs.enumerated()), id: \.offset) { index, tab in
+                if index > 0 {
+                    Divider()
+                }
+
+                Button {
+                    selectedTab = tab
+                    dismiss()
+                } label: {
+                    HStack {
+                        Image(systemName: icon(for: tab))
+                        Text(label(for: tab))
+                        Spacer()
+                    }
+                    .padding()
+                }
+            }
+        }
+        .frame(width: 200)
+    }
+
+    private func icon(for tab: AppTab) -> String {
+        switch tab {
+        case .home: return "house.fill"
+        case .schedule: return "calendar"
+        case .speakersAndPlaces: return "info.circle.fill"
+        case .rating: return "star.fill"
+        case .media: return "photo.fill"
+        case .aboutFestival: return "questionmark.circle.fill"
+        case .more: return "ellipsis"
+        default: return "circle"
+        }
+    }
+
+    private func label(for tab: AppTab) -> String {
+        switch tab {
+        case .home: return Strings.Tabs.shared.HOME
+        case .schedule: return Strings.Tabs.shared.SCHEDULE
+        case .speakersAndPlaces: return Strings.Tabs.shared.SPEAKERS_AND_PLACES
+        case .rating: return Strings.Tabs.shared.RATING
+        case .media: return Strings.Tabs.shared.MEDIA
+        case .aboutFestival: return Strings.Tabs.shared.ABOUT_FESTIVAL
+        case .more: return Strings.Tabs.shared.MORE
+        default: return ""
+        }
+    }
+}
+
+#Preview("Loaded state - LIMITED") {
     ContentView()
         .environmentObject({
             let vm = AppViewModel()
             vm.isLoading = false
+            vm.appState = .limited
+            return vm
+        }())
+        .background(.background)
+}
+
+#Preview("Loaded state - ACTIVE_EVENT") {
+    ContentView()
+        .environmentObject({
+            let vm = AppViewModel()
+            vm.isLoading = false
+            vm.appState = .activeEvent
+            return vm
+        }())
+        .background(.background)
+}
+
+#Preview("Loaded state - POST_EVENT") {
+    ContentView()
+        .environmentObject({
+            let vm = AppViewModel()
+            vm.isLoading = false
+            vm.appState = .postEvent
             return vm
         }())
         .background(.background)

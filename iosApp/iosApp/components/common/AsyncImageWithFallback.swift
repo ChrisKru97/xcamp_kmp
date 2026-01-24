@@ -136,7 +136,6 @@ struct HeroAsyncImageWithFallback: View {
             }
             .frame(height: height)
             .frame(maxWidth: .infinity)
-            .clipped()
             .overlay(
                 LinearGradient(
                     colors: [.clear, .black.opacity(0.5)],
