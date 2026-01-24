@@ -9,96 +9,99 @@ struct ScheduleFilterView: View {
     private let allTypes: [SectionType] = [.main, .internal, .gospel, .food]
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                // Drag handle
-                RoundedRectangle(cornerRadius: 2.5)
-                    .fill(Color.white.opacity(0.3))
-                    .frame(width: 40, height: 5)
-                    .padding(.top, Spacing.sm)
-                    .padding(.bottom, Spacing.md)
+        if #available(iOS 16.0, *) {
+            NavigationStack {
+                contentView
+            }
+        } else {
+            contentView
+        }
+    }
 
-                // Filter content
-                ScrollView {
-                    VStack(spacing: Spacing.md) {
-                        // Section type filters
-                        ForEach(allTypes, id: \.self) { type in
-                            FilterTypeRow(
-                                type: type,
-                                isVisible: visibleTypes.contains(type),
-                                onTap: {
-                                    withAnimation(.easeInOut(duration: 0.2)) {
-                                        toggleType(type)
-                                    }
-                                }
-                            )
-                        }
+    private var contentView: some View {
+        VStack(spacing: 0) {
+            RoundedRectangle(cornerRadius: 2.5)
+                .fill(Color.white.opacity(0.3))
+                .frame(width: 40, height: 5)
+                .padding(.top, Spacing.sm)
+                .padding(.bottom, Spacing.md)
 
-                        Divider()
-                            .background(Color.white.opacity(0.2))
-                            .padding(.vertical, Spacing.sm)
-
-                        // Favorites filter
-                        FilterToggleRow(
-                            title: Strings.Schedule.shared.FAVORITES,
-                            icon: "star.fill",
-                            color: .yellow,
-                            isOn: favoritesOnly,
+            ScrollView {
+                VStack(spacing: Spacing.md) {
+                    ForEach(allTypes, id: \.self) { type in
+                        FilterTypeRow(
+                            type: type,
+                            isVisible: visibleTypes.contains(type),
                             onTap: {
                                 withAnimation(.easeInOut(duration: 0.2)) {
-                                    favoritesOnly.toggle()
+                                    toggleType(type)
                                 }
                             }
                         )
+                    }
 
-                        Divider()
-                            .background(Color.white.opacity(0.2))
-                            .padding(.vertical, Spacing.sm)
+                    Divider()
+                        .background(Color.white.opacity(0.2))
+                        .padding(.vertical, Spacing.sm)
 
-                        // Quick actions
-                        HStack(spacing: Spacing.md) {
-                            Button(action: showAllTypes) {
-                                HStack {
-                                    Image(systemName: "eye")
-                                    Text(Strings.Schedule.shared.SHOW_ALL)
-                                }
-                                .font(.subheadline)
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(
-                                    Capsule()
-                                        .fill(Color.secondary.opacity(0.3))
-                                )
-                            }
-
-                            Button(action: hideAllTypes) {
-                                HStack {
-                                    Image(systemName: "eye.slash")
-                                    Text(Strings.Schedule.shared.HIDE_ALL)
-                                }
-                                .font(.subheadline)
-                                .foregroundColor(.white)
-                                .frame(maxWidth: .infinity)
-                                .padding()
-                                .background(
-                                    Capsule()
-                                        .fill(Color.secondary.opacity(0.3))
-                                )
+                    FilterToggleRow(
+                        title: Strings.Schedule.shared.FAVORITES,
+                        icon: "star.fill",
+                        color: .yellow,
+                        isOn: favoritesOnly,
+                        onTap: {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                favoritesOnly.toggle()
                             }
                         }
+                    )
+
+                    Divider()
+                        .background(Color.white.opacity(0.2))
+                        .padding(.vertical, Spacing.sm)
+
+                    HStack(spacing: Spacing.md) {
+                        Button(action: showAllTypes) {
+                            HStack {
+                                Image(systemName: "eye")
+                                Text(Strings.Schedule.shared.SHOW_ALL)
+                            }
+                            .font(.subheadline)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(
+                                Capsule()
+                                    .fill(Color.secondary.opacity(0.3))
+                            )
+                        }
+
+                        Button(action: hideAllTypes) {
+                            HStack {
+                                Image(systemName: "eye.slash")
+                                Text(Strings.Schedule.shared.HIDE_ALL)
+                            }
+                            .font(.subheadline)
+                            .foregroundColor(.white)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(
+                                Capsule()
+                                    .fill(Color.secondary.opacity(0.3))
+                            )
+                        }
                     }
-                    .padding(.horizontal, Spacing.md)
                 }
+                .padding(.horizontal, Spacing.md)
             }
-            .background(Color.background)
-            .navigationTitle(Strings.Schedule.shared.FILTER_TITLE)
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(Strings.Schedule.shared.DONE) {
-                        dismiss()
-                    }
+        }
+        .background(Color.background)
+        .navigationTitle(Strings.Schedule.shared.FILTER_TITLE)
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Button(Strings.Schedule.shared.DONE) {
+                    dismiss()
                 }
             }
         }
@@ -133,7 +136,6 @@ struct FilterTypeRow: View {
     var body: some View {
         Button(action: onTap) {
             HStack(spacing: Spacing.md) {
-                // Color indicator
                 Circle()
                     .fill(type.color)
                     .frame(width: 16, height: 16)

@@ -34,12 +34,10 @@ class ScheduleViewModel: ObservableObject {
         }
 
         return sections.filter { section in
-            // Filter by type
             guard visibleTypes.contains(section.type) else {
                 return false
             }
 
-            // Filter by favorites
             if favoritesOnly && !section.favorite {
                 return false
             }
@@ -53,7 +51,6 @@ class ScheduleViewModel: ObservableObject {
         do {
             let sections = try await service.getAllSections()
             allSections = sections
-            // Sort by start time
             let sortedSections = sections.sorted(by: { lhs, rhs in
                 return lhs.startTime.epochMillis < rhs.startTime.epochMillis
             })
@@ -81,11 +78,9 @@ class ScheduleViewModel: ObservableObject {
     func toggleFavorite(section: shared.Section, service: ScheduleService) async {
         do {
             try await service.toggleFavorite(sectionId: section.id, favorite: !section.favorite)
-            // Reload to reflect changes
             await loadSections(service: service)
             lastError = nil
         } catch {
-            // Track the error for UI display
             lastError = error
         }
     }
@@ -140,7 +135,6 @@ class ScheduleViewModel: ObservableObject {
             return 0
         }
 
-        // Calculate the target date from millis
         let targetDate = Date(timeIntervalSince1970: Double(millis) / 1000.0)
 
         // Calculate day difference (86400 seconds per day)

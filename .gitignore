@@ -105,7 +105,3 @@ Thumbs.db
 *.konan/
 
 .kotlin
-
-# Progress tracking files
-*_PROGRESS.md
-ralph/

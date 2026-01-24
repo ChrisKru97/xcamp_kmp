@@ -10,44 +10,51 @@ struct ScheduleView: View {
     @State private var showingFilter = false
 
     var body: some View {
-        NavigationStack {
-            ZStack(alignment: .bottomTrailing) {
-                Color.background.ignoresSafeArea()
+        if #available(iOS 16.0, *) {
+            NavigationStack {
+                contentView
+            }
+        } else {
+            contentView
+        }
+    }
 
-                switch viewModel.state {
-                case .loading:
-                    loadingView
-                case .loaded:
-                    if viewModel.filteredSections.isEmpty {
-                        emptyView
-                    } else {
-                        scheduleContent(viewModel.filteredSections)
-                    }
-                case .error:
-                    errorView
-                }
+    private var contentView: some View {
+        ZStack(alignment: .bottomTrailing) {
+            Color.background.ignoresSafeArea()
 
-                // Filter FAB
-                if case .loaded = viewModel.state {
-                    filterFab
-                        .padding(.trailing, Spacing.md)
-                        .padding(.bottom, Spacing.md)
+            switch viewModel.state {
+            case .loading:
+                loadingView
+            case .loaded:
+                if viewModel.filteredSections.isEmpty {
+                    emptyView
+                } else {
+                    scheduleContent(viewModel.filteredSections)
                 }
+            case .error:
+                errorView
             }
-            .navigationTitle(Strings.Tabs.shared.SCHEDULE)
-            .modifier(iOS16TabBarBackgroundModifier())
-            .onAppear {
-                viewModel.setRemoteConfigService(appViewModel.getRemoteConfigService())
+
+            if case .loaded = viewModel.state {
+                filterFab
+                    .padding(.trailing, Spacing.md)
+                    .padding(.bottom, Spacing.md)
             }
-            .task {
-                await viewModel.loadSections(service: appViewModel.getScheduleService())
-            }
-            .sheet(isPresented: $showingFilter) {
-                ScheduleFilterView(
-                    visibleTypes: $viewModel.visibleTypes,
-                    favoritesOnly: $viewModel.favoritesOnly
-                )
-            }
+        }
+        .navigationTitle(Strings.Tabs.shared.SCHEDULE)
+        .modifier(iOS16TabBarBackgroundModifier())
+        .onAppear {
+            viewModel.setRemoteConfigService(appViewModel.getRemoteConfigService())
+        }
+        .task {
+            await viewModel.loadSections(service: appViewModel.getScheduleService())
+        }
+        .sheet(isPresented: $showingFilter) {
+            ScheduleFilterView(
+                visibleTypes: $viewModel.visibleTypes,
+                favoritesOnly: $viewModel.favoritesOnly
+            )
         }
     }
 
@@ -104,14 +111,14 @@ struct ScheduleView: View {
 
     private var dayNames: [String] {
         [
-            Strings.ScheduleDays.shared.DAYS_SATURDAY,  // Day 1
-            Strings.ScheduleDays.shared.DAYS_SUNDAY,    // Day 2
-            Strings.ScheduleDays.shared.DAYS_MONDAY,    // Day 3
-            Strings.ScheduleDays.shared.DAYS_TUESDAY,   // Day 4
-            Strings.ScheduleDays.shared.DAYS_WEDNESDAY, // Day 5
-            Strings.ScheduleDays.shared.DAYS_THURSDAY,  // Day 6
-            Strings.ScheduleDays.shared.DAYS_FRIDAY,    // Day 7
-            Strings.ScheduleDays.shared.DAYS_SATURDAY   // Day 8
+            Strings.ScheduleDays.shared.DAYS_SATURDAY,
+            Strings.ScheduleDays.shared.DAYS_SUNDAY,
+            Strings.ScheduleDays.shared.DAYS_MONDAY,
+            Strings.ScheduleDays.shared.DAYS_TUESDAY,
+            Strings.ScheduleDays.shared.DAYS_WEDNESDAY,
+            Strings.ScheduleDays.shared.DAYS_THURSDAY,
+            Strings.ScheduleDays.shared.DAYS_FRIDAY,
+            Strings.ScheduleDays.shared.DAYS_SATURDAY
         ]
     }
 

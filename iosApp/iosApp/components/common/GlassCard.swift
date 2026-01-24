@@ -16,7 +16,6 @@ struct GlassCard<Content: View>: View {
                             .fill(.ultraThinMaterial)
                     }
             } else {
-                // Standalone variant: full glass effect
                 content()
                     .padding()
                     .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))

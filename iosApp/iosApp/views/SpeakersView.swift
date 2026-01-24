@@ -6,11 +6,19 @@ struct SpeakersView: View {
     @State private var scrollOffset: CGFloat = 0
 
     var body: some View {
-        NavigationStack {
-            SpeakersContentView(scrollOffset: $scrollOffset)
-                .navigationTitle(Strings.Tabs.shared.SPEAKERS)
-                .modifier(iOS16ToolbarBackgroundModifier())
+        if #available(iOS 16.0, *) {
+            NavigationStack {
+                contentView
+            }
+        } else {
+            contentView
         }
+    }
+
+    private var contentView: some View {
+        SpeakersContentView(scrollOffset: $scrollOffset)
+            .navigationTitle(Strings.Tabs.shared.SPEAKERS)
+            .modifier(iOS16ToolbarBackgroundModifier())
     }
 }
 

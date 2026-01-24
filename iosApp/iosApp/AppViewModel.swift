@@ -1,21 +1,10 @@
 import SwiftUI
 import shared
-import OSLog
-import os.signpost
-
-// MARK: - App Initialization Signposts
-
-private extension OSLog {
-    /// Signpost log for app initialization performance instrumentation
-    static let appInit = OSLog(subsystem: "com.krutsche.xcamp", category: "AppInitialization")
-}
 
 @MainActor
 class AppViewModel: ObservableObject {
     @Published var appState: AppState = .limited
     @Published var isLoading: Bool = true
-
-    private let logger = Logger(subsystem: "com.krutsche.xcamp", category: "AppViewModel")
 
     // Cached services - lazy initialization without nil-checks on each access
     // Note: remoteConfigService must be declared before services that depend on it
@@ -27,45 +16,25 @@ class AppViewModel: ObservableObject {
     private lazy var scheduleService = ScheduleService()
 
     func initializeApp() {
-        let signpostID = OSSignpostID(log: OSLog.appInit)
-        os_signpost(.begin, log: OSLog.appInit, name: "InitializeApp", signpostID: signpostID)
-
-        logger.debug("initializeApp() - Starting app initialization")
-
         let authService = AuthService()
         let appConfigService = getAppConfigService()
-        logger.debug("initializeApp() - Created AuthService and AppConfigService")
 
         let appInitializer = AppInitializer(
             appConfigService: appConfigService,
             authService: authService
         )
-        logger.debug("initializeApp() - Created AppInitializer")
 
         Task {
-            os_signpost(.begin, log: OSLog.appInit, name: "AppInitializerInit", signpostID: signpostID)
-            logger.debug("initializeApp() - Calling appInitializer.initialize()...")
             do {
                 try await appInitializer.initialize()
-                os_signpost(.end, log: OSLog.appInit, name: "AppInitializerInit", signpostID: signpostID)
-                logger.info("initializeApp() - AppInitializer completed successfully")
 
                 await MainActor.run {
                     self.appState = appConfigService.getAppState()
-                    self.logger.info("initializeApp() - Got app state: \(self.appState)")
                     self.isLoading = false
-                    self.logger.debug("initializeApp() - Set isLoading = false, main initialization complete")
-                    os_signpost(.event, log: OSLog.appInit, name: "FirstInteractiveFrame", signpostID: signpostID)
                 }
                 // Lazy load places, speakers, and schedule in parallel after Remote Config loads
-                logger.debug("initializeApp() - Starting parallel background sync")
-                os_signpost(.begin, log: OSLog.appInit, name: "BackgroundSync", signpostID: signpostID)
                 await syncAllDataInBackground()
-                os_signpost(.end, log: OSLog.appInit, name: "BackgroundSync", signpostID: signpostID)
-                os_signpost(.end, log: OSLog.appInit, name: "InitializeApp", signpostID: signpostID)
             } catch {
-                os_signpost(.end, log: OSLog.appInit, name: "AppInitializerInit", signpostID: signpostID)
-                logger.error("initializeApp() - AppInitializer failed: \(error.localizedDescription)")
                 await MainActor.run {
                     isLoading = false
                 }
@@ -77,8 +46,6 @@ class AppViewModel: ObservableObject {
     /// This is more efficient than launching separate tasks as async-let provides
     /// structured concurrency with proper cancellation and error handling
     private func syncAllDataInBackground() async {
-        logger.debug("syncAllDataInBackground() - Starting parallel sync")
-
         // Run all sync tasks in parallel
         async let places = syncPlaces()
         async let speakers = syncSpeakers()
@@ -86,41 +53,21 @@ class AppViewModel: ObservableObject {
 
         // Wait for all tasks to complete
         await (places, speakers, schedule)
-
-        logger.info("syncAllDataInBackground() - All parallel sync tasks completed")
     }
 
     private func syncPlaces() async {
-        self.logger.debug("syncAllDataInBackground() - Places sync task started")
         let placesService = self.getPlacesService()
-        do {
-            let result = try await placesService.refreshPlaces() as? [Place] ?? []
-            self.logger.info("syncAllDataInBackground() - Places sync completed: \(result.count) items")
-        } catch {
-            self.logger.error("syncAllDataInBackground() - Places sync failed: \(error.localizedDescription)")
-        }
+        try? await placesService.refreshPlaces() as? [Place] ?? []
     }
 
     private func syncSpeakers() async {
-        self.logger.debug("syncAllDataInBackground() - Speakers sync task started")
         let speakersService = self.getSpeakersService()
-        do {
-            let result = try await speakersService.refreshSpeakers() as? [Speaker] ?? []
-            self.logger.info("syncAllDataInBackground() - Speakers sync completed: \(result.count) items")
-        } catch {
-            self.logger.error("syncAllDataInBackground() - Speakers sync failed: \(error.localizedDescription)")
-        }
+        try? await speakersService.refreshSpeakers() as? [Speaker] ?? []
     }
 
     private func syncSchedule() async {
-        self.logger.debug("syncAllDataInBackground() - Schedule sync task started")
         let scheduleService = self.getScheduleService()
-        do {
-            let result = try await scheduleService.refreshSections() as? [shared.Section] ?? []
-            self.logger.info("syncAllDataInBackground() - Schedule sync completed: \(result.count) items")
-        } catch {
-            self.logger.error("syncAllDataInBackground() - Schedule sync failed: \(error.localizedDescription)")
-        }
+        try? await scheduleService.refreshSections() as? [shared.Section] ?? []
     }
 
     // Cached service accessors - no nil-checks needed due to lazy initialization
@@ -151,9 +98,6 @@ class AppViewModel: ObservableObject {
 
     /// Get available tabs based on the current app state that was set during initialization
     func getAvailableTabsForCurrentState() -> [AppTab] {
-        logger.debug("getAvailableTabsForCurrentState() - Current app state: \(self.appState)")
-        let result = getAppConfigService().getAvailableTabs()
-        logger.debug("getAvailableTabsForCurrentState() - Got \(result.count) tabs")
-        return result
+        getAppConfigService().getAvailableTabs()
     }
 }

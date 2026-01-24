@@ -7,7 +7,6 @@ import cz.krutsche.xcamp.shared.domain.model.FirestoreSpeaker
 import cz.krutsche.xcamp.shared.domain.model.Speaker
 import cz.krutsche.xcamp.shared.domain.model.populateImageUrls
 import cz.krutsche.xcamp.shared.domain.model.toDbSpeaker
-import io.github.aakira.napier.Napier
 
 class SpeakersRepository(
     databaseManager: DatabaseManager,
@@ -18,11 +17,8 @@ class SpeakersRepository(
     override val collectionName = "speakers"
 
     suspend fun getAllSpeakers(): List<Speaker> {
-        Napier.d(tag = "SpeakersRepository") { "getAllSpeakers() - Fetching speakers from local database" }
         return withDatabase {
-            val result = queries.selectAllSpeakers().executeAsList().map(::mapToSpeaker)
-            Napier.d(tag = "SpeakersRepository") { "getAllSpeakers() - Found ${result.size} speakers in database" }
-            result
+            queries.selectAllSpeakers().executeAsList().map(::mapToSpeaker)
         }
     }
 
@@ -31,7 +27,6 @@ class SpeakersRepository(
     }
 
     suspend fun insertSpeakers(speakers: List<Speaker>) = withDatabase {
-        Napier.d(tag = "SpeakersRepository") { "insertSpeakers() - Inserting ${speakers.size} speakers into database" }
         queries.transaction {
             speakers.forEach { speaker ->
                 val dbSpeaker = speaker.toDbSpeaker()
@@ -46,11 +41,9 @@ class SpeakersRepository(
                 )
             }
         }
-        Napier.d(tag = "SpeakersRepository") { "insertSpeakers() - Insert complete" }
     }
 
     suspend fun syncFromFirestore(): Result<Unit> {
-        Napier.d(tag = "SpeakersRepository") { "syncFromFirestore() - Starting speakers sync from Firestore with document ID injection" }
         return syncFromFirestoreWithIds(
             deserializer = FirestoreSpeaker.serializer(),
             injectId = { documentId, firestoreSpeaker ->

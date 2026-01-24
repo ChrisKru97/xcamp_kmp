@@ -51,7 +51,19 @@ struct SpeakerDetailView: View {
 // MARK: - Previews
 
 #Preview("Speaker Detail View - With Description") {
-    NavigationStack {
+    if #available(iOS 16.0, *) {
+        NavigationStack {
+            SpeakerDetailView(speaker: Speaker(
+                id: "test1",
+                name: "Jan Novák",
+                description: "Pastor a řečník s mnoha lety zkušeností. Slouží církvi a víře již více než 20 let. Jeho posláním je šířit evangelium a pomáhat lidem najít cestu k Bohu.",
+                priority: 1,
+                image: nil,
+                imageUrl: nil
+            ))
+        }
+        .preferredColorScheme(.dark)
+    } else {
         SpeakerDetailView(speaker: Speaker(
             id: "test1",
             name: "Jan Novák",
@@ -60,12 +72,24 @@ struct SpeakerDetailView: View {
             image: nil,
             imageUrl: nil
         ))
+        .preferredColorScheme(.dark)
     }
-    .preferredColorScheme(.dark)
 }
 
 #Preview("Speaker Detail View - Long Biography") {
-    NavigationStack {
+    if #available(iOS 16.0, *) {
+        NavigationStack {
+            SpeakerDetailView(speaker: Speaker(
+                id: "test2",
+                name: "Marie Svobodová",
+                description: "Známá kazatelka a autorka mnoha knih. Její posláním je šířit evangelium a pomáhat lidem najít cestu k Bohu. Pravidelně přednáší na konferencích a setkáních po celé České republice i v zahraničí. Věnuje se také poradenství pro mladé páry a rodiny. Je vdaná a má tři děti.",
+                priority: 2,
+                image: nil,
+                imageUrl: nil
+            ))
+        }
+        .preferredColorScheme(.light)
+    } else {
         SpeakerDetailView(speaker: Speaker(
             id: "test2",
             name: "Marie Svobodová",
@@ -74,12 +98,24 @@ struct SpeakerDetailView: View {
             image: nil,
             imageUrl: nil
         ))
+        .preferredColorScheme(.light)
     }
-    .preferredColorScheme(.light)
 }
 
 #Preview("Speaker Detail View - Without Description") {
-    NavigationStack {
+    if #available(iOS 16.0, *) {
+        NavigationStack {
+            SpeakerDetailView(speaker: Speaker(
+                id: "test3",
+                name: "Tomáš Dvořák",
+                description: nil,
+                priority: 3,
+                image: nil,
+                imageUrl: nil
+            ))
+        }
+        .preferredColorScheme(.dark)
+    } else {
         SpeakerDetailView(speaker: Speaker(
             id: "test3",
             name: "Tomáš Dvořák",
@@ -88,6 +124,6 @@ struct SpeakerDetailView: View {
             image: nil,
             imageUrl: nil
         ))
+        .preferredColorScheme(.dark)
     }
-    .preferredColorScheme(.dark)
 }

@@ -3,7 +3,6 @@
 package cz.krutsche.xcamp.shared.data.config
 
 import cz.krutsche.xcamp.shared.data.firebase.RemoteConfigService
-import io.github.aakira.napier.Napier
 import kotlin.time.Clock.System.now
 import kotlin.time.Duration.Companion.days
 import kotlin.time.ExperimentalTime
@@ -27,71 +26,46 @@ class AppConfigService(
         } else {
             startDateStr
         }
-        val result = Instant.parse(fullDateTimeStr)
-        Napier.d(tag = "AppConfigService") { "parseStartDate() -> $result (from '$startDateStr')" }
-        return result
+        return Instant.parse(fullDateTimeStr)
     }
 
     private fun getEndOfEvent(): Instant {
         val startDate = parseStartDate()
-        val result = startDate + EventLength.days
-        Napier.d(tag = "AppConfigService") { "getEndOfEvent() -> $result (startDate + $EventLength days)" }
-        return result
+        return startDate + EventLength.days
     }
 
     private fun isEventActive(): Boolean {
         val startDate = parseStartDate()
         val today = now()
-        val result = today >= startDate && !isEventOver()
-        Napier.d(tag = "AppConfigService") { "isEventActive(): today=$today, startDate=$startDate, result=$result" }
-        return result
+        return today >= startDate && !isEventOver()
     }
 
     private fun isEventOver(): Boolean {
         val endDate = getEndOfEvent()
         val today = now()
-        val result = today >= endDate
-        Napier.d(tag = "AppConfigService") { "isEventOver(): today=$today, endDate=$endDate, result=$result" }
-        return result
+        return today >= endDate
     }
 
     /**
      * Determines current app state based on event dates and showAppData flag
      */
     fun getAppState(): AppState {
-        Napier.i(tag = "AppConfigService") { "getAppState() called - starting evaluation..." }
+        // TEMPORARY: Force ACTIVE_EVENT mode for testing scroll-away header
+        return AppState.ACTIVE_EVENT
 
         val showAppData = remoteConfigService.shouldShowAppData()
-        Napier.d(tag = "AppConfigService") { "getAppState() - showAppData = $showAppData" }
 
-        val result = when {
-            !showAppData -> {
-                Napier.d(tag = "AppConfigService") { "getAppState() -> LIMITED (showAppData is false)" }
-                AppState.LIMITED
-            }
-            isEventOver() -> {
-                Napier.d(tag = "AppConfigService") { "getAppState() -> POST_EVENT (event is over)" }
-                AppState.POST_EVENT
-            }
-            isEventActive() -> {
-                Napier.d(tag = "AppConfigService") { "getAppState() -> ACTIVE_EVENT (event is active)" }
-                AppState.ACTIVE_EVENT
-            }
-            else -> {
-                Napier.d(tag = "AppConfigService") { "getAppState() -> PRE_EVENT (before event, showAppData is true)" }
-                AppState.PRE_EVENT
-            }
+        return when {
+            !showAppData -> AppState.LIMITED
+            isEventOver() -> AppState.POST_EVENT
+            isEventActive() -> AppState.ACTIVE_EVENT
+            else -> AppState.PRE_EVENT
         }
-
-        Napier.i(tag = "AppConfigService") { "getAppState() returning: $result" }
-        return result
     }
 
     fun shouldShowCountdown(): Boolean {
         val state = getAppState()
-        val result = state == AppState.LIMITED || state == AppState.PRE_EVENT
-        Napier.d(tag = "AppConfigService") { "shouldShowCountdown() -> $result (appState=$state)" }
-        return result
+        return state == AppState.LIMITED || state == AppState.PRE_EVENT
     }
 
     /**
@@ -99,37 +73,22 @@ class AppConfigService(
      */
     fun getAvailableTabs(): List<AppTab> {
         val state = getAppState()
-        val result = when (state) {
-            AppState.LIMITED -> {
-                Napier.d(tag = "AppConfigService") { "getAvailableTabs() -> LIMITED tabs: HOME, MEDIA, ABOUT_FESTIVAL" }
-                listOf(AppTab.HOME, AppTab.MEDIA, AppTab.ABOUT_FESTIVAL)
-            }
-
-            AppState.PRE_EVENT, AppState.ACTIVE_EVENT -> {
-                Napier.d(tag = "AppConfigService") { "getAvailableTabs() -> FULL tabs (state=$state): HOME, SCHEDULE, SPEAKERS_AND_PLACES, MEDIA, ABOUT_FESTIVAL" }
-                listOf(
-                    AppTab.HOME,
-                    AppTab.SCHEDULE,
-                    AppTab.SPEAKERS_AND_PLACES,
-                    AppTab.MEDIA,
-                    AppTab.ABOUT_FESTIVAL
-                )
-            }
-
-            AppState.POST_EVENT -> {
-                Napier.d(tag = "AppConfigService") { "getAvailableTabs() -> POST_EVENT tabs: HOME, SCHEDULE, RATING, MEDIA, ABOUT_FESTIVAL" }
-                listOf(AppTab.HOME, AppTab.SCHEDULE, AppTab.RATING, AppTab.MEDIA, AppTab.ABOUT_FESTIVAL)
-            }
+        return when (state) {
+            AppState.LIMITED -> listOf(AppTab.HOME, AppTab.MEDIA, AppTab.ABOUT_FESTIVAL)
+            AppState.PRE_EVENT, AppState.ACTIVE_EVENT -> listOf(
+                AppTab.HOME,
+                AppTab.SCHEDULE,
+                AppTab.SPEAKERS_AND_PLACES,
+                AppTab.MEDIA,
+                AppTab.ABOUT_FESTIVAL
+            )
+            AppState.POST_EVENT -> listOf(AppTab.HOME, AppTab.SCHEDULE, AppTab.RATING, AppTab.MEDIA, AppTab.ABOUT_FESTIVAL)
         }
-        Napier.i(tag = "AppConfigService") { "getAvailableTabs() returning ${result.size} tabs" }
-        return result
     }
 
     fun getEventYear(): String {
         val startDate = remoteConfigService.getStartDate()
-        val result = startDate.take(4)
-        Napier.d(tag = "AppConfigService") { "getEventYear() -> '$result' (from startDate '$startDate')" }
-        return result
+        return startDate.take(4)
     }
 }
 

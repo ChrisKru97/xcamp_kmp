@@ -1,2 +1,0 @@
-Go through git history from the commit 7ed9af795cb6bd193446d6af0f784e798f76aef1 to the current one and review each separately one by one. Make sure you do code review and run our review/coding subagents over it, to know what to do better, simplify, and enhance! Document this recommended changes and then after you finish reviewing all the commits - make a plan and fix them all at once in one big commit!
-Use proper skills to check onto it.

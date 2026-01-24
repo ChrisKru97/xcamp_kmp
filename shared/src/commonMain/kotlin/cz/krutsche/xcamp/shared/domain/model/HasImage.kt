@@ -1,7 +1,6 @@
 package cz.krutsche.xcamp.shared.domain.model
 
 import cz.krutsche.xcamp.shared.data.firebase.StorageService
-import io.github.aakira.napier.Napier
 
 /**
  * Generic extension to populate image URLs for entities with images
@@ -30,25 +29,7 @@ suspend inline fun <reified T : Any> List<T>.populateImageUrls(
 
         if (imageField != null) {
             val urlResult = storageService.getDownloadUrl(imageField)
-            val updatedEntity = entity.copyWithUrl(urlResult.getOrNull())
-
-            if (urlResult.isFailure) {
-                val entityId = when (T::class) {
-                    Speaker::class -> (entity as? Speaker)?.id
-                    Place::class -> (entity as? Place)?.id
-                    else -> null
-                }
-                Napier.w(tag = "Repository") { "Failed to get download URL for $entityName ${entityId}: ${urlResult.exceptionOrNull()?.message}" }
-            } else {
-                val entityId = when (T::class) {
-                    Speaker::class -> (entity as? Speaker)?.id
-                    Place::class -> (entity as? Place)?.id
-                    else -> null
-                }
-                Napier.d(tag = "Repository") { "Got download URL for $entityName ${entityId}: ${urlResult.getOrNull()}" }
-            }
-
-            updatedEntity
+            entity.copyWithUrl(urlResult.getOrNull())
         } else {
             entity
         }

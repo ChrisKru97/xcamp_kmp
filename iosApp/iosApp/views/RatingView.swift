@@ -5,13 +5,21 @@ struct RatingView: View {
     @EnvironmentObject var appViewModel: AppViewModel
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                Text("TODO")
+        if #available(iOS 16.0, *) {
+            NavigationStack {
+                contentView
             }
-            .navigationTitle(Strings.Tabs.shared.RATING)
-            .modifier(iOS16TabBarBackgroundModifier())
+        } else {
+            contentView
         }
+    }
+
+    private var contentView: some View {
+        ScrollView {
+            Text("TODO")
+        }
+        .navigationTitle(Strings.Tabs.shared.RATING)
+        .modifier(iOS16TabBarBackgroundModifier())
     }
 }
 

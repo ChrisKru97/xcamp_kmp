@@ -31,46 +31,54 @@ struct SpeakersAndPlacesView: View {
     }
 
     var body: some View {
-        NavigationStack {
+        if #available(iOS 16.0, *) {
+            NavigationStack {
+                contentView
+                    .navigationTitle("")
+                    .navigationBarHidden(true)
+            }
+        } else {
+            contentView
+        }
+    }
+
+    private var contentView: some View {
+        VStack(spacing: 0) {
+            // Scroll-aware header
             VStack(spacing: 0) {
-                // Scroll-aware header
-                VStack(spacing: 0) {
-                    // Title
-                    Text(Strings.Tabs.shared.SPEAKERS_AND_PLACES)
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.horizontal, Spacing.md)
-                        .padding(.vertical, Spacing.sm)
-
-                    // Segmented control
-                    Picker("", selection: $selectedTopTab) {
-                        ForEach(Array(tabTitles.enumerated()), id: \.offset) { index, title in
-                            Text(title).tag(index)
-                        }
-                    }
-                    .pickerStyle(.segmented)
+                // Title
+                Text(Strings.Tabs.shared.SPEAKERS_AND_PLACES)
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, Spacing.md)
-                    .padding(.bottom, Spacing.sm)
-                }
-                .background(Color.background)
-                .opacity(headerOpacity)
-                .offset(y: headerOffset)
-                .zIndex(1)
+                    .padding(.vertical, Spacing.sm)
 
-                Group {
-                    switch selectedTopTab {
-                    case 0:
-                        SpeakersContentView(scrollOffset: $scrollOffset)
-                    case 1:
-                        PlacesContentView(scrollOffset: $scrollOffset)
-                    default:
-                        EmptyView()
+                // Segmented control
+                Picker("", selection: $selectedTopTab) {
+                    ForEach(Array(tabTitles.enumerated()), id: \.offset) { index, title in
+                        Text(title).tag(index)
                     }
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal, Spacing.md)
+                .padding(.bottom, Spacing.sm)
+            }
+            .background(Color.background)
+            .opacity(headerOpacity)
+            .offset(y: headerOffset)
+            .zIndex(1)
+
+            Group {
+                switch selectedTopTab {
+                case 0:
+                    SpeakersContentView(scrollOffset: $scrollOffset)
+                case 1:
+                    PlacesContentView(scrollOffset: $scrollOffset)
+                default:
+                    EmptyView()
                 }
             }
-            .navigationTitle("")
-            .navigationBarHidden(true)
         }
     }
 }

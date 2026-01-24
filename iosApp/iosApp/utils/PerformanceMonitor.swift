@@ -1,47 +1,19 @@
 import SwiftUI
-import OSLog
-import os.signpost
 
 // MARK: - Performance Monitor Utility
 
 /// A utility for monitoring app performance in development and production.
 /// Provides view modifiers and logging utilities for tracking rendering times,
 /// memory usage, and other performance metrics.
-///
-/// In debug builds, this provides detailed logging. In release builds,
-/// it uses signposts for Instruments integration without console output.
 @available(iOS 15.0, *)
 public struct PerformanceMonitor {
-
-    /// Logger subsystem for all performance-related logs
-    public static let subsystem = "com.krutsche.xcamp"
-
-    /// Category for view rendering performance
-    public static let viewRendering = OSLog(subsystem: subsystem, category: "ViewRendering")
-
-    /// Category for memory tracking
-    public static let memory = OSLog(subsystem: subsystem, category: "Memory")
-
-    /// Category for network operations
-    public static let network = OSLog(subsystem: subsystem, category: "Network")
-
-    /// Signpost log for Instruments
-    public static let signposts = OSLog(subsystem: subsystem, category: "Performance")
-
-    #if DEBUG
-    /// Track memory usage in debug builds
-    private static let enableMemoryLogging = true
-    #else
-    private static let enableMemoryLogging = false
-    #endif
 
     // MARK: - Memory Tracking
 
     /// Reports current memory usage
     /// - Parameter label: Optional label to identify the measurement point
     public static func reportMemoryUsage(label: String = "Memory") {
-        guard enableMemoryLogging else { return }
-
+        #if DEBUG
         var info = mach_task_basic_info()
         var count = mach_msg_type_number_t(MemoryLayout<mach_task_basic_info>.size)/4
 
@@ -54,41 +26,26 @@ public struct PerformanceMonitor {
         if result == KERN_SUCCESS {
             let usedMB = Double(info.resident_size) / 1024.0 / 1024.0
             let totalMB = Double(info.virtual_size) / 1024.0 / 1024.0
-            logger.debug("\(label): Used \(String(format: "%.2f", usedMB)) MB / Total \(String(format: "%.2f", totalMB)) MB")
-
-            // Signpost for Instruments
-            os_signpost(.event, log: memory, name: "MemoryUsage", "Memory used in MB: %f", usedMB)
+            // Logging removed - user will add manual logging
         }
+        #endif
     }
 
     /// Logs memory usage with optional signpost interval
     /// - Parameters:
     ///   - signpostID: Unique identifier for the signpost
     ///   - label: Label for the measurement
-    public static func beginMemoryTracking(signpostID: OSSignpostID, label: String = "Tracking") {
-        guard enableMemoryLogging else { return }
-        os_signpost(.begin, log: memory, name: "MemoryTracking", signpostID: signpostID, "Memory tracking start: %{public}s", label)
+    public static func beginMemoryTracking(signpostID: Int, label: String = "Tracking") {
+        #if DEBUG
         reportMemoryUsage(label: "\(label) Start")
+        #endif
     }
 
-    public static func endMemoryTracking(signpostID: OSSignpostID, label: String = "Tracking") {
-        guard enableMemoryLogging else { return }
+    public static func endMemoryTracking(signpostID: Int, label: String = "Tracking") {
+        #if DEBUG
         reportMemoryUsage(label: "\(label) End")
-        os_signpost(.end, log: memory, name: "MemoryTracking", signpostID: signpostID)
+        #endif
     }
-
-    // MARK: - View Rendering Timing
-
-    /// Creates a unique signpost ID for view tracking
-    public static func makeSignpostID() -> OSSignpostID {
-        OSSignpostID(log: signposts)
-    }
-}
-
-// MARK: - Private Logger
-
-private extension PerformanceMonitor {
-    static let logger = Logger(subsystem: subsystem, category: "PerformanceMonitor")
 }
 
 // MARK: - View Modifiers
@@ -162,7 +119,6 @@ private struct MeasureRenderTimeView<Content: View>: View {
     let content: Content
 
     @State private var hasAppeared = false
-    private let logger = Logger(subsystem: PerformanceMonitor.subsystem, category: "MeasureRenderTime")
 
     init(label: String, @ViewBuilder content: () -> Content) {
         self.label = label
@@ -170,16 +126,10 @@ private struct MeasureRenderTimeView<Content: View>: View {
     }
 
     var body: some View {
-        let signpostID = PerformanceMonitor.makeSignpostID()
-        _ = os_signpost(.begin, log: PerformanceMonitor.signposts, name: "ViewRender", signpostID: signpostID, "%{public}s", label)
-
         return content
             .onAppear {
-                os_signpost(.end, log: PerformanceMonitor.signposts, name: "ViewRender", signpostID: signpostID, "%{public}s", label)
                 hasAppeared = true
-                #if DEBUG
-                logger.debug("\(label): View appeared - use Instruments Time Profiler for accurate render metrics")
-                #endif
+                // Logging removed - user will add manual logging
             }
     }
 }
@@ -190,7 +140,7 @@ private struct TrackMemoryView<Content: View>: View {
     let label: String
     let content: Content
 
-    private let signpostID = PerformanceMonitor.makeSignpostID()
+    private let signpostID = 0
 
     init(label: String, @ViewBuilder content: () -> Content) {
         self.label = label
@@ -228,17 +178,12 @@ public extension PerformanceMonitor {
     /// }
     /// ```
     static func measure<T>(_ label: String, operation: () throws -> T) rethrows -> T {
-        let signpostID = makeSignpostID()
-        os_signpost(.begin, log: signposts, name: "Operation", signpostID: signpostID, "Start: %{public}s", label)
-
         let startTime = CFAbsoluteTimeGetCurrent()
         let result = try operation()
-        let duration = CFAbsoluteTimeGetCurrent() - startTime
-
-        os_signpost(.end, log: signposts, name: "Operation", signpostID: signpostID, "End: %{public}s", label)
+        _ = CFAbsoluteTimeGetCurrent() - startTime
 
         #if DEBUG
-        logger.debug("\(label): Completed in \(String(format: "%.2f", duration * 1000)) ms")
+        // Logging removed - user will add manual logging
         #endif
 
         return result
@@ -258,17 +203,12 @@ public extension PerformanceMonitor {
     /// }
     /// ```
     static func measure<T>(_ label: String, operation: () async throws -> T) async rethrows -> T {
-        let signpostID = makeSignpostID()
-        os_signpost(.begin, log: signposts, name: "AsyncOperation", signpostID: signpostID, "Start: %{public}s", label)
-
         let startTime = CFAbsoluteTimeGetCurrent()
         let result = try await operation()
-        let duration = CFAbsoluteTimeGetCurrent() - startTime
-
-        os_signpost(.end, log: signposts, name: "AsyncOperation", signpostID: signpostID, "End: %{public}s", label)
+        _ = CFAbsoluteTimeGetCurrent() - startTime
 
         #if DEBUG
-        logger.debug("\(label): Completed in \(String(format: "%.2f", duration * 1000)) ms")
+        // Logging removed - user will add manual logging
         #endif
 
         return result

@@ -116,9 +116,15 @@ struct PlacesContentView: View {
 // MARK: - Previews
 
 #Preview("Places Content View") {
-    NavigationStack {
+    if #available(iOS 16.0, *) {
+        NavigationStack {
+            PlacesContentView(scrollOffset: .constant(0))
+        }
+        .environmentObject(AppViewModel())
+        .preferredColorScheme(.dark)
+    } else {
         PlacesContentView(scrollOffset: .constant(0))
+            .environmentObject(AppViewModel())
+            .preferredColorScheme(.dark)
     }
-    .environmentObject(AppViewModel())
-    .preferredColorScheme(.dark)
 }

@@ -6,11 +6,19 @@ struct PlacesView: View {
     @State private var scrollOffset: CGFloat = 0
 
     var body: some View {
-        NavigationStack {
-            PlacesContentView(scrollOffset: $scrollOffset)
-                .navigationTitle(Strings.Tabs.shared.PLACES)
-                .modifier(iOS16ToolbarBackgroundModifier())
+        if #available(iOS 16.0, *) {
+            NavigationStack {
+                contentView
+            }
+        } else {
+            contentView
         }
+    }
+
+    private var contentView: some View {
+        PlacesContentView(scrollOffset: $scrollOffset)
+            .navigationTitle(Strings.Tabs.shared.PLACES)
+            .modifier(iOS16ToolbarBackgroundModifier())
     }
 }
 

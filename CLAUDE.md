@@ -50,7 +50,7 @@ open iosApp/iosApp.xcodeproj
 | Platform | Bundle ID | Minimum |
 |----------|-----------|---------|
 | Android | `cz.krutsche.xcamp` | API 24 (Android 7.0) |
-| iOS | `com.krutsche.xcamp` | iOS 14.1 |
+| iOS | `com.krutsche.xcamp` | iOS 15 |
 
 Use latest KMP-compatible APIs. For platform-specific guidance, see:
 - iOS: `.claude/subagents/ios-dev.md`
@@ -185,6 +185,15 @@ Use MCP tools to verify the feature works:
 - [ ] No duplicate code patterns
 - [ ] SwiftUI previews added for new views
 - [ ] Proper error handling implemented
+- [ ] **No unnecessary comments** - Code should be self-documenting; only comment "why" not "what", or complex/non-obvious logic
+
+## Code Quality Standards
+
+**Comments Policy**: Minimize comments in code. Prefer self-documenting code with clear names and structure. Only add comments when:
+- Explaining **why** something is done (not **what** is done)
+- Documenting complex algorithms or non-obvious logic
+- Notes about workarounds or technical debt
+- Standard `// MARK:` comments for code organization
 
 ### Android Development Blocker
 **IMPORTANT:** If asked to do Android-specific UI work, STOP and require the user to add Android MCP tools first before proceeding!

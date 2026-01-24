@@ -116,9 +116,15 @@ struct SpeakersContentView: View {
 // MARK: - Previews
 
 #Preview("Speakers Content View") {
-    NavigationStack {
+    if #available(iOS 16.0, *) {
+        NavigationStack {
+            SpeakersContentView(scrollOffset: .constant(0))
+        }
+        .environmentObject(AppViewModel())
+        .preferredColorScheme(.dark)
+    } else {
         SpeakersContentView(scrollOffset: .constant(0))
+            .environmentObject(AppViewModel())
+            .preferredColorScheme(.dark)
     }
-    .environmentObject(AppViewModel())
-    .preferredColorScheme(.dark)
 }

@@ -69,9 +69,6 @@ kotlin {
             // Dependency Injection
             implementation(libs.koin.core)
 
-            // Logging
-            implementation(libs.napier)
-
             // UUID
             implementation(libs.kotlin.uuid)
 

@@ -5,20 +5,28 @@ struct InfoView: View {
     @EnvironmentObject var appViewModel: AppViewModel
 
     var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: Spacing.lg) {
-                    emergencySection
-                    contactSection
-                }
-                .padding(.horizontal, Spacing.md)
-                .padding(.top, Spacing.md)
-                .padding(.bottom, Spacing.xxl)
+        if #available(iOS 16.0, *) {
+            NavigationStack {
+                contentView
             }
-            .background(Color.background)
-            .navigationTitle(Strings.Tabs.shared.INFO)
-            .modifier(iOS16TabBarBackgroundModifier())
+        } else {
+            contentView
         }
+    }
+
+    private var contentView: some View {
+        ScrollView {
+            VStack(spacing: Spacing.lg) {
+                emergencySection
+                contactSection
+            }
+            .padding(.horizontal, Spacing.md)
+            .padding(.top, Spacing.md)
+            .padding(.bottom, Spacing.xxl)
+        }
+        .background(Color.background)
+        .navigationTitle(Strings.Tabs.shared.INFO)
+        .modifier(iOS16TabBarBackgroundModifier())
     }
 
     private var emergencySection: some View {

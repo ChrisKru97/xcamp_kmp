@@ -1,13 +1,10 @@
 import SwiftUI
 import shared
-import OSLog
 
 struct ContentView: View {
     @EnvironmentObject var appViewModel: AppViewModel
     @State private var selectedTab: AppTab = .home
     @State private var showingMorePopover = false
-
-    private let logger = Logger(subsystem: "com.krutsche.xcamp", category: "ContentView")
 
     var body: some View {
         if appViewModel.isLoading {
@@ -29,7 +26,6 @@ struct ContentView: View {
         availableTabs.count > 5
     }
 
-    // Get tabs that should be visible in the tab bar (excluding overflow)
     private var visibleTabs: [AppTab] {
         if needsMoreTab {
             // First 5 tabs + More tab
@@ -39,7 +35,6 @@ struct ContentView: View {
         }
     }
 
-    // Get overflow tabs that go in the More menu
     private var overflowTabs: [AppTab] {
         if needsMoreTab {
             return Array(availableTabs.dropFirst(5))
@@ -51,7 +46,6 @@ struct ContentView: View {
     @ViewBuilder
     private var mainContentView: some View {
         TabView(selection: $selectedTab) {
-            // All tab views (needed for navigation regardless of visibility)
             tabView(for: .home) {
                 HomeView()
             }
@@ -86,7 +80,6 @@ struct ContentView: View {
                 }
             }
 
-            // More tab (only visible when needed)
             if needsMoreTab {
                 Color.clear
                     .tabItem {
@@ -110,7 +103,6 @@ struct ContentView: View {
         }
     }
 
-    // Helper to create a tab view with proper labeling
     @ViewBuilder
     private func tabView<Content: View>(for tab: AppTab, @ViewBuilder content: () -> Content) -> some View {
         content()

@@ -12,29 +12,37 @@ struct HomeView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ZStack {
-                Color.background.ignoresSafeArea()
-
-                VStack(spacing: Spacing.md) {
-                    HomeHeaderView()
-                        .padding(.bottom, Spacing.sm)
-
-                    if showCountdown {
-                        CountdownView()
-                    }
-
-                    if !mainInfo.isEmpty {
-                        MainInfoCard(infoText: mainInfo)
-                    }
-
-                    Spacer()
-                }
-                .padding(.horizontal, Spacing.md)
-                .padding(.top, Spacing.md)
+        if #available(iOS 16.0, *) {
+            NavigationStack {
+                contentView
             }
-            .modifier(iOS16TabBarBackgroundModifier())
+        } else {
+            contentView
         }
+    }
+
+    private var contentView: some View {
+        ZStack {
+            Color.background.ignoresSafeArea()
+
+            VStack(spacing: Spacing.md) {
+                HomeHeaderView()
+                    .padding(.bottom, Spacing.sm)
+
+                if showCountdown {
+                    CountdownView()
+                }
+
+                if !mainInfo.isEmpty {
+                    MainInfoCard(infoText: mainInfo)
+                }
+
+                Spacer()
+            }
+            .padding(.horizontal, Spacing.md)
+            .padding(.top, Spacing.md)
+        }
+        .modifier(iOS16TabBarBackgroundModifier())
     }
 
     private var mainInfo: String {
