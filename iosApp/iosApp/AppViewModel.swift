@@ -73,51 +73,54 @@ class AppViewModel: ObservableObject {
         }
     }
 
-    /// Syncs all data (places, speakers, schedule) in parallel using TaskGroup
-    /// This is more efficient than launching separate tasks as TaskGroup provides
+    /// Syncs all data (places, speakers, schedule) in parallel using async-let
+    /// This is more efficient than launching separate tasks as async-let provides
     /// structured concurrency with proper cancellation and error handling
     private func syncAllDataInBackground() async {
-        logger.debug("syncAllDataInBackground() - Starting parallel sync with TaskGroup")
+        logger.debug("syncAllDataInBackground() - Starting parallel sync")
 
-        await withTaskGroup(of: Void.self) { group in
-            // Add places sync task
-            group.addTask(priority: .background) {
-                self.logger.debug("syncAllDataInBackground() - Places sync task started")
-                let placesService = self.getPlacesService()
-                do {
-                    let result = try await placesService.refreshPlaces()
-                    self.logger.info("syncAllDataInBackground() - Places sync completed: \(result ?? 0) items")
-                } catch {
-                    self.logger.error("syncAllDataInBackground() - Places sync failed: \(error.localizedDescription)")
-                }
-            }
+        // Run all sync tasks in parallel
+        async let places = syncPlaces()
+        async let speakers = syncSpeakers()
+        async let schedule = syncSchedule()
 
-            // Add speakers sync task
-            group.addTask(priority: .background) {
-                self.logger.debug("syncAllDataInBackground() - Speakers sync task started")
-                let speakersService = self.getSpeakersService()
-                do {
-                    let result = try await speakersService.refreshSpeakers()
-                    self.logger.info("syncAllDataInBackground() - Speakers sync completed: \(result ?? 0) items")
-                } catch {
-                    self.logger.error("syncAllDataInBackground() - Speakers sync failed: \(error.localizedDescription)")
-                }
-            }
-
-            // Add schedule sync task
-            group.addTask(priority: .background) {
-                self.logger.debug("syncAllDataInBackground() - Schedule sync task started")
-                let scheduleService = self.getScheduleService()
-                do {
-                    let result = try await scheduleService.refreshSections()
-                    self.logger.info("syncAllDataInBackground() - Schedule sync completed: \(result ?? 0) items")
-                } catch {
-                    self.logger.error("syncAllDataInBackground() - Schedule sync failed: \(error.localizedDescription)")
-                }
-            }
-        }
+        // Wait for all tasks to complete
+        await (places, speakers, schedule)
 
         logger.info("syncAllDataInBackground() - All parallel sync tasks completed")
+    }
+
+    private func syncPlaces() async {
+        self.logger.debug("syncAllDataInBackground() - Places sync task started")
+        let placesService = self.getPlacesService()
+        do {
+            let result = try await placesService.refreshPlaces() as? [Place] ?? []
+            self.logger.info("syncAllDataInBackground() - Places sync completed: \(result.count) items")
+        } catch {
+            self.logger.error("syncAllDataInBackground() - Places sync failed: \(error.localizedDescription)")
+        }
+    }
+
+    private func syncSpeakers() async {
+        self.logger.debug("syncAllDataInBackground() - Speakers sync task started")
+        let speakersService = self.getSpeakersService()
+        do {
+            let result = try await speakersService.refreshSpeakers() as? [Speaker] ?? []
+            self.logger.info("syncAllDataInBackground() - Speakers sync completed: \(result.count) items")
+        } catch {
+            self.logger.error("syncAllDataInBackground() - Speakers sync failed: \(error.localizedDescription)")
+        }
+    }
+
+    private func syncSchedule() async {
+        self.logger.debug("syncAllDataInBackground() - Schedule sync task started")
+        let scheduleService = self.getScheduleService()
+        do {
+            let result = try await scheduleService.refreshSections() as? [shared.Section] ?? []
+            self.logger.info("syncAllDataInBackground() - Schedule sync completed: \(result.count) items")
+        } catch {
+            self.logger.error("syncAllDataInBackground() - Schedule sync failed: \(error.localizedDescription)")
+        }
     }
 
     // Cached service accessors - no nil-checks needed due to lazy initialization

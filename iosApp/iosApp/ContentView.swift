@@ -35,7 +35,9 @@ struct ContentView: View {
         }
         .tabViewStyle(.automatic)
         .tint(.accentColor)
-        .onChange(of: selectedTabIndex, handleTabChange)
+        .onChange(of: selectedTabIndex) { newValue in
+            handleTabChange(newValue: newValue)
+        }
         .confirmationDialog(
             Strings.Common.shared.MORE_OPTIONS,
             isPresented: $showingMorePopover,

@@ -122,10 +122,21 @@ tasks.register("createVsCodeFrameworkSymlink") {
         val frameworkBaseDir = layout.buildDirectory.dir("xcode-frameworks/Debug").get().asFile
         val linkDir = layout.buildDirectory.dir("xcode-frameworks").get().asFile
 
+        // Skip if the directory doesn't exist (e.g., when building from command line)
+        if (!frameworkBaseDir.exists()) {
+            println("Skipping VS Code symlink creation: $frameworkBaseDir does not exist")
+            return@doLast
+        }
+
         // Find the simulator framework directory (e.g., iphonesimulator26.2)
         val simulatorDir = frameworkBaseDir.listFiles()?.firstOrNull {
             it.name.startsWith("iphonesimulator")
-        } ?: error("No simulator framework directory found in $frameworkBaseDir")
+        }
+
+        if (simulatorDir == null) {
+            println("Skipping VS Code symlink creation: no simulator framework directory found in $frameworkBaseDir")
+            return@doLast
+        }
 
         // Create symlink using ln -sf (relative path from xcode-frameworks to Debug/iphonesimulator26.2)
         exec {

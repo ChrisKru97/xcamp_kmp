@@ -164,11 +164,16 @@ private struct MeasureRenderTimeView<Content: View>: View {
     @State private var hasAppeared = false
     private let logger = Logger(subsystem: PerformanceMonitor.subsystem, category: "MeasureRenderTime")
 
+    init(label: String, @ViewBuilder content: () -> Content) {
+        self.label = label
+        self.content = content()
+    }
+
     var body: some View {
         let signpostID = PerformanceMonitor.makeSignpostID()
         _ = os_signpost(.begin, log: PerformanceMonitor.signposts, name: "ViewRender", signpostID: signpostID, "%{public}s", label)
 
-        content
+        return content
             .onAppear {
                 os_signpost(.end, log: PerformanceMonitor.signposts, name: "ViewRender", signpostID: signpostID, "%{public}s", label)
                 hasAppeared = true
@@ -186,6 +191,11 @@ private struct TrackMemoryView<Content: View>: View {
     let content: Content
 
     private let signpostID = PerformanceMonitor.makeSignpostID()
+
+    init(label: String, @ViewBuilder content: () -> Content) {
+        self.label = label
+        self.content = content()
+    }
 
     var body: some View {
         content
