@@ -1,5 +1,6 @@
 import SwiftUI
 import shared
+import Kingfisher
 
 struct SpeakerDetailView: View {
     let speaker: Speaker
@@ -14,8 +15,6 @@ struct SpeakerDetailView: View {
         .navigationTitle(speaker.name)
         .navigationBarTitleDisplayMode(.inline)
         .background(Color.background)
-        .accessibilityLabel(speaker.name)
-        .accessibilityHint(Strings.Speakers.shared.DETAIL_BIO_HINT)
     }
 
     private var speakerHeroImage: some View {
@@ -24,7 +23,6 @@ struct SpeakerDetailView: View {
             fallbackIconName: "person.fill",
             height: 300
         )
-        .accessibilityHidden(true)  // Decorative hero image
     }
 
     private var speakerContent: some View {
@@ -36,7 +34,6 @@ struct SpeakerDetailView: View {
                         .font(.body)
                         .foregroundColor(.primary)
                         .lineSpacing(4)
-                        .accessibilityLabel(Strings.Speakers.shared.BIOGRAPHY)
                 }
                 .padding(.top, -CornerRadius.large)
                 .padding(.horizontal, Spacing.md)

@@ -1,5 +1,6 @@
 import SwiftUI
 import shared
+import Kingfisher
 
 struct SpeakerListItem: View, Equatable {
     let speaker: Speaker
@@ -19,20 +20,15 @@ struct SpeakerListItem: View, Equatable {
                     .font(.caption)
             }
         }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(accessibilityLabelText)
-        .accessibilityHint(Strings.Speakers.shared.DETAIL_HINT)
-        .accessibilityAddTraits(.isButton)
     }
 
     private var speakerImage: some View {
         AsyncImageWithFallback(
             url: speaker.imageUrlURL,
             fallbackIconName: "person.fill",
-            size: CGSize(width: 60, height: 60)  // Reduced from 80x80
+            size: CGSize(width: 60, height: 60)
         )
         .clipShape(Circle())
-        .accessibilityHidden(true)  // Decorative image
     }
 
     private var speakerInfo: some View {
@@ -49,14 +45,6 @@ struct SpeakerListItem: View, Equatable {
                     .lineLimit(3)  // Increased from 2
             }
         }
-    }
-
-    private var accessibilityLabelText: String {
-        var text = speaker.name
-        if let description = speaker.description_, !description.isEmpty {
-            text += ". " + description
-        }
-        return text
     }
 }
 

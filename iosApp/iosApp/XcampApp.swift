@@ -3,6 +3,7 @@ import Firebase
 import FirebaseCore
 import shared
 import Combine
+import Kingfisher
 
 // MARK: - Memory Warning Handler
 
@@ -20,10 +21,8 @@ private class MemoryWarningHandler: ObservableObject {
         )
         .sink { [weak self] _ in
             guard let self = self else { return }
-            ImageCache.shared.clearCache()
-
-            // Also clean up expired entries
-            ImageCache.shared.cleanupExpiredEntries()
+            // Kingfisher automatically manages memory, but we can clear on warning
+            KingfisherManager.shared.cache.clearMemoryCache()
         }
     }
 
@@ -41,8 +40,11 @@ struct XcampApp: App {
         // Initialize Firebase
         FirebaseApp.configure()
 
-        // Clean up expired image cache entries on app launch
-        ImageCache.shared.cleanupExpiredEntries()
+        // Kingfisher handles cache management automatically
+        // Optional: Configure cache sizes here if needed
+        // let cache = ImageCache.default
+        // cache.memoryStorage.config.totalCostLimit = 50 * 1024 * 1024  // 50MB
+        // cache.diskStorage.config.sizeLimit = 500 * 1024 * 1024  // 500MB
     }
 
     var body: some Scene {

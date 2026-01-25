@@ -62,13 +62,10 @@ struct PlacesContentView: View {
     private var loadingView: some View {
         VStack(spacing: Spacing.lg) {
             ProgressView()
-                .accessibilityLabel(Strings.Places.shared.LOADING)
             Text(Strings.Places.shared.LOADING)
                 .font(.body)
                 .foregroundColor(.secondary)
         }
-        .accessibilityElement()
-        .accessibilityLabel(Strings.Places.shared.LOADING)
     }
 
     private var emptyView: some View {
@@ -76,7 +73,6 @@ struct PlacesContentView: View {
             Image(systemName: "location.slash")
                 .font(.system(size: 50))
                 .foregroundColor(.secondary)
-                .accessibilityHidden(true)
             Text(Strings.Places.shared.EMPTY_TITLE)
                 .font(.headline)
                 .foregroundColor(.secondary)
@@ -86,10 +82,7 @@ struct PlacesContentView: View {
                 }
             }
             .buttonStyle(.bordered)
-            .accessibilityHint(Strings.Places.shared.RETRY_HINT)
         }
-        .accessibilityElement()
-        .accessibilityLabel(Strings.Places.shared.EMPTY_TITLE)
     }
 
     private var errorView: some View {
@@ -97,7 +90,6 @@ struct PlacesContentView: View {
             Image(systemName: "exclamationmark.triangle")
                 .font(.system(size: 50))
                 .foregroundColor(.red)
-                .accessibilityHidden(true)
             Text(Strings.Places.shared.ERROR_TITLE)
                 .font(.headline)
             Button(Strings.Places.shared.RETRY) {
@@ -106,10 +98,7 @@ struct PlacesContentView: View {
                 }
             }
             .buttonStyle(.bordered)
-            .accessibilityHint(Strings.Places.shared.RETRY_HINT)
         }
-        .accessibilityElement()
-        .accessibilityLabel(Strings.Places.shared.ERROR_TITLE)
     }
 }
 

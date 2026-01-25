@@ -62,13 +62,10 @@ struct SpeakersContentView: View {
     private var loadingView: some View {
         VStack(spacing: Spacing.lg) {
             ProgressView()
-                .accessibilityLabel(Strings.Speakers.shared.LOADING)
             Text(Strings.Speakers.shared.LOADING)
                 .font(.body)
                 .foregroundColor(.secondary)
         }
-        .accessibilityElement()
-        .accessibilityLabel(Strings.Speakers.shared.LOADING)
     }
 
     private var emptyView: some View {
@@ -76,7 +73,6 @@ struct SpeakersContentView: View {
             Image(systemName: "person.3")
                 .font(.system(size: 50))
                 .foregroundColor(.secondary)
-                .accessibilityHidden(true)
             Text(Strings.Speakers.shared.EMPTY_TITLE)
                 .font(.headline)
                 .foregroundColor(.secondary)
@@ -86,10 +82,7 @@ struct SpeakersContentView: View {
                 }
             }
             .buttonStyle(.bordered)
-            .accessibilityHint(Strings.Speakers.shared.RETRY_HINT)
         }
-        .accessibilityElement()
-        .accessibilityLabel(Strings.Speakers.shared.EMPTY_TITLE)
     }
 
     private var errorView: some View {
@@ -97,7 +90,6 @@ struct SpeakersContentView: View {
             Image(systemName: "exclamationmark.triangle")
                 .font(.system(size: 50))
                 .foregroundColor(.red)
-                .accessibilityHidden(true)
             Text(Strings.Speakers.shared.ERROR_TITLE)
                 .font(.headline)
             Button(Strings.Speakers.shared.RETRY) {
@@ -106,10 +98,7 @@ struct SpeakersContentView: View {
                 }
             }
             .buttonStyle(.bordered)
-            .accessibilityHint(Strings.Speakers.shared.RETRY_HINT)
         }
-        .accessibilityElement()
-        .accessibilityLabel(Strings.Speakers.shared.ERROR_TITLE)
     }
 }
 

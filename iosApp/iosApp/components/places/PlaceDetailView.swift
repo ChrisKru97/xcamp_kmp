@@ -1,5 +1,6 @@
 import SwiftUI
 import shared
+import Kingfisher
 
 struct PlaceDetailView: View {
     let place: Place
@@ -14,8 +15,6 @@ struct PlaceDetailView: View {
         .navigationTitle(place.name)
         .navigationBarTitleDisplayMode(.inline)
         .background(Color.background)
-        .accessibilityLabel(place.name)
-        .accessibilityHint(Strings.Places.shared.DETAIL_DESCRIPTION_HINT)
     }
 
     private var placeHeroImage: some View {
@@ -24,7 +23,6 @@ struct PlaceDetailView: View {
             fallbackIconName: "photo",
             height: 250
         )
-        .accessibilityHidden(true)  // Decorative hero image
     }
 
     private var placeContent: some View {
@@ -58,7 +56,6 @@ struct PlaceDetailView: View {
                             .fill(.ultraThinMaterial)
                     )
                 }
-                .accessibilityHint("Opens this location in Apple Maps")
                 .padding(.horizontal, Spacing.md)
             }
 

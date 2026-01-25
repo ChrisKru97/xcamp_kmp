@@ -65,9 +65,4 @@ class AppViewModel: ObservableObject {
     private func syncSchedule() async {
         try? await scheduleService.refreshSections()
     }
-
-    /// Get available tabs based on the current app state that was set during initialization
-    func getAvailableTabsForCurrentState() -> [AppTab] {
-        appConfigService.getAvailableTabs()
-    }
 }

@@ -1,5 +1,6 @@
 import SwiftUI
 import shared
+import Kingfisher
 
 struct PlaceListItem: View, Equatable {
     let place: Place
@@ -19,10 +20,6 @@ struct PlaceListItem: View, Equatable {
                     .font(.caption)
             }
         }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(accessibilityLabelText)
-        .accessibilityHint(Strings.Places.shared.DETAIL_HINT)
-        .accessibilityAddTraits(.isButton)
     }
 
     private var placeImage: some View {
@@ -32,7 +29,6 @@ struct PlaceListItem: View, Equatable {
             size: CGSize(width: 80, height: 80)
         )
         .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
-        .accessibilityHidden(true)  // Decorative image
     }
 
     private var placeInfo: some View {
@@ -57,17 +53,6 @@ struct PlaceListItem: View, Equatable {
                 .foregroundColor(.secondary)
             }
         }
-    }
-
-    private var accessibilityLabelText: String {
-        var text = place.name
-        if let description = place.description_, !description.isEmpty {
-            text += ". " + description
-        }
-        if place.latitude != nil && place.longitude != nil {
-            text += ". " + Strings.Places.shared.SHOW_ON_MAP
-        }
-        return text
     }
 }
 
