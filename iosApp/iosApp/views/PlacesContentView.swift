@@ -24,7 +24,7 @@ struct PlacesContentView: View {
             }
         }
         .task {
-            await viewModel.loadPlaces(service: appViewModel.getPlacesService())
+            await viewModel.loadPlaces(service: appViewModel.placesService)
         }
     }
 
@@ -55,7 +55,7 @@ struct PlacesContentView: View {
             }
         }
         .refreshable {
-            await viewModel.refreshPlaces(service: appViewModel.getPlacesService())
+            await viewModel.refreshPlaces(service: appViewModel.placesService)
         }
     }
 
@@ -82,7 +82,7 @@ struct PlacesContentView: View {
                 .foregroundColor(.secondary)
             Button(Strings.Places.shared.RETRY) {
                 Task {
-                    await viewModel.loadPlaces(service: appViewModel.getPlacesService())
+                    await viewModel.loadPlaces(service: appViewModel.placesService)
                 }
             }
             .buttonStyle(.bordered)
@@ -102,7 +102,7 @@ struct PlacesContentView: View {
                 .font(.headline)
             Button(Strings.Places.shared.RETRY) {
                 Task {
-                    await viewModel.loadPlaces(service: appViewModel.getPlacesService())
+                    await viewModel.loadPlaces(service: appViewModel.placesService)
                 }
             }
             .buttonStyle(.bordered)

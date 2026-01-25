@@ -24,7 +24,7 @@ struct SpeakersContentView: View {
             }
         }
         .task {
-            await viewModel.loadSpeakers(service: appViewModel.getSpeakersService())
+            await viewModel.loadSpeakers(service: appViewModel.speakersService)
         }
     }
 
@@ -55,7 +55,7 @@ struct SpeakersContentView: View {
             }
         }
         .refreshable {
-            await viewModel.refreshSpeakers(service: appViewModel.getSpeakersService())
+            await viewModel.refreshSpeakers(service: appViewModel.speakersService)
         }
     }
 
@@ -82,7 +82,7 @@ struct SpeakersContentView: View {
                 .foregroundColor(.secondary)
             Button(Strings.Speakers.shared.RETRY) {
                 Task {
-                    await viewModel.loadSpeakers(service: appViewModel.getSpeakersService())
+                    await viewModel.loadSpeakers(service: appViewModel.speakersService)
                 }
             }
             .buttonStyle(.bordered)
@@ -102,7 +102,7 @@ struct SpeakersContentView: View {
                 .font(.headline)
             Button(Strings.Speakers.shared.RETRY) {
                 Task {
-                    await viewModel.loadSpeakers(service: appViewModel.getSpeakersService())
+                    await viewModel.loadSpeakers(service: appViewModel.speakersService)
                 }
             }
             .buttonStyle(.bordered)

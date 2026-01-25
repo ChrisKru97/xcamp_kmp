@@ -46,9 +46,6 @@ kotlin {
             // DateTime
             implementation(libs.kotlinx.datetime)
 
-            // Ktor Client
-            implementation(libs.ktor.client.core)
-
             // SQLDelight
             implementation(libs.sqldelight.runtime)
             implementation(libs.sqldelight.coroutines)
@@ -59,32 +56,14 @@ kotlin {
             implementation(libs.firebase.firestore)
             implementation(libs.firebase.storage)
             implementation(libs.firebase.config)
-
-            // Multiplatform Settings
-            implementation(libs.multiplatform.settings)
-
-            // Image Loading
-            implementation(libs.kamel.image)
-
-            // Dependency Injection
-            implementation(libs.koin.core)
-
-            // UUID
-            implementation(libs.kotlin.uuid)
-
-            // Notifications
-            implementation(libs.kmpnotifier)
         }
 
         androidMain.dependencies {
             implementation(libs.kotlinx.coroutines.android)
-            implementation(libs.ktor.client.okhttp)
             implementation(libs.sqldelight.android.driver)
-            implementation(libs.koin.android)
         }
 
         iosMain.dependencies {
-            implementation(libs.ktor.client.darwin)
             implementation(libs.sqldelight.native.driver)
         }
     }

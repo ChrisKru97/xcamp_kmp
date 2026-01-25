@@ -22,7 +22,7 @@ struct CountdownView: View {
     }
 
     private var countdownCalculator: CountdownCalculator {
-        let targetDate = appViewModel.getRemoteConfigService().getStartDate()
+        let targetDate = appViewModel.remoteConfigService.getStartDate()
         return CountdownUtils.shared.createCountdownCalculator(dateString: targetDate)
     }
 }

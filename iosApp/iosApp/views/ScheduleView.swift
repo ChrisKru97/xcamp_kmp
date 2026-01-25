@@ -45,10 +45,10 @@ struct ScheduleView: View {
         .navigationTitle(Strings.Tabs.shared.SCHEDULE)
         .modifier(iOS16TabBarBackgroundModifier())
         .onAppear {
-            viewModel.setRemoteConfigService(appViewModel.getRemoteConfigService())
+            viewModel.setRemoteConfigService(appViewModel.remoteConfigService)
         }
         .task {
-            await viewModel.loadSections(service: appViewModel.getScheduleService())
+            await viewModel.loadSections(service: appViewModel.scheduleService)
         }
         .sheet(isPresented: $showingFilter) {
             ScheduleFilterView(
@@ -86,10 +86,10 @@ struct ScheduleView: View {
                     ForEach(sections, id: \.id) { section in
                         NavigationLink(destination: SectionDetailView(
                             section: section,
-                            service: appViewModel.getScheduleService(),
+                            service: appViewModel.scheduleService,
                             onFavoriteToggled: {
                                 Task {
-                                    await viewModel.loadSections(service: appViewModel.getScheduleService())
+                                    await viewModel.loadSections(service: appViewModel.scheduleService)
                                 }
                             }
                         )) {
@@ -104,7 +104,7 @@ struct ScheduleView: View {
                 .padding(.bottom, Spacing.xxl)
             }
             .refreshable {
-                await viewModel.refreshSections(service: appViewModel.getScheduleService())
+                await viewModel.refreshSections(service: appViewModel.scheduleService)
             }
         }
     }
@@ -143,7 +143,7 @@ struct ScheduleView: View {
                 .foregroundColor(.secondary)
             Button(Strings.Schedule.shared.RETRY) {
                 Task {
-                    await viewModel.loadSections(service: appViewModel.getScheduleService())
+                    await viewModel.loadSections(service: appViewModel.scheduleService)
                 }
             }
             .buttonStyle(.bordered)
@@ -161,7 +161,7 @@ struct ScheduleView: View {
                 .font(.headline)
             Button(Strings.Schedule.shared.RETRY) {
                 Task {
-                    await viewModel.loadSections(service: appViewModel.getScheduleService())
+                    await viewModel.loadSections(service: appViewModel.scheduleService)
                 }
             }
             .buttonStyle(.bordered)

@@ -8,16 +8,15 @@ class AppViewModel: ObservableObject {
 
     // Cached services - lazy initialization without nil-checks on each access
     // Note: remoteConfigService must be declared before services that depend on it
-    private lazy var remoteConfigService = RemoteConfigService()
-    private lazy var appConfigService: AppConfigService = AppConfigService(remoteConfigService: remoteConfigService)
-    private lazy var linksService: LinksService = LinksService(remoteConfigService: remoteConfigService)
-    private lazy var placesService = PlacesService()
-    private lazy var speakersService = SpeakersService()
-    private lazy var scheduleService = ScheduleService()
+    lazy var remoteConfigService = RemoteConfigService()
+    lazy var appConfigService: AppConfigService = AppConfigService(remoteConfigService: remoteConfigService)
+    lazy var linksService: LinksService = LinksService(remoteConfigService: remoteConfigService)
+    lazy var placesService = PlacesService()
+    lazy var speakersService = SpeakersService()
+    lazy var scheduleService = ScheduleService()
 
     func initializeApp() {
         let authService = AuthService()
-        let appConfigService = getAppConfigService()
 
         let appInitializer = AppInitializer(
             appConfigService: appConfigService,
@@ -56,48 +55,19 @@ class AppViewModel: ObservableObject {
     }
 
     private func syncPlaces() async {
-        let placesService = self.getPlacesService()
-        try? await placesService.refreshPlaces() as? [Place] ?? []
+        try? await placesService.refreshPlaces()
     }
 
     private func syncSpeakers() async {
-        let speakersService = self.getSpeakersService()
-        try? await speakersService.refreshSpeakers() as? [Speaker] ?? []
+        try? await speakersService.refreshSpeakers()
     }
 
     private func syncSchedule() async {
-        let scheduleService = self.getScheduleService()
-        try? await scheduleService.refreshSections() as? [shared.Section] ?? []
-    }
-
-    // Cached service accessors - no nil-checks needed due to lazy initialization
-
-    func getAppConfigService() -> AppConfigService {
-        appConfigService
-    }
-
-    func getRemoteConfigService() -> RemoteConfigService {
-        remoteConfigService
-    }
-
-    func getLinksService() -> LinksService {
-        linksService
-    }
-
-    func getPlacesService() -> PlacesService {
-        placesService
-    }
-
-    func getSpeakersService() -> SpeakersService {
-        speakersService
-    }
-
-    func getScheduleService() -> ScheduleService {
-        scheduleService
+        try? await scheduleService.refreshSections()
     }
 
     /// Get available tabs based on the current app state that was set during initialization
     func getAvailableTabsForCurrentState() -> [AppTab] {
-        getAppConfigService().getAvailableTabs()
+        appConfigService.getAvailableTabs()
     }
 }

@@ -17,7 +17,7 @@ struct HomeHeaderView: View {
     }
 
     private var eventYear: String {
-        return appViewModel.getAppConfigService().getEventYear()
+        return appViewModel.appConfigService.getEventYear()
     }
 }
 

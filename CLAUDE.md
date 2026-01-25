@@ -58,11 +58,9 @@ Use latest KMP-compatible APIs. For platform-specific guidance, see:
 
 ## Key Dependencies
 
-- Firebase GitLive SDK 2.3.0
+- Firebase GitLive SDK 2.4.0
 - SQLDelight 2.1.0
-- Koin 4.0.1
 - Kotlin 2.2.20 + Coroutines 1.10.2
-- Ktor 3.0.2
 
 ## App State & Navigation
 
@@ -120,7 +118,7 @@ Specialized Claude Code plugin agents for parallel platform work. These agents c
 | `ios-developer` | SwiftUI views, previews, components | iOS/Swift UI work |
 | `android-developer` | Compose, Material, Gradle | Android UI work |
 | `firebase-specialist` | Firestore, Storage, Remote Config | Database/cloud ops |
-| `shared-logic-dev` | Repositories, SQLDelight, Koin | Kotlin shared module |
+| `shared-logic-dev` | Repositories, SQLDelight, ServiceFactory | Kotlin shared module |
 | `strings-manager` | Strings.kt, localization | UI text management |
 | `ui-reviewer` | KISS/DRY code review | UI quality review |
 | `code-reviewer` | Code quality, anti-patterns, architecture | Comprehensive code review |

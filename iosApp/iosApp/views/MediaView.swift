@@ -27,7 +27,7 @@ struct MediaView: View {
     }
 
     private var mediaLinks: [MediaLink] {
-        appViewModel.getLinksService().getMediaLinks()
+        appViewModel.linksService.getMediaLinks()
     }
 }
 

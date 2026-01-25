@@ -58,7 +58,7 @@ struct InfoView: View {
     }
 
     private var infoLinks: [InfoLink] {
-        return appViewModel.getLinksService().getInfoLinks()
+        return appViewModel.linksService.getInfoLinks()
     }
 }
 
