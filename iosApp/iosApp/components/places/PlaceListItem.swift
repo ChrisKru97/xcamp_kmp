@@ -10,16 +10,16 @@ struct PlaceListItem: View, Equatable {
     }
 
     var body: some View {
-        GlassCard(isScrollable: true) {
-            HStack(spacing: Spacing.md) {
-                placeImage
-                placeInfo
-                Spacer()
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.secondary)
-                    .font(.caption)
-            }
+        HStack(spacing: Spacing.md) {
+            placeImage
+            placeInfo
+            Spacer()
+            Image(systemName: "chevron.right")
+                .foregroundColor(.secondary)
+                .font(.caption)
         }
+        .padding()
+        .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
     }
 
     private var placeImage: some View {

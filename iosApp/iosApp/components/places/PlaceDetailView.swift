@@ -29,14 +29,14 @@ struct PlaceDetailView: View {
         VStack(alignment: .leading, spacing: Spacing.lg) {
             // Use description_ to avoid conflict with Swift's built-in .description
             if let description = place.description_, !description.isEmpty {
-                GlassCard {
-                    Text(description)
-                        .font(.body)
-                        .foregroundColor(.white)
-                        .lineSpacing(4)
-                }
-                .padding(.top, -CornerRadius.large)
-                .padding(.horizontal, Spacing.md)
+                Text(description)
+                    .font(.body)
+                    .foregroundColor(.white)
+                    .lineSpacing(4)
+                    .padding()
+                    .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
+                    .padding(.top, -CornerRadius.large)
+                    .padding(.horizontal, Spacing.md)
             }
 
             if let lat = place.latitude, let lon = place.longitude {

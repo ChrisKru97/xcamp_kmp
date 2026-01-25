@@ -14,36 +14,38 @@ struct ContentView: View {
 
     @ViewBuilder
     private var mainContentView: some View {
+        let availableTabs = appViewModel.appConfigService.getAvailableTabs()
+
         TabView {
             tabView(for: .home) {
                 HomeView()
             }
 
-            if appViewModel.appConfigService.getAvailableTabs().contains(.schedule) {
+            if availableTabs.contains(.schedule) {
                 tabView(for: .schedule) {
                     ScheduleView()
                 }
             }
 
-            if appViewModel.appConfigService.getAvailableTabs().contains(.speakersAndPlaces) {
+            if availableTabs.contains(.speakersAndPlaces) {
                 tabView(for: .speakersAndPlaces) {
                     SpeakersAndPlacesView()
                 }
             }
 
-            if appViewModel.appConfigService.getAvailableTabs().contains(.rating) {
+            if availableTabs.contains(.rating) {
                 tabView(for: .rating) {
                     RatingView()
                 }
             }
 
-            if appViewModel.appConfigService.getAvailableTabs().contains(.media) {
+            if availableTabs.contains(.media) {
                 tabView(for: .media) {
                     MediaView()
                 }
             }
 
-            if appViewModel.appConfigService.getAvailableTabs().contains(.aboutFestival) {
+            if availableTabs.contains(.aboutFestival) {
                 tabView(for: .aboutFestival) {
                     InfoView()
                 }

@@ -6,21 +6,21 @@ struct SectionTimeCard: View {
     let endTime: Int64
 
     var body: some View {
-        GlassCard {
-            VStack(alignment: .leading, spacing: Spacing.xs) {
-                HStack {
-                    Image(systemName: "clock")
-                        .foregroundColor(.secondary)
-                    Text(Strings.ScheduleDetail.shared.DETAIL_TIME)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    Spacer()
-                }
-                Text("\(DateFormatter.formatTime(from: startTime)) - \(DateFormatter.formatTime(from: endTime))")
-                    .font(.body)
-                    .foregroundColor(.primary)
+        VStack(alignment: .leading, spacing: Spacing.xs) {
+            HStack {
+                Image(systemName: "clock")
+                    .foregroundColor(.secondary)
+                Text(Strings.ScheduleDetail.shared.DETAIL_TIME)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                Spacer()
             }
+            Text("\(DateFormatter.formatTime(from: startTime)) - \(DateFormatter.formatTime(from: endTime))")
+                .font(.body)
+                .foregroundColor(.primary)
         }
+        .padding()
+        .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(Strings.ScheduleDetail.shared.DETAIL_TIME): \(DateFormatter.formatTime(from: startTime)) - \(DateFormatter.formatTime(from: endTime))")
     }
@@ -30,22 +30,22 @@ struct SectionDescriptionCard: View {
     let description: String
 
     var body: some View {
-        GlassCard {
-            VStack(alignment: .leading, spacing: Spacing.sm) {
-                HStack {
-                    Image(systemName: "text.alignleft")
-                        .foregroundColor(.secondary)
-                    Text(Strings.ScheduleDetail.shared.DETAIL_DESCRIPTION)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    Spacer()
-                }
-                Text(description)
-                    .font(.body)
-                    .foregroundColor(.primary)
-                    .lineSpacing(4)
+        VStack(alignment: .leading, spacing: Spacing.sm) {
+            HStack {
+                Image(systemName: "text.alignleft")
+                    .foregroundColor(.secondary)
+                Text(Strings.ScheduleDetail.shared.DETAIL_DESCRIPTION)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                Spacer()
             }
+            Text(description)
+                .font(.body)
+                .foregroundColor(.primary)
+                .lineSpacing(4)
         }
+        .padding()
+        .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(Strings.ScheduleDetail.shared.DETAIL_DESCRIPTION): \(description)")
     }

@@ -10,16 +10,16 @@ struct SpeakerListItem: View, Equatable {
     }
 
     var body: some View {
-        GlassCard(isScrollable: true) {
-            HStack(spacing: Spacing.md) {
-                speakerImage
-                speakerInfo
-                Spacer(minLength: Spacing.xs)
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.secondary)
-                    .font(.caption)
-            }
+        HStack(spacing: Spacing.md) {
+            speakerImage
+            speakerInfo
+            Spacer(minLength: Spacing.xs)
+            Image(systemName: "chevron.right")
+                .foregroundColor(.secondary)
+                .font(.caption)
         }
+        .padding()
+        .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
     }
 
     private var speakerImage: some View {

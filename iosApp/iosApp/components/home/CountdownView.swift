@@ -6,19 +6,20 @@ struct CountdownView: View {
     @State private var timeRemaining: String = ""
 
     var body: some View {
-        GlassCard {
-            VStack(spacing: Spacing.sm) {
-                Text(Strings.Countdown.shared.TITLE)
-                Text(timeRemaining)
-                    .font(.title)
-                    .fontWeight(.semibold)
-                    .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
-                        timeRemaining = countdownCalculator.getTimeRemaining()
-                    }
-            }.onAppear {
-                timeRemaining = countdownCalculator.getTimeRemaining()
-            }
+        VStack(spacing: Spacing.sm) {
+            Text(Strings.Countdown.shared.TITLE)
+            Text(timeRemaining)
+                .font(.title)
+                .fontWeight(.semibold)
+                .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
+                    timeRemaining = countdownCalculator.getTimeRemaining()
+                }
         }
+        .onAppear {
+            timeRemaining = countdownCalculator.getTimeRemaining()
+        }
+        .padding()
+        .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
     }
 
     private var countdownCalculator: CountdownCalculator {

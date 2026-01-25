@@ -155,9 +155,9 @@ struct FilterTypeRow: View {
             }
             .padding()
             .background(
-                GlassCard {
-                    EmptyView()
-                }
+                EmptyView()
+                    .padding()
+                    .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
             )
         }
         .buttonStyle(PlainButtonStyle())
@@ -193,9 +193,9 @@ struct FilterToggleRow: View {
             }
             .padding()
             .background(
-                GlassCard {
-                    EmptyView()
-                }
+                EmptyView()
+                    .padding()
+                    .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
             )
         }
         .buttonStyle(PlainButtonStyle())
