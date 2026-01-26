@@ -9,15 +9,13 @@ object Strings {
     object Tabs {
         const val HOME = "Domů"
         const val SCHEDULE = "Program"
-        const val SPEAKERS_AND_PLACES = "Informace"  // Merged tab
+        const val SPEAKERS_AND_PLACES = "Informace"
         const val MEDIA = "Média"
-        const val ABOUT_FESTIVAL = "O festivalu"     // Renamed from INFO
+        const val ABOUT_FESTIVAL = "O festivalu"
         const val RATING = "Hodnocení"
-        const val MORE = "Více"
         // Keep for use in top tabs
         const val SPEAKERS = "Řečníci"
         const val PLACES = "Místa"
-        const val INFO = "Info"  // Keep for backward compatibility
     }
 
     object Common {

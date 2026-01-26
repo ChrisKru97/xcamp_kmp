@@ -1,70 +1,36 @@
 import SwiftUI
 import shared
-import Kingfisher
 
 struct PlaceDetailView: View {
     let place: Place
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                placeHeroImage
-                placeContent
-            }
-        }
-        .navigationTitle(place.name)
-        .navigationBarTitleDisplayMode(.inline)
-        .background(Color.background)
-    }
-
-    private var placeHeroImage: some View {
-        HeroAsyncImageWithFallback(
-            url: place.imageUrlURL,
-            fallbackIconName: "photo",
-            height: 250
+        EntityDetailView(
+            entity: place,
+            config: .place
         )
-    }
-
-    private var placeContent: some View {
-        VStack(alignment: .leading, spacing: Spacing.lg) {
-            // Use description_ to avoid conflict with Swift's built-in .description
-            if let description = place.description_, !description.isEmpty {
-                Text(description)
-                    .font(.body)
-                    .foregroundColor(.white)
-                    .lineSpacing(4)
-                    .padding()
-                    .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
-                    .padding(.top, -CornerRadius.large)
-                    .padding(.horizontal, Spacing.md)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                mapsButton
             }
-
-            if let lat = place.latitude, let lon = place.longitude {
-                Button {
-                    openInMaps(latitude: lat.doubleValue, longitude: lon.doubleValue, name: place.name)
-                } label: {
-                    HStack {
-                        Image(systemName: "map.fill")
-                        Text(Strings.Places.shared.OPEN_IN_MAPS)
-                        Spacer()
-                        Image(systemName: "arrow.up.right")
-                    }
-                    .foregroundColor(.primary)
-                    .padding()
-                    .background(
-                        RoundedRectangle(cornerRadius: CornerRadius.medium)
-                            .fill(.ultraThinMaterial)
-                    )
-                }
-                .padding(.horizontal, Spacing.md)
-            }
-
-            Spacer(minLength: Spacing.xxl)
         }
-        .padding(.top, Spacing.xl)
     }
 
-    private func openInMaps(latitude: Double, longitude: Double, name: String) {
+    @ViewBuilder
+    private var mapsButton: some View {
+        if place.latitude != nil && place.longitude != nil {
+            Button {
+                if let lat = place.latitude, let lon = place.longitude {
+                    openMaps(latitude: lat.doubleValue, longitude: lon.doubleValue, name: place.name)
+                }
+            } label: {
+                Image(systemName: "map.fill")
+            }
+            .accessibilityLabel("Open in Maps")
+        }
+    }
+
+    private func openMaps(latitude: Double, longitude: Double, name: String) {
         let region = "ll=\(latitude),\(longitude)"
         guard let encodedName = name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return }
         guard let url = URL(string: "http://maps.apple.com/?\(region)&q=\(encodedName)") else { return }

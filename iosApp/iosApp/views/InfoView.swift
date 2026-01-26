@@ -25,7 +25,8 @@ struct InfoView: View {
             .padding(.bottom, Spacing.xxl)
         }
         .background(Color.background)
-        .navigationTitle(Strings.Tabs.shared.INFO)
+        .navigationTitle(Strings.Tabs.shared.ABOUT_FESTIVAL)
+        .navigationBarTitleDisplayMode(.inline)
         .modifier(iOS16TabBarBackgroundModifier())
     }
 

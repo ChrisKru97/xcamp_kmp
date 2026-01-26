@@ -37,7 +37,11 @@ class SongsRepository(
     }
 
     suspend fun syncFromFirestore(): Result<Unit> =
-        syncFromFirestore(Song.serializer(), ::insertSongs)
+        syncFromFirestore(
+            Song.serializer(),
+            ::insertSongs,
+            clearItems = { withDatabase { queries.deleteAllSongs() } }
+        )
 
     private fun mapToSong(dbSong: cz.krutsche.xcamp.shared.db.Song): Song =
         cz.krutsche.xcamp.shared.domain.model.Song(

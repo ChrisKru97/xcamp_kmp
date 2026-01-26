@@ -44,7 +44,7 @@ extension Backport where Content: View {
     }
 }
 
-// MARK: - iOS 16+ Toolbar Background Modifier
+// MARK: - iOS 16+ Toolbar Modifiers
 
 /// Hides the tab bar background to maintain transparent/blur effect on iOS 16+
 /// This fixes iOS 18's automatic opaque tab bar behavior when ScrollView content is present
@@ -53,6 +53,18 @@ struct iOS16TabBarBackgroundModifier: ViewModifier {
         if #available(iOS 16.0, *) {
             content
                 .toolbarBackground(.hidden, for: .tabBar)
+        } else {
+            content
+        }
+    }
+}
+
+/// Hides the toolbar (tab bar) on iOS 16+ using the native modifier
+struct iOS16ToolbarHiddenModifier: ViewModifier {
+    func body(content: Content) -> some View {
+        if #available(iOS 16.0, *) {
+            content
+                .toolbar(.hidden, for: .tabBar)
         } else {
             content
         }
@@ -74,5 +86,15 @@ extension View {
     @ViewBuilder
     func fillMaxSize() -> some View {
         frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    /// Applies a transformation to the view if the condition is true
+    @ViewBuilder
+    func applyIf<T>(_ condition: Bool, transform: (Self) -> T) -> some View where T: View {
+        if condition {
+            transform(self)
+        } else {
+            self
+        }
     }
 }

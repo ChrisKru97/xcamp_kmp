@@ -3,7 +3,6 @@ import shared
 
 struct PlacesView: View {
     @EnvironmentObject var appViewModel: AppViewModel
-    @State private var scrollOffset: CGFloat = 0
 
     var body: some View {
         if #available(iOS 16.0, *) {
@@ -16,8 +15,9 @@ struct PlacesView: View {
     }
 
     private var contentView: some View {
-        PlacesContentView(scrollOffset: $scrollOffset)
+        PlacesContentView()
             .navigationTitle(Strings.Tabs.shared.PLACES)
+            .navigationBarTitleDisplayMode(.inline)
             .modifier(iOS16ToolbarBackgroundModifier())
     }
 }
@@ -28,7 +28,6 @@ private struct iOS16ToolbarBackgroundModifier: ViewModifier {
     func body(content: Content) -> some View {
         if #available(iOS 16.0, *) {
             content
-                .toolbarBackground(.hidden, for: .navigationBar)
                 .toolbarBackground(.hidden, for: .tabBar)
         } else {
             content

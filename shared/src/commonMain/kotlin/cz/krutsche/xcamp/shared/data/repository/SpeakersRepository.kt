@@ -50,14 +50,14 @@ class SpeakersRepository(
                 Speaker.fromFirestoreData(documentId, firestoreSpeaker)
             },
             insertItems = { speakers ->
-                // Populate imageUrls for speakers with images using shared extension
                 val speakersWithUrls = speakers.populateImageUrls(
                     storageService = storageService,
                     entityName = "speaker",
                     copyWithUrl = { imageUrl -> this.copy(imageUrl = imageUrl) }
                 )
                 insertSpeakers(speakersWithUrls)
-            }
+            },
+            clearItems = { withDatabase { queries.deleteAllSpeakers() } }
         )
     }
 

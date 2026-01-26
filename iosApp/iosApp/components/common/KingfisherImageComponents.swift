@@ -1,88 +1,56 @@
 import SwiftUI
 import Kingfisher
 
-// MARK: - Async Image With Fallback
-
-/// Kingfisher-powered async image with fallback SF Symbol.
-/// Automatically handles caching, loading states, and memory management.
 struct AsyncImageWithFallback: View {
     let url: URL?
     let fallbackIconName: String
-    let size: CGSize
+    let width: CGFloat?
+    let height: CGFloat
 
     init(url: URL?, fallbackIconName: String = "photo", size: CGSize) {
         self.url = url
         self.fallbackIconName = fallbackIconName
-        self.size = size
+        self.width = size.width
+        self.height = size.height
     }
 
-    var body: some View {
-        Group {
-            if let url = url {
-                KFImage(url)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: size.width, height: size.height)
-            } else {
-                Image(systemName: fallbackIconName)
-                    .resizable()
-                    .scaledToFit()
-                    .foregroundStyle(.secondary)
-                    .frame(width: size.width, height: size.height)
-            }
-        }
-    }
-}
-
-// MARK: - Hero Async Image With Fallback
-
-/// Hero-sized Kingfisher image with gradient overlay for detail views.
-struct HeroAsyncImageWithFallback: View {
-    let url: URL?
-    let fallbackIconName: String
-    let height: CGFloat
-
-    init(url: URL?, fallbackIconName: String = "photo", height: CGFloat = 300) {
+    init(url: URL?, fallbackIconName: String = "photo", height: CGFloat) {
         self.url = url
         self.fallbackIconName = fallbackIconName
+        self.width = nil
         self.height = height
     }
 
     var body: some View {
-        GeometryReader { geometry in
-            Group {
-                if let url = url {
-                    KFImage(url)
-                        .resizable()
-                        .scaledToFill()
-                        .frame(height: height)
-                        .frame(maxWidth: .infinity)
-                } else {
-                    ZStack {
-                        Color.clear
-                        Image(systemName: fallbackIconName)
-                            .font(.system(size: 60))
-                            .foregroundStyle(.secondary)
-                    }
-                    .frame(height: height)
-                    .frame(maxWidth: .infinity)
-                }
-            }
-            .overlay(
-                LinearGradient(
-                    colors: [.clear, .black.opacity(0.5)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-            )
+        if let width = width {
+            imageContent
+                .frame(width: width, height: height)
+        } else {
+            imageContent
+                .frame(height: height)
+                .frame(maxWidth: .infinity)
         }
-        .frame(height: height)
+    }
+
+    @ViewBuilder
+    private var imageContent: some View {
+        if let url = url {
+            KFImage(url)
+                .backgroundDecode()
+                .resizable()
+                .scaledToFill()
+        } else {
+            Image(systemName: fallbackIconName)
+                .resizable()
+                .scaledToFit()
+                .foregroundStyle(.secondary)
+        }
     }
 }
 
 // MARK: - Previews
 
-#Preview("AsyncImageWithFallback") {
+#Preview("Fixed Size") {
     VStack(spacing: 20) {
         AsyncImageWithFallback(
             url: URL(string: "https://via.placeholder.com/300"),
@@ -102,15 +70,15 @@ struct HeroAsyncImageWithFallback: View {
     .background(Color.background)
 }
 
-#Preview("HeroAsyncImageWithFallback") {
+#Preview("Full Width") {
     VStack(spacing: 20) {
-        HeroAsyncImageWithFallback(
+        AsyncImageWithFallback(
             url: URL(string: "https://via.placeholder.com/600x300"),
             fallbackIconName: "person.fill",
             height: 250
         )
 
-        HeroAsyncImageWithFallback(
+        AsyncImageWithFallback(
             url: nil,
             fallbackIconName: "photo",
             height: 250

@@ -105,6 +105,5 @@ enum class AppTab {
     SPEAKERS_AND_PLACES,
     RATING,
     MEDIA,
-    ABOUT_FESTIVAL,
-    MORE
+    ABOUT_FESTIVAL
 }

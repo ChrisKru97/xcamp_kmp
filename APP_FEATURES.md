@@ -8,20 +8,20 @@
 ## Show App Data State
 
 - **true**: Full event data available - shows complete navigation and features
-- **false**: Limited mode - shows only Home, Media, and Info tabs for staying connected with users
+- **false**: Limited mode - shows only Home, Media, and O festivalu tabs for staying connected with users
 
 ## Dynamic Bottom Navigation
 
 The app uses a **dynamic bottom tab system** that adapts based on event state and remote configuration:
 
 ### Limited Mode (showAppData = false)
-**Tabs:** Home → Media → Info
+**Tabs:** Home → Media → O festivalu
 
 ### During Active Event
-**Tabs:** Home → Schedule → Speakers → Places → Media → Info
+**Tabs:** Home → Schedule → Informace → Media → O festivalu
 
 ### Post-Event Mode (after event ends)
-**Tabs:** Home → Schedule → Rating → Media → Info
+**Tabs:** Home → Schedule → Rating → Media → O festivalu
 
 ---
 
@@ -52,16 +52,18 @@ The app uses a **dynamic bottom tab system** that adapts based on event state an
 - **Time-Aware Display**: Past events dimmed or hidden
 - **Individual Event Details**: Tap events to see full details page
 
-## Speakers Tab ("Řečníci")
+## Informace Tab ("Informace")
 **Available only during active event and a while before it (if showAppData = true)**
 
+This tab combines Speakers and Places using a segmented picker interface:
+
+### Speakers Sub-Tab ("Řečníci")
 - **Speaker Profiles**: Masonry layout with photos and information
 - **Individual Speaker Pages**: Detailed speaker information
 - **Speaker Information**: Include photo, name, bio and list of his scheduled parts of program (sections)
 
-## Places Tab ("Místa")
-**Available only during active event and a while before it (if showAppData = true)**
-
+### Places Sub-Tab ("Místa")
+- **Areal Map**: Full-screen camp areal/map image at top with QuickLook support for zoom/pan
 - **Interactive Map**: Location information and details - as an image
 - **Place List**: List of all camp important locations with basic information
 - **Place Details**: Individual location pages with comprehensive information - name, photo, location 
@@ -99,7 +101,7 @@ The app uses a **dynamic bottom tab system** that adapts based on event state an
 - Lost and Found functionality
 - Xcamp Merchandise
 
-## Info Tab
+## O Festivalu Tab ("O festivalu")
 **Always available**
 
 ### Contact Information
@@ -236,17 +238,17 @@ The app uses a **dynamic bottom tab system** that adapts based on event state an
 ### Pre-Event (showAppData = false)
 - **Purpose**: Keep users engaged before event data is available
 - **Features**: Countdown, news, media links, contact info
-- **Tabs**: Home, Media, Info only
+- **Tabs**: Home, Media, O festivalu only
 
 ### Active Event (showAppData = true, event ongoing)
 - **Purpose**: Full camp management and information system
 - **Features**: Complete schedule, speakers, places, live updates
-- **Tabs**: Home, Schedule, Speakers, Places, Info
+- **Tabs**: Home, Schedule, Informace, Media, O festivalu
 
 ### Post-Event (showAppData = true, event ended)
 - **Purpose**: Feedback collection and media access
 - **Features**: Event rating, media access, schedule review
-- **Tabs**: Home, Schedule, Rating, Media, Info
+- **Tabs**: Home, Schedule, Rating, Media, O festivalu
 
 ## Data Synchronization & Firebase Fetching Patterns
 
@@ -265,8 +267,8 @@ The app uses a **dynamic bottom tab system** that adapts based on event state an
 #### Lazy Loading by UI Component
 - **Home Tab**: News collection (`addPostFrameCallback` → `NewsProvider.loadNews()`)
 - **Schedule Tab**: Schedule sections (`ScheduleProvider.loadSchedule()` on first access)  
-- **Speakers Tab**: Speakers collection (`SpeakersProvider.loadSpeakers()` on first access)
-- **Places Tab**: Places collection (`PlacesProvider.loadPlaces()` on first access)
+- **Speakers Sub-Tab**: Speakers collection (`SpeakersProvider.loadSpeakers()` on first access)
+- **Places Sub-Tab**: Places collection (`PlacesProvider.loadPlaces()` on first access)
 - **Songs Tab**: Songs collection (`SongsProvider.loadSongs()` on first access)
 - **Group Leaders**: GroupLeaders collection (`GroupLeadersProvider.loadGroupLeaders()` when needed)
 
@@ -317,16 +319,17 @@ The app uses a **dynamic bottom tab system** that adapts based on event state an
 
 ### Limited Mode (showAppData = false)
 **Default Production State**
-- **Navigation**: 3 tabs (Home → Media → Info)
+- **Navigation**: 3 tabs (Home → Media → O festivalu)
 - **Features**: Countdown, news, media links, contact info
 - **Purpose**: Pre-event engagement and basic information access
 
 ### Event Mode (showAppData = true)
 **Full Event Features Enabled**
-- **Navigation**: 6 tabs (Home → Program → Řečníci → Mapa → Media → Info)
+- **Navigation**: 5 tabs (Home → Program → Informace → Media → O festivalu)
 - **Additional Features**:
   - QR Code scanner/display button (top-right on Home)
   - Complete schedule with 8-day navigation
+  - Informace tab with segmented picker for Speakers and Places
   - Speaker profiles with detailed biographies
   - Interactive places/locations with map integration
   - Schedule filtering (FAB on Schedule tab)

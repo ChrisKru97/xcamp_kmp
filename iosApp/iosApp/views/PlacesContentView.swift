@@ -4,7 +4,8 @@ import shared
 struct PlacesContentView: View {
     @EnvironmentObject var appViewModel: AppViewModel
     @StateObject private var viewModel = PlacesViewModel()
-    @Binding var scrollOffset: CGFloat
+
+    @State private var showFullscreen = false
 
     var body: some View {
         ZStack {
@@ -23,6 +24,12 @@ struct PlacesContentView: View {
                 errorView
             }
         }
+        .sheet(isPresented: $showFullscreen) {
+            FullscreenImageView(
+                imageURL: viewModel.arealImageURL,
+                isPresented: $showFullscreen
+            )
+        }
         .task {
             await viewModel.loadPlaces(service: appViewModel.placesService)
         }
@@ -31,6 +38,10 @@ struct PlacesContentView: View {
     private func placesList(_ places: [Place]) -> some View {
         ScrollView {
             LazyVStack(spacing: Spacing.md) {
+                ArealHeroSection(imageURL: viewModel.arealImageURL) {
+                    showFullscreen = true
+                }
+
                 ForEach(places, id: \.id) { place in
                     NavigationLink(destination: PlaceDetailView(place: place)) {
                         PlaceListItem(place: place)
@@ -42,17 +53,6 @@ struct PlacesContentView: View {
             .padding(.horizontal, Spacing.md)
             .padding(.top, Spacing.md)
             .padding(.bottom, Spacing.xxl)
-            .coordinateSpace(name: "scrollView")
-            .background(
-                GeometryReader { geometry in
-                    Color.clear
-                        .preference(key: ScrollOffsetPreferenceKey.self,
-                                  value: geometry.frame(in: .named("scrollView")).minY)
-                }
-            )
-            .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
-                scrollOffset = offset
-            }
         }
         .refreshable {
             await viewModel.refreshPlaces(service: appViewModel.placesService)
@@ -105,15 +105,7 @@ struct PlacesContentView: View {
 // MARK: - Previews
 
 #Preview("Places Content View") {
-    if #available(iOS 16.0, *) {
-        NavigationStack {
-            PlacesContentView(scrollOffset: .constant(0))
-        }
+    PlacesContentView()
         .environmentObject(AppViewModel())
         .preferredColorScheme(.dark)
-    } else {
-        PlacesContentView(scrollOffset: .constant(0))
-            .environmentObject(AppViewModel())
-            .preferredColorScheme(.dark)
-    }
 }

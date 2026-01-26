@@ -33,12 +33,6 @@ struct ContentView: View {
                 }
             }
 
-            if availableTabs.contains(.rating) {
-                tabView(for: .rating) {
-                    RatingView()
-                }
-            }
-
             if availableTabs.contains(.media) {
                 tabView(for: .media) {
                     MediaView()
@@ -67,12 +61,10 @@ struct ContentView: View {
         switch tab {
         case .home: return "house.fill"
         case .schedule: return "calendar"
-        case .speakersAndPlaces: return "info.circle.fill"
-        case .rating: return "star.fill"
-        case .media: return "photo.fill"
+        case .speakersAndPlaces: return "info.circle.text.page.fill"
+        case .media: return "photo.on.rectangle.angled.fill"
         case .aboutFestival: return "questionmark.circle.fill"
-        case .more: return "ellipsis"
-        default: return "circle"
+        default: return "circle.fill"
         }
     }
 
@@ -81,10 +73,8 @@ struct ContentView: View {
         case .home: return Strings.Tabs.shared.HOME
         case .schedule: return Strings.Tabs.shared.SCHEDULE
         case .speakersAndPlaces: return Strings.Tabs.shared.SPEAKERS_AND_PLACES
-        case .rating: return Strings.Tabs.shared.RATING
         case .media: return Strings.Tabs.shared.MEDIA
         case .aboutFestival: return Strings.Tabs.shared.ABOUT_FESTIVAL
-        case .more: return Strings.Tabs.shared.MORE
         default: return ""
         }
     }

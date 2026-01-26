@@ -1,47 +1,14 @@
 import SwiftUI
 import shared
-import Kingfisher
 
 struct SpeakerDetailView: View {
     let speaker: Speaker
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 0) {
-                speakerHeroImage
-                speakerContent
-            }
-        }
-        .navigationTitle(speaker.name)
-        .navigationBarTitleDisplayMode(.inline)
-        .background(Color.background)
-    }
-
-    private var speakerHeroImage: some View {
-        HeroAsyncImageWithFallback(
-            url: speaker.imageUrlURL,
-            fallbackIconName: "person.fill",
-            height: 300
+        EntityDetailView(
+            entity: speaker,
+            config: .speaker
         )
-    }
-
-    private var speakerContent: some View {
-        VStack(alignment: .leading, spacing: Spacing.lg) {
-            // Use description_ to avoid conflict with Swift's built-in .description
-            if let description = speaker.description_, !description.isEmpty {
-                Text(description)
-                    .font(.body)
-                    .foregroundColor(.primary)
-                    .lineSpacing(4)
-                    .padding()
-                    .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
-                    .padding(.top, -CornerRadius.large)
-                    .padding(.horizontal, Spacing.md)
-            }
-
-            Spacer(minLength: Spacing.xxl)
-        }
-        .padding(.top, Spacing.xl)
     }
 }
 

@@ -33,7 +33,8 @@ abstract class BaseRepository<T : Any>(
     protected suspend fun <F : Any> syncFromFirestoreWithIds(
         deserializer: DeserializationStrategy<F>,
         injectId: (documentId: String, item: F) -> T,
-        insertItems: suspend (List<T>) -> Unit
+        insertItems: suspend (List<T>) -> Unit,
+        clearItems: (suspend () -> Unit)? = null
     ): Result<Unit> {
         return try {
             val result = firestoreService.getCollectionWithIds(collectionName, deserializer)
@@ -42,6 +43,7 @@ abstract class BaseRepository<T : Any>(
                     val items = itemsWithIds.map { (documentId, item) ->
                         injectId(documentId, item)
                     }
+                    clearItems?.invoke()
                     insertItems(items)
                     Result.success(Unit)
                 },
@@ -56,12 +58,14 @@ abstract class BaseRepository<T : Any>(
 
     suspend fun syncFromFirestore(
         deserializer: DeserializationStrategy<T>,
-        insertItems: suspend (List<T>) -> Unit
+        insertItems: suspend (List<T>) -> Unit,
+        clearItems: (suspend () -> Unit)? = null
     ): Result<Unit> {
         return try {
             val result = firestoreService.getCollection(collectionName, deserializer)
             result.fold(
                 onSuccess = { items ->
+                    clearItems?.invoke()
                     insertItems(items)
                     Result.success(Unit)
                 },

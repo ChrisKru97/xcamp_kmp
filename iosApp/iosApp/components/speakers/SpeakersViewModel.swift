@@ -1,5 +1,6 @@
 import SwiftUI
 import shared
+import Kingfisher
 
 enum SpeakersState {
     case loading
@@ -20,7 +21,6 @@ class SpeakersViewModel: ObservableObject {
         state = .loading
         do {
             let speakers = try await service.getAllSpeakers()
-            // Data is already sorted by SQL: ORDER BY priority, name
             state = .loaded(speakers)
             lastError = nil
         } catch {
@@ -30,12 +30,11 @@ class SpeakersViewModel: ObservableObject {
     }
 
     func refreshSpeakers(service: SpeakersService) async {
+        KingfisherManager.shared.cache.clearMemoryCache()
         do {
             _ = try await service.refreshSpeakers()
-            // On success, reload the speakers from local cache
             await loadSpeakers(service: service)
         } catch {
-            // If refresh fails, keep showing existing data silently
             lastError = error
         }
     }

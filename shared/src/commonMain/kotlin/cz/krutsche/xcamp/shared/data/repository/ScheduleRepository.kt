@@ -119,7 +119,24 @@ class ScheduleRepository(
                 val result = firestoreService.getCollection("schedule", Section.serializer())
                 result.fold(
                     onSuccess = { sections ->
+                        val favoriteIds = withContext(Dispatchers.Default) {
+                            val ids = queries.selectFavoriteSections()
+                                .executeAsList()
+                                .map { it.id }
+                                .toSet()
+                            queries.deleteAllSections()
+                            ids
+                        }
                         insertSections(sections)
+                        if (favoriteIds.isNotEmpty()) {
+                            withContext(Dispatchers.Default) {
+                                queries.transaction {
+                                    favoriteIds.forEach { id ->
+                                        queries.updateSectionFavorite(1, id)
+                                    }
+                                }
+                            }
+                        }
                         Result.success(Unit)
                     },
                     onFailure = { error ->

@@ -23,6 +23,7 @@ struct MediaView: View {
         }
         .background(Color.background)
         .navigationTitle(Strings.Tabs.shared.MEDIA)
+        .navigationBarTitleDisplayMode(.inline)
         .modifier(iOS16TabBarBackgroundModifier())
     }
 

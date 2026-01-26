@@ -3,17 +3,18 @@ import shared
 
 // MARK: - Entity Extensions for Image URL
 
-/// Protocol for entities that have imageUrl property
-protocol HasImageUrl {
+/// Protocol for entities that can be displayed in EntityDetailView
+protocol EntityDetailRepresentable {
     var imageUrl: String? { get }
+    var name: String { get }
+    var description_: String? { get }
 }
 
-extension Speaker: HasImageUrl {}
-extension Place: HasImageUrl {}
+extension Place: EntityDetailRepresentable {}
+extension Speaker: EntityDetailRepresentable {}
 
-extension HasImageUrl {
+extension EntityDetailRepresentable {
     /// Extracts URL from the entity's imageUrl property
-    /// - Returns: URL if imageUrl string is valid and non-empty, nil otherwise
     var imageUrlURL: URL? {
         guard let urlString = imageUrl, !urlString.isEmpty else { return nil }
         return URL(string: urlString)

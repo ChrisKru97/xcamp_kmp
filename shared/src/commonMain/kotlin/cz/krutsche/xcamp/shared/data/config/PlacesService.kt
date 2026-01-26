@@ -72,4 +72,8 @@ class PlacesService : RepositoryService<PlacesRepository>() {
             Result.failure(e)
         }
     }
+
+    suspend fun getArealImageURL(): String? {
+        return repository.getArealImageURL()
+    }
 }

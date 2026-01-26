@@ -3,6 +3,7 @@ package cz.krutsche.xcamp.shared.data.repository
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
 import cz.krutsche.xcamp.shared.data.firebase.StorageService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
+import cz.krutsche.xcamp.shared.consts.StoragePaths
 import cz.krutsche.xcamp.shared.domain.model.FirestorePlace
 import cz.krutsche.xcamp.shared.domain.model.Place
 import cz.krutsche.xcamp.shared.domain.model.populateImageUrls
@@ -52,14 +53,14 @@ class PlacesRepository(
                 Place.fromFirestoreData(documentId, firestorePlace)
             },
             insertItems = { places ->
-                // Populate imageUrls for places with images using shared extension
                 val placesWithUrls = places.populateImageUrls(
                     storageService = storageService,
                     entityName = "place",
                     copyWithUrl = { imageUrl -> this.copy(imageUrl = imageUrl) }
                 )
                 insertPlaces(placesWithUrls)
-            }
+            },
+            clearItems = { withDatabase { queries.deleteAllPlaces() } }
         )
     }
 
@@ -74,5 +75,10 @@ class PlacesRepository(
             image = dbPlace.image,
             imageUrl = dbPlace.imageUrl
         )
+    }
+
+    suspend fun getArealImageURL(): String? {
+        return storageService.getDownloadUrl(StoragePaths.AREAL_MAP)
+            .getOrNull()
     }
 }

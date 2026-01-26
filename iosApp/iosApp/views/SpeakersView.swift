@@ -3,7 +3,6 @@ import shared
 
 struct SpeakersView: View {
     @EnvironmentObject var appViewModel: AppViewModel
-    @State private var scrollOffset: CGFloat = 0
 
     var body: some View {
         if #available(iOS 16.0, *) {
@@ -16,8 +15,9 @@ struct SpeakersView: View {
     }
 
     private var contentView: some View {
-        SpeakersContentView(scrollOffset: $scrollOffset)
+        SpeakersContentView()
             .navigationTitle(Strings.Tabs.shared.SPEAKERS)
+            .navigationBarTitleDisplayMode(.inline)
             .modifier(iOS16ToolbarBackgroundModifier())
     }
 }

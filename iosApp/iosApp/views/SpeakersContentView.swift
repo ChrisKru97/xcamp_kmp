@@ -4,7 +4,6 @@ import shared
 struct SpeakersContentView: View {
     @EnvironmentObject var appViewModel: AppViewModel
     @StateObject private var viewModel = SpeakersViewModel()
-    @Binding var scrollOffset: CGFloat
 
     var body: some View {
         ZStack {
@@ -42,17 +41,6 @@ struct SpeakersContentView: View {
             .padding(.horizontal, Spacing.md)
             .padding(.top, Spacing.md)
             .padding(.bottom, Spacing.xxl)
-            .coordinateSpace(name: "scrollView")
-            .background(
-                GeometryReader { geometry in
-                    Color.clear
-                        .preference(key: ScrollOffsetPreferenceKey.self,
-                                  value: geometry.frame(in: .named("scrollView")).minY)
-                }
-            )
-            .onPreferenceChange(ScrollOffsetPreferenceKey.self) { offset in
-                scrollOffset = offset
-            }
         }
         .refreshable {
             await viewModel.refreshSpeakers(service: appViewModel.speakersService)
@@ -105,15 +93,7 @@ struct SpeakersContentView: View {
 // MARK: - Previews
 
 #Preview("Speakers Content View") {
-    if #available(iOS 16.0, *) {
-        NavigationStack {
-            SpeakersContentView(scrollOffset: .constant(0))
-        }
+    SpeakersContentView()
         .environmentObject(AppViewModel())
         .preferredColorScheme(.dark)
-    } else {
-        SpeakersContentView(scrollOffset: .constant(0))
-            .environmentObject(AppViewModel())
-            .preferredColorScheme(.dark)
-    }
 }

@@ -307,6 +307,7 @@ Event announcements, updates, and real-time communications.
 │   ├── marie_szymeczek.jpg
 │   └── steve_barlow.jpeg
 ├── places/
+│   ├── areal.jpg           # Areal/camp map hero image
 │   ├── stanky_infobudka.jpg
 │   ├── infobudka.jpg
 │   ├── IMG_6428.jpeg

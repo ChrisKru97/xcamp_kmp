@@ -1,5 +1,6 @@
 import SwiftUI
 import shared
+import Kingfisher
 
 enum PlacesState {
     case loading
@@ -10,11 +11,13 @@ enum PlacesState {
 @MainActor
 class PlacesViewModel: ObservableObject {
     @Published private(set) var state: PlacesState = .loading
+    @Published private(set) var arealImageURL: String? = nil
 
     func loadPlaces(service: PlacesService) async {
         state = .loading
         do {
             let places = try await service.getAllPlaces()
+            arealImageURL = try? await service.getArealImageURL()
             state = .loaded(places)
         } catch {
             state = .error
@@ -22,12 +25,11 @@ class PlacesViewModel: ObservableObject {
     }
 
     func refreshPlaces(service: PlacesService) async {
+        KingfisherManager.shared.cache.clearMemoryCache()
         do {
             _ = try await service.refreshPlaces()
-            // On success, reload the places from local cache
             await loadPlaces(service: service)
         } catch {
-            // If refresh fails, keep showing existing data silently
         }
     }
 }
