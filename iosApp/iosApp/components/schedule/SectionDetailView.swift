@@ -25,6 +25,7 @@ struct SectionDetailView: View {
         .navigationTitle(section.name)
         .navigationBarTitleDisplayMode(.inline)
         .background(Color.background)
+        .modifier(iOS16ToolbarHiddenModifier())
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {

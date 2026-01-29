@@ -13,20 +13,29 @@ struct EntityDetailView<T: EntityDetailRepresentable>: View {
                 Spacer(minLength: Spacing.xxl)
             }
         }
-        .navigationTitle(entity.name)
+        .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
         .background(Color.background)
-        .applyIf(config.hideToolbar) { view in
-            view.modifier(iOS16ToolbarHiddenModifier())
-        }
+        .modifier(iOS16ToolbarHiddenModifier())
     }
 
     private var heroImage: some View {
-        AsyncImageWithFallback(
-            url: entity.imageUrlURL,
-            fallbackIconName: config.fallbackIconName,
-            height: config.heroHeight
-        )
+        ZStack(alignment: .bottomLeading) {
+            AsyncImageWithFallback(
+                url: entity.imageUrlURL,
+                fallbackIconName: config.fallbackIconName,
+                height: config.heroHeight
+            )
+            .clipped()
+
+            Text(entity.name)
+                .font(.title2)
+                .fontWeight(.bold)
+                .foregroundColor(.white)
+                .shadow(color: .black.opacity(0.5), radius: 4, x: 0, y: 2)
+                .shadow(color: .black.opacity(1.0), radius: 12, x: 0, y: 6)
+                .padding(Spacing.lg)
+        }
     }
 
     private var entityDescription: some View {
@@ -47,17 +56,14 @@ struct EntityDetailView<T: EntityDetailRepresentable>: View {
 struct EntityDetailViewConfig {
     let heroHeight: CGFloat
     let fallbackIconName: String
-    let hideToolbar: Bool
 
     static let place = EntityDetailViewConfig(
         heroHeight: 250,
-        fallbackIconName: "photo",
-        hideToolbar: false
+        fallbackIconName: "photo"
     )
 
     static let speaker = EntityDetailViewConfig(
         heroHeight: 300,
-        fallbackIconName: "person.fill",
-        hideToolbar: false
+        fallbackIconName: "person.fill"
     )
 }
