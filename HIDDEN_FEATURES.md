@@ -69,7 +69,7 @@ This document covers advanced features, hidden behaviors, and non-obvious functi
 - **Live Theme Updates**: Colors can be changed remotely without app updates
 - **Backward Compatibility**: Legacy color system still supported alongside Modern Dark Design System
 - **Gradient Backgrounds**: Dynamic gradients using primary/secondary background colors
-- **Context-Aware Colors**: Different content types (main, internal, gospel, food, basic (- deprecated, same as main)) have distinct color schemes
+- **Context-Aware Colors**: Different content types (main, internal, gospel, food) have distinct color schemes
 
 ### Modern Dark Design System
 - **Consistent Spacing**: 4px base unit system (xs: 4px, sm: 8px, md: 16px, lg: 24px, xl: 32px, 2xl: 48px, 3xl: 64px)
@@ -106,7 +106,7 @@ This document covers advanced features, hidden behaviors, and non-obvious functi
 - **Czech Language Support**: Proper handling of Czech diacritics and special characters
 
 ### Schedule Smart Filtering
-- **Type-Based Filtering**: Filter events by type (main, internal, gospel, food, basic (- deprecated, same as main))
+- **Type-Based Filtering**: Filter events by type (main, internal, gospel, food)
 - **Favorite System**: Quick access to starred events across all days
 - **Time-Aware Display**: Past events automatically dimmed 
 - **Category Colors**: Visual coding by event type

@@ -51,7 +51,7 @@ Each JSON file contains an array of schedule entries:
 | `type` | string | Yes | Event type (see values below) |
 | `place` | string | No | Place ID from `PLACES.md` |
 | `speakers` | array[string] | No | Array of speaker IDs from `SPEAKERS.md` |
-| `leader` | string | No | Leader name (for workshops) |
+| `leader` | string | No | Leader name (for events with designated leader) |
 | `description` | string | No | Event description |
 
 ## Type Values
@@ -70,11 +70,11 @@ Multi-day events are stored as **single** Firestore documents with a `days` arra
 Example:
 ```json
 {
-  "name": "Dvojdílní workshop",
+  "name": "Dvojdílný workshop: Knihařství",
   "days": [21, 22],
   "startTime": "14:00",
   "endTime": "16:00",
-  "type": "main"
+  "type": "workshop"
 }
 ```
 

@@ -76,6 +76,5 @@ enum class SectionType {
     MAIN,
     INTERNAL,
     GOSPEL,
-    FOOD,
-    BASIC
+    FOOD
 }
