@@ -7,6 +7,11 @@ struct PlacesContentView: View {
 
     @State private var showFullscreen = false
 
+    private let columns = [
+        GridItem(.flexible(), spacing: Spacing.md),
+        GridItem(.flexible(), spacing: Spacing.md)
+    ]
+
     var body: some View {
         ZStack {
             Color.background.ignoresSafeArea()
@@ -37,17 +42,19 @@ struct PlacesContentView: View {
 
     private func placesList(_ places: [Place]) -> some View {
         ScrollView {
-            LazyVStack(spacing: Spacing.md) {
+            VStack(spacing: Spacing.lg) {
                 ArealHeroSection(imageURL: viewModel.arealImageURL) {
                     showFullscreen = true
                 }
 
-                ForEach(places, id: \.id) { place in
-                    NavigationLink(destination: PlaceDetailView(place: place)) {
-                        PlaceListItem(place: place)
-                            .equatable()
+                LazyVGrid(columns: columns, spacing: Spacing.md) {
+                    ForEach(places, id: \.id) { place in
+                        NavigationLink(destination: PlaceDetailView(place: place)) {
+                            PlaceListItem(place: place)
+                                .equatable()
+                        }
+                        .buttonStyle(PlainButtonStyle())
                     }
-                    .buttonStyle(PlainButtonStyle())
                 }
             }
             .padding(.horizontal, Spacing.md)

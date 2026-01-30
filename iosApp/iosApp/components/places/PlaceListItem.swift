@@ -10,15 +10,17 @@ struct PlaceListItem: View, Equatable {
     }
 
     var body: some View {
-        HStack(spacing: Spacing.md) {
+        VStack(spacing: Spacing.sm) {
             placeImage
-            placeInfo
-            Spacer()
-            Image(systemName: "chevron.right")
-                .foregroundColor(.secondary)
+            Text(place.name)
                 .font(.caption)
+                .fontWeight(.medium)
+                .foregroundStyle(.primary)
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
         }
-        .padding()
+        .frame(maxWidth: .infinity)
+        .padding(Spacing.sm)
         .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
     }
 
@@ -26,39 +28,15 @@ struct PlaceListItem: View, Equatable {
         AsyncImageWithFallback(
             url: place.imageUrlURL,
             fallbackIconName: "photo",
-            size: CGSize(width: 80, height: 80)
+            size: CGSize(width: 120, height: 120)
         )
         .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
-    }
-
-    private var placeInfo: some View {
-        VStack(alignment: .leading, spacing: Spacing.xs) {
-            Text(place.name)
-                .font(.headline)
-                .foregroundColor(.primary)
-            // Use description_ to avoid conflict with Swift's built-in .description
-            if let description = place.description_, !description.isEmpty {
-                Text(description.prefix(100) + (description.count > 100 ? "..." : ""))
-                    .font(.subheadline)
-                    .foregroundColor(.primary)
-                    .lineLimit(2)
-            }
-            if place.latitude != nil && place.longitude != nil {
-                HStack(spacing: Spacing.xs) {
-                    Image(systemName: "location.fill")
-                        .font(.caption)
-                    Text(Strings.Places.shared.SHOW_ON_MAP)
-                        .font(.caption)
-                }
-                .foregroundColor(.secondary)
-            }
-        }
     }
 }
 
 // MARK: - Previews
 
-#Preview("Place List Item - With Description") {
+#Preview("Place List Item") {
     PlaceListItem(place: Place(
         id: "test",
         name: "Test Place",
@@ -69,12 +47,13 @@ struct PlaceListItem: View, Equatable {
         image: nil,
         imageUrl: nil
     ))
+    .frame(width: 150)
     .padding()
     .background(Color.background)
     .preferredColorScheme(.dark)
 }
 
-#Preview("Place List Item - Without Description") {
+#Preview("Place List Item - Without Image") {
     PlaceListItem(place: Place(
         id: "test2",
         name: "Another Place",
@@ -85,23 +64,8 @@ struct PlaceListItem: View, Equatable {
         image: nil,
         imageUrl: nil
     ))
+    .frame(width: 150)
     .padding()
     .background(Color.background)
     .preferredColorScheme(.light)
-}
-
-#Preview("Place List Item - Long Description") {
-    PlaceListItem(place: Place(
-        id: "test3",
-        name: "Place With Long Description",
-        description: "This is a much longer description that should wrap nicely. It contains multiple lines of text describing the place in detail.",
-        priority: 3,
-        latitude: 50.5,
-        longitude: 14.5,
-        image: nil,
-        imageUrl: nil
-    ))
-    .padding()
-    .background(Color.background)
-    .preferredColorScheme(.dark)
 }
