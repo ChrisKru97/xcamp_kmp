@@ -57,7 +57,6 @@ struct ScheduleView: View {
                     visibleTypes: $viewModel.visibleTypes,
                     favoritesOnly: $viewModel.favoritesOnly
                 )
-                .presentationDetents([.large, .medium])
                 .presentationDragIndicator(.visible)
                 .presentationBackground(.ultraThinMaterial)
             } else if #available(iOS 16.0, *) {
@@ -65,7 +64,6 @@ struct ScheduleView: View {
                     visibleTypes: $viewModel.visibleTypes,
                     favoritesOnly: $viewModel.favoritesOnly
                 )
-                .presentationDetents([.large, .medium])
                 .presentationDragIndicator(.visible)
             } else {
                 ScheduleFilterView(

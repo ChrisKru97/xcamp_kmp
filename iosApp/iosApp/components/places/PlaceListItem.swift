@@ -1,6 +1,5 @@
 import SwiftUI
 import shared
-import Kingfisher
 
 struct PlaceListItem: View, Equatable {
     let place: Place
@@ -10,27 +9,12 @@ struct PlaceListItem: View, Equatable {
     }
 
     var body: some View {
-        VStack(spacing: Spacing.sm) {
-            placeImage
-            Text(place.name)
-                .font(.caption)
-                .fontWeight(.medium)
-                .foregroundStyle(.primary)
-                .lineLimit(2)
-                .multilineTextAlignment(.center)
-        }
-        .frame(maxWidth: .infinity)
-        .padding(Spacing.sm)
-        .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
-    }
-
-    private var placeImage: some View {
-        AsyncImageWithFallback(
-            url: place.imageUrlURL,
+        ImageNameCard(
+            name: place.name,
+            imageUrl: place.imageUrlURL,
             fallbackIconName: "photo",
-            size: CGSize(width: 120, height: 120)
+            imageShape: .roundedRect
         )
-        .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
     }
 }
 

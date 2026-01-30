@@ -90,15 +90,8 @@ struct ScheduleFilterView: View {
             }
         }
         .background(Color.background)
-        .navigationTitle(Strings.Schedule.shared.FILTER_TITLE)
+        .navigationTitle("Filtrovat")
         .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
-                Button(Strings.Schedule.shared.DONE) {
-                    dismiss()
-                }
-            }
-        }
     }
 
     private func toggleType(_ type: SectionType) {
@@ -136,7 +129,7 @@ struct FilterTypeRow: View {
 
                 Text(type.label)
                     .font(.body)
-                    .foregroundColor(.white)
+                    .foregroundColor(.secondary)
 
                 Spacer()
 
@@ -174,7 +167,7 @@ struct FilterToggleRow: View {
 
                 Text(title)
                     .font(.body)
-                    .foregroundColor(.white)
+                    .foregroundColor(.secondary)
 
                 Spacer()
 

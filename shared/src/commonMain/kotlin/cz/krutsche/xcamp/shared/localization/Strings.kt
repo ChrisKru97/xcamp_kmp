@@ -89,8 +89,8 @@ object Strings {
 
         object SectionType {
             const val SECTIONTYPE_MAIN = "Hlavní"
-            const val SECTIONTYPE_INTERNAL = "Interní"
-            const val SECTIONTYPE_GOSPEL = "Gospel"
+            const val SECTIONTYPE_INTERNAL = "Pro registrované"
+            const val SECTIONTYPE_GOSPEL = "Evangelizace"
             const val SECTIONTYPE_FOOD = "Jídlo"
             const val SECTIONTYPE_OTHER = "Ostatní"
         }
