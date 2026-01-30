@@ -3,15 +3,17 @@ package cz.krutsche.xcamp.shared.data.config
 
 import cz.krutsche.xcamp.shared.data.ServiceFactory
 import cz.krutsche.xcamp.shared.data.repository.ScheduleRepository
+import cz.krutsche.xcamp.shared.domain.model.ExpandedSection
 import cz.krutsche.xcamp.shared.domain.model.Section
 import cz.krutsche.xcamp.shared.domain.model.SectionType
+
+private const val DEFAULT_START_DATE = "2026-07-18"
 
 /**
  * Service for managing Section (schedule) entities.
  *
  * Provides access to schedule/section data from both local database and remote Firestore.
  * Extends [RepositoryService] for common repository initialization and sync functionality.
- * Uses [kotlin.time.Instant] for time-based queries (experimental API).
  *
  * @property repository The lazily initialized ScheduleRepository instance
  */
@@ -50,7 +52,7 @@ class ScheduleService : RepositoryService<ScheduleRepository>() {
     /**
      * Retrieves sections filtered by type.
      *
-     * @param type The section type to filter by (main, internal, gospel, food, other)
+     * @param type The section type to filter by (main, internal, gospel, food)
      * @return List of sections matching the specified type
      */
     suspend fun getSectionsByType(type: SectionType): List<Section> {
@@ -67,14 +69,28 @@ class ScheduleService : RepositoryService<ScheduleRepository>() {
     }
 
     /**
-     * Retrieves sections within a specific date/time range.
+     * Retrieves expanded sections for a specific day.
      *
-     * @param startTime Start of the time range (inclusive)
-     * @param endTime End of the time range (inclusive)
-     * @return List of sections that fall within the specified time range
+     * Multi-day sections are expanded into individual entries for display.
+     *
+     * @param dayNumber The day number (e.g., 21 for July 21)
+     * @param startDate The start date in YYYY-MM-DD format (default: 2026-07-18)
+     * @return List of expanded sections for the specified day
      */
-    suspend fun getSectionsByDateRange(startTime: kotlin.time.Instant, endTime: kotlin.time.Instant): List<Section> {
-        return repository.getSectionsByDateRange(startTime, endTime)
+    suspend fun getExpandedSections(dayNumber: Int, startDate: String = DEFAULT_START_DATE): List<ExpandedSection> {
+        return repository.getExpandedSections(dayNumber, startDate)
+    }
+
+    /**
+     * Retrieves all expanded sections across all days.
+     *
+     * Multi-day sections are expanded into individual entries for display.
+     *
+     * @param startDate The start date in YYYY-MM-DD format (default: 2026-07-18)
+     * @return List of all expanded sections sorted by start time
+     */
+    suspend fun getAllExpandedSections(startDate: String = DEFAULT_START_DATE): List<ExpandedSection> {
+        return repository.getAllExpandedSections(startDate)
     }
 
     /**

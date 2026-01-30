@@ -2,8 +2,13 @@ import SwiftUI
 import shared
 
 struct SectionTimeCard: View {
-    let startTime: Int64
-    let endTime: Int64
+    let startTimeString: String
+    let endTimeString: String
+
+    init(startTimeString: String, endTimeString: String) {
+        self.startTimeString = startTimeString
+        self.endTimeString = endTimeString
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.xs) {
@@ -15,14 +20,14 @@ struct SectionTimeCard: View {
                     .foregroundColor(.secondary)
                 Spacer()
             }
-            Text("\(DateFormatter.formatTime(from: startTime)) - \(DateFormatter.formatTime(from: endTime))")
+            Text("\(startTimeString) - \(endTimeString)")
                 .font(.body)
                 .foregroundColor(.primary)
         }
         .padding()
         .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(Strings.ScheduleDetail.shared.DETAIL_TIME): \(DateFormatter.formatTime(from: startTime)) - \(DateFormatter.formatTime(from: endTime))")
+        .accessibilityLabel("\(Strings.ScheduleDetail.shared.DETAIL_TIME): \(startTimeString) - \(endTimeString)")
     }
 }
 
@@ -53,7 +58,7 @@ struct SectionDescriptionCard: View {
 
 #Preview("Section Time Card") {
     VStack(spacing: 20) {
-        SectionTimeCard(startTime: 1701234567000, endTime: 1701238167000)
+        SectionTimeCard(startTimeString: "09:00", endTimeString: "10:30")
     }
     .padding()
     .background(Color.background)

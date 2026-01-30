@@ -2,7 +2,7 @@ import SwiftUI
 import shared
 
 // Typealias to avoid ambiguity with SwiftUI.Section
-typealias ScheduleSection = shared.Section
+typealias ScheduleSection = shared.ExpandedSection
 
 struct ScheduleView: View {
     @EnvironmentObject var appViewModel: AppViewModel
@@ -80,17 +80,20 @@ struct ScheduleView: View {
                 dayNames: dayNames,
                 onDaySelected: { index in
                     viewModel.selectDay(index: index)
+                    Task {
+                        await viewModel.loadDay(service: appViewModel.scheduleService, dayIndex: index)
+                    }
                 }
             )
             ScrollView {
                 LazyVStack(spacing: Spacing.md) {
                     ForEach(sections, id: \.id) { section in
                         NavigationLink(destination: SectionDetailView(
-                            section: section,
+                            section: section.base,
                             service: appViewModel.scheduleService,
                             onFavoriteToggled: {
                                 Task {
-                                    await viewModel.loadSections(service: appViewModel.scheduleService)
+                                    await viewModel.loadDay(service: appViewModel.scheduleService, dayIndex: viewModel.selectedDayIndex)
                                 }
                             }
                         )) {

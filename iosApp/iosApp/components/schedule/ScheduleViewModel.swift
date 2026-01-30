@@ -3,7 +3,7 @@ import shared
 
 enum ScheduleState {
     case loading
-    case loaded([shared.Section])
+    case loaded([shared.ExpandedSection])
     case error
 }
 
@@ -17,8 +17,18 @@ class ScheduleViewModel: ObservableObject {
     @Published var favoritesOnly: Bool = false
     @Published private(set) var lastError: Error?
 
-    private var allSections: [shared.Section] = []
     private var remoteConfigService: RemoteConfigService?
+
+    private var eventDays: [Int] {
+        guard let remoteConfigService,
+              let startDate = parseStartDate(remoteConfigService.getStartDate()) else {
+            return [18, 19, 20, 21, 22, 23, 24, 25]
+        }
+
+        let calendar = Calendar.current
+        let startDay = calendar.component(.day, from: startDate)
+        return (0..<8).map { startDay + $0 }
+    }
 
     func setRemoteConfigService(_ service: RemoteConfigService) {
         self.remoteConfigService = service
@@ -28,7 +38,7 @@ class ScheduleViewModel: ObservableObject {
         lastError = nil
     }
 
-    var filteredSections: [shared.Section] {
+    var filteredSections: [shared.ExpandedSection] {
         guard case .loaded(let sections) = state else {
             return []
         }
@@ -49,15 +59,12 @@ class ScheduleViewModel: ObservableObject {
     func loadSections(service: ScheduleService) async {
         state = .loading
         do {
-            let sections = try await service.getAllSections()
-            allSections = sections
-            let sortedSections = sections.sorted(by: { lhs, rhs in
-                return lhs.startTime.epochMillis < rhs.startTime.epochMillis
-            })
-            state = .loaded(sortedSections)
+            let startDate = remoteConfigService?.getStartDate() ?? "2026-07-18"
+            let sections = try await service.getAllExpandedSections(startDate: startDate)
+            state = .loaded(sections)
 
             // Auto-select current day if applicable
-            selectCurrentDay(sections: sortedSections)
+            selectCurrentDay(sections: sections)
         } catch {
             state = .error
         }
@@ -75,7 +82,7 @@ class ScheduleViewModel: ObservableObject {
         }
     }
 
-    func toggleFavorite(section: shared.Section, service: ScheduleService) async {
+    func toggleFavorite(section: shared.ExpandedSection, service: ScheduleService) async {
         do {
             try await service.toggleFavorite(sectionId: section.id, favorite: !section.favorite)
             await loadSections(service: service)
@@ -101,7 +108,20 @@ class ScheduleViewModel: ObservableObject {
         selectedDayIndex = index
     }
 
-    private func selectCurrentDay(sections: [shared.Section]) {
+    func loadDay(service: ScheduleService, dayIndex: Int) async {
+        guard dayIndex >= 0 && dayIndex < eventDays.count else { return }
+        let dayNumber = eventDays[dayIndex]
+        let startDate = remoteConfigService?.getStartDate() ?? "2026-07-18"
+
+        do {
+            let sections = try await service.getExpandedSections(dayNumber: Int32(dayNumber), startDate: startDate)
+            state = .loaded(sections)
+        } catch {
+            state = .error
+        }
+    }
+
+    private func selectCurrentDay(sections: [shared.ExpandedSection]) {
         let now = Date()
         let currentMillis = Int64(now.timeIntervalSince1970 * 1000)
 
@@ -109,57 +129,28 @@ class ScheduleViewModel: ObservableObject {
         for section in sections {
             if section.startTime.epochMillis <= currentMillis &&
                section.endTime.epochMillis >= currentMillis {
-                // Calculate day index from start time
-                selectedDayIndex = calculateDayIndex(from: section.startTime.epochMillis)
-                return
+                // Find day index from section's day number
+                if let dayIndex = eventDays.firstIndex(of: section.day) {
+                    selectedDayIndex = dayIndex
+                    return
+                }
             }
         }
 
         // If no current section, find the next upcoming one
         for section in sections {
             if section.startTime.epochMillis > currentMillis {
-                selectedDayIndex = calculateDayIndex(from: section.startTime.epochMillis)
-                return
+                if let dayIndex = eventDays.firstIndex(of: section.day) {
+                    selectedDayIndex = dayIndex
+                    return
+                }
             }
         }
     }
 
-    private func calculateDayIndex(from millis: Int64) -> Int {
-        guard let remoteConfigService = remoteConfigService else {
-            return 0
-        }
-
-        // Get event start date from Remote Config (ISO-8601 format)
-        let startDateStr = remoteConfigService.getStartDate()
-        guard let startDate = parseISO8601Date(startDateStr) else {
-            return 0
-        }
-
-        let targetDate = Date(timeIntervalSince1970: Double(millis) / 1000.0)
-
-        // Calculate day difference (86400 seconds per day)
-        let secondsPerDay: TimeInterval = 86400
-        let dayDifference = Int(targetDate.timeIntervalSince(startDate) / secondsPerDay)
-
-        // Clamp to valid range [0, 7] for 8-day event
-        return max(0, min(7, dayDifference))
-    }
-
-    private func parseISO8601(_ dateString: String) -> Date? {
-        let isoFormatter = ISO8601DateFormatter()
-        isoFormatter.formatOptions = [.withInternetDateTime]
-        return isoFormatter.date(from: dateString)
-    }
-
-    private func parseISO8601Date(_ dateString: String) -> Date? {
-        // Try ISO8601 formatter first
-        if let date = parseISO8601(dateString) {
-            return date
-        }
-
-        // Fallback to DateFormatter for extended format
+    private func parseStartDate(_ dateString: String) -> Date? {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'"
+        formatter.dateFormat = "yyyy-MM-dd"
         formatter.timeZone = TimeZone(secondsFromGMT: 0)
         return formatter.date(from: dateString)
     }

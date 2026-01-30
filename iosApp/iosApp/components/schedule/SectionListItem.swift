@@ -2,7 +2,7 @@ import SwiftUI
 import shared
 
 struct SectionListItem: View, Equatable {
-    let section: shared.Section
+    let section: shared.ExpandedSection
 
     static func == (lhs: SectionListItem, rhs: SectionListItem) -> Bool {
         lhs.section.id == rhs.section.id && lhs.section.favorite == rhs.section.favorite

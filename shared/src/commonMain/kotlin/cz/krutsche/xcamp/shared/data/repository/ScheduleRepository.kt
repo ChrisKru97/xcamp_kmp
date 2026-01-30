@@ -3,32 +3,32 @@ package cz.krutsche.xcamp.shared.data.repository
 
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
+import cz.krutsche.xcamp.shared.domain.model.ExpandedSection
 import cz.krutsche.xcamp.shared.domain.model.Section
 import cz.krutsche.xcamp.shared.domain.model.SectionType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
-import kotlin.time.Instant
 import kotlinx.serialization.json.Json
-import cz.krutsche.xcamp.shared.db.XcampDatabase
 import cz.krutsche.xcamp.shared.db.XcampDatabaseQueries
 import cz.krutsche.xcamp.shared.db.Section as DbSection
 import kotlin.time.Duration.Companion.seconds
 
-// Extension functions to map between database and domain models
+private const val DEFAULT_START_DATE = "2026-07-18"
+
 private fun DbSection.toDomain(json: Json): Section = Section(
     id = id,
     uid = uid,
     name = name,
     description = description,
-    startTime = Instant.fromEpochMilliseconds(startTime),
-    endTime = Instant.fromEpochMilliseconds(endTime),
+    days = json.decodeFromString<List<Int>>(days),
+    startTime = startTime,
+    endTime = endTime,
     place = place,
     speakers = speakers?.let { json.decodeFromString<List<Long>>(it) },
     leader = leader,
     type = SectionType.valueOf(type),
-    favorite = favorite > 0,
-    repeatedDates = repeatedDates?.let { json.decodeFromString<List<String>>(it) }
+    favorite = favorite > 0
 )
 
 private fun Section.toDbInsert(
@@ -40,14 +40,14 @@ private fun Section.toDbInsert(
         uid = uid,
         name = name,
         description = description,
-        startTime = startTime.toEpochMilliseconds(),
-        endTime = endTime.toEpochMilliseconds(),
+        days = json.encodeToString(days),
+        startTime = startTime,
+        endTime = endTime,
         place = place,
         speakers = speakers?.let { json.encodeToString(it) },
         leader = leader,
         type = type.name,
-        favorite = if (favorite) 1 else 0,
-        repeatedDates = repeatedDates?.let { json.encodeToString(it) }
+        favorite = if (favorite) 1 else 0
     )
 }
 
@@ -82,12 +82,25 @@ class ScheduleRepository(
         }
     }
 
-    suspend fun getSectionsByDateRange(startTime: Instant, endTime: Instant): List<Section> {
+    suspend fun getExpandedSections(dayNumber: Int, startDate: String = DEFAULT_START_DATE): List<ExpandedSection> {
         return withContext(Dispatchers.Default) {
-            queries.selectSectionsByDateRange(
-                startTime.toEpochMilliseconds(),
-                endTime.toEpochMilliseconds()
-            ).executeAsList().map { it.toDomain(json) }
+            getAllSections()
+                .flatMap { section ->
+                    if (dayNumber in section.days) {
+                        section.expand(startDate).filter { it.day == dayNumber }
+                    } else {
+                        emptyList()
+                    }
+                }
+                .sortedBy { it.startTime }
+        }
+    }
+
+    suspend fun getAllExpandedSections(startDate: String = DEFAULT_START_DATE): List<ExpandedSection> {
+        return withContext(Dispatchers.Default) {
+            getAllSections()
+                .flatMap { it.expand(startDate) }
+                .sortedBy { it.startTime }
         }
     }
 

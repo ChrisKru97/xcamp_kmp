@@ -45,7 +45,7 @@ struct SectionDetailView: View {
 
     private var contentSection: some View {
         VStack(alignment: .leading, spacing: Spacing.lg) {
-            SectionTimeCard(startTime: section.startTime.epochMillis, endTime: section.endTime.epochMillis)
+            SectionTimeCard(startTimeString: section.startTime, endTimeString: section.endTime)
                 .padding(.top, -CornerRadius.large)
                 .padding(.horizontal, Spacing.md)
 
