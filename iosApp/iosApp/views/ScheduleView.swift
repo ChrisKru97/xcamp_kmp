@@ -52,10 +52,27 @@ struct ScheduleView: View {
             await viewModel.loadSections(service: appViewModel.scheduleService)
         }
         .sheet(isPresented: $showingFilter) {
-            ScheduleFilterView(
-                visibleTypes: $viewModel.visibleTypes,
-                favoritesOnly: $viewModel.favoritesOnly
-            )
+            if #available(iOS 16.4, *) {
+                ScheduleFilterView(
+                    visibleTypes: $viewModel.visibleTypes,
+                    favoritesOnly: $viewModel.favoritesOnly
+                )
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+                .presentationBackground(.ultraThinMaterial)
+            } else if #available(iOS 16.0, *) {
+                ScheduleFilterView(
+                    visibleTypes: $viewModel.visibleTypes,
+                    favoritesOnly: $viewModel.favoritesOnly
+                )
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+            } else {
+                ScheduleFilterView(
+                    visibleTypes: $viewModel.visibleTypes,
+                    favoritesOnly: $viewModel.favoritesOnly
+                )
+            }
         }
     }
 
@@ -63,14 +80,17 @@ struct ScheduleView: View {
         Button(action: { showingFilter = true }) {
             Image(systemName: "line.3.horizontal.decrease.circle")
                 .font(.title2)
-                .foregroundColor(.white)
-                .padding()
-                .background(
+                .foregroundColor(.primary)
+                .frame(width: 56, height: 56)
+                .background(.ultraThinMaterial, in: Circle())
+                .overlay {
                     Circle()
-                        .fill(Color.secondary.opacity(0.8))
-                )
-                .shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
+                        .strokeBorder(.white.opacity(0.15), lineWidth: 0.5)
+                }
+                .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
+                .contentShape(Circle())
         }
+        .buttonStyle(ScaleButtonStyle())
     }
 
     private func scheduleContent(_ sections: [ScheduleSection]) -> some View {

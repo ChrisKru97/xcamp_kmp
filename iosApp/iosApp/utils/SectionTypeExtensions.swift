@@ -4,7 +4,7 @@ import shared
 extension SectionType {
     var color: Color {
         switch self {
-        case .main, .basic:
+        case .main:
             return Color.Section.main
         case .internal:
             return Color.Section.internal
@@ -19,7 +19,7 @@ extension SectionType {
 
     var icon: String {
         switch self {
-        case .main, .basic:
+        case .main:
             return "star.fill"
         case .internal:
             return "person.3.fill"
@@ -34,7 +34,7 @@ extension SectionType {
 
     var label: String {
         switch self {
-        case .main, .basic:
+        case .main:
             return Strings.ScheduleSectionType.shared.SECTIONTYPE_MAIN
         case .internal:
             return Strings.ScheduleSectionType.shared.SECTIONTYPE_INTERNAL

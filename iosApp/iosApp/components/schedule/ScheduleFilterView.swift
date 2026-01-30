@@ -20,12 +20,6 @@ struct ScheduleFilterView: View {
 
     private var contentView: some View {
         VStack(spacing: 0) {
-            RoundedRectangle(cornerRadius: 2.5)
-                .fill(Color.white.opacity(0.3))
-                .frame(width: 40, height: 5)
-                .padding(.top, Spacing.sm)
-                .padding(.bottom, Spacing.md)
-
             ScrollView {
                 VStack(spacing: Spacing.md) {
                     ForEach(allTypes, id: \.self) { type in
