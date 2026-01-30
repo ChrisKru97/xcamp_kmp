@@ -74,7 +74,7 @@ struct SectionDetailView: View {
 }
 
 #Preview("Section Time Card") {
-    SectionTimeCard(startTime: 1701234567000, endTime: 1701238167000)
+    SectionTimeCard(startTimeString: "09:00", endTimeString: "10:30")
         .padding()
         .background(Color.background)
         .preferredColorScheme(.dark)

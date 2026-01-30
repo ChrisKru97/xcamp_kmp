@@ -130,7 +130,7 @@ class ScheduleViewModel: ObservableObject {
             if section.startTime.epochMillis <= currentMillis &&
                section.endTime.epochMillis >= currentMillis {
                 // Find day index from section's day number
-                if let dayIndex = eventDays.firstIndex(of: section.day) {
+                if let dayIndex = eventDays.firstIndex(of: Int(section.day)) {
                     selectedDayIndex = dayIndex
                     return
                 }
@@ -140,7 +140,7 @@ class ScheduleViewModel: ObservableObject {
         // If no current section, find the next upcoming one
         for section in sections {
             if section.startTime.epochMillis > currentMillis {
-                if let dayIndex = eventDays.firstIndex(of: section.day) {
+                if let dayIndex = eventDays.firstIndex(of: Int(section.day)) {
                     selectedDayIndex = dayIndex
                     return
                 }

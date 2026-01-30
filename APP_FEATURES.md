@@ -259,29 +259,29 @@ This tab combines Speakers and Places using a segmented picker interface:
 ### App Startup Sequence
 1. **Firebase Core**: Initialize Firebase, Auth (anonymous), Remote Config, Crashlytics
 2. **Animation Utils**: Initialize performance-aware animations based on device capabilities
-3. **ObjectBox**: Open local SQLite database for offline storage
-4. **Cleanup Check**: Optional ObjectBox data cleanup without app restart
+3. **SQLDelight**: Open local SQLite database for offline storage
+4. **Cleanup Check**: Optional SQLDelight data cleanup without app restart
 
 ### Data Loading Patterns
 
-#### On App Start (main.dart)
+#### On App Start
 - **Immediate**: Remote Config values (cached, fast access)
 - **Deferred**: All collection data loaded only when UI components need them
 
 #### Lazy Loading by UI Component
-- **Home Tab**: News collection (`addPostFrameCallback` → `NewsProvider.loadNews()`)
-- **Schedule Tab**: Schedule sections (`ScheduleProvider.loadSchedule()` on first access)  
-- **Speakers Sub-Tab**: Speakers collection (`SpeakersProvider.loadSpeakers()` on first access)
-- **Places Sub-Tab**: Places collection (`PlacesProvider.loadPlaces()` on first access)
-- **Songs Tab**: Songs collection (`SongsProvider.loadSongs()` on first access)
-- **Group Leaders**: GroupLeaders collection (`GroupLeadersProvider.loadGroupLeaders()` when needed)
+- **Home Tab**: News collection (loaded on first access)
+- **Schedule Tab**: Schedule sections (loaded on first access)
+- **Speakers Sub-Tab**: Speakers collection (loaded on first access)
+- **Places Sub-Tab**: Places collection (loaded on first access)
+- **Songs Tab**: Songs collection (loaded on first access)
+- **Group Leaders**: GroupLeaders collection (loaded when needed)
 
-#### Loading Strategy per Provider
-1. **Check Local Cache**: Query ObjectBox first (instant if data exists)
+#### Loading Strategy
+1. **Check Local Cache**: Query SQLDelight first (instant if data exists)
 2. **Firebase Sync**: If cache empty or needs refresh → Firestore query with 5-second timeout
-3. **Data Validation**: Filter invalid documents, convert to ObjectBox entities
-4. **Batch Storage**: Store valid data in ObjectBox for offline access
-5. **UI Update**: Notify listeners → rebuild affected widgets
+3. **Data Validation**: Filter invalid documents, convert to domain models
+4. **Batch Storage**: Store valid data in SQLDelight for offline access
+5. **UI Update**: Notify listeners → update UI state
 
 #### Data Loading Triggers
 - **Tab Navigation**: Load fresh data when switching to content tabs TODO only if the data is missing
@@ -289,8 +289,8 @@ This tab combines Speakers and Places using a segmented picker interface:
 
 #### Performance Optimizations
 - **Timeout Protection**: 5-second max for Firestore queries
-- **Selective Rebuilds**: Consumer/Selector widgets prevent unnecessary rebuilds
-- **Async Loading**: `findAsync()` for all ObjectBox queries to prevent UI blocking
+- **Selective Rebuilds**: UI observers prevent unnecessary rebuilds
+- **Async Loading**: Async queries for all SQLDelight operations to prevent UI blocking
 - **Error Recovery**: Graceful degradation - continue with cached data if sync fails
 
 ### Collection-Specific Patterns

@@ -82,7 +82,7 @@ xcamp_kmp/
 - **Multiplatform Settings**: 1.2.0
 - **Koin**: 4.0.1
 
-## Core Functionality Matches Flutter App
+## Core Functionality
 
 ✅ **Complete Feature Parity**:
 - 8-day schedule system with favorites and filtering
@@ -120,4 +120,4 @@ All data operations, Firebase integration, state management, and business logic 
 3. **iOS Development**:
    Open `iosApp/iosApp.xcodeproj` in Xcode
 
-The project is structured to follow DRY, KISS, and SOLID principles with small, focused files and clean architecture patterns exactly matching the original Flutter app functionality.
+The project is structured to follow DRY, KISS, and SOLID principles with small, focused files and clean architecture patterns.

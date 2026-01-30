@@ -80,7 +80,7 @@ This document covers advanced features, hidden behaviors, and non-obvious functi
 ## 📊 Smart Data Management
 
 ### Offline-First Architecture
-- **ObjectBox Local Database**: Full app functionality without internet connection
+- **SQLDelight Local Database**: Full app functionality without internet connection
 - **Background Sync**: Automatic synchronization with Firestore when connection available
 - **Graceful Degradation**: App continues working even if sync operations fail
 - **Smart Caching**: Images cached locally with `cached_network_image`
