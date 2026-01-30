@@ -27,9 +27,14 @@ struct SpeakersContentView: View {
         }
     }
 
+    private let columns = [
+        GridItem(.flexible(), spacing: Spacing.md),
+        GridItem(.flexible(), spacing: Spacing.md)
+    ]
+
     private func speakersList(_ speakers: [Speaker]) -> some View {
         ScrollView {
-            LazyVStack(spacing: Spacing.md) {
+            LazyVGrid(columns: columns, spacing: Spacing.md) {
                 ForEach(speakers, id: \.id) { speaker in
                     NavigationLink(destination: SpeakerDetailView(speaker: speaker)) {
                         SpeakerListItem(speaker: speaker)

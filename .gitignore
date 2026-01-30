@@ -105,3 +105,5 @@ Thumbs.db
 *.konan/
 
 .kotlin
+
+scripts/firebase-credentials.json

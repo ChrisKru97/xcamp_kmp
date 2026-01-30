@@ -49,6 +49,7 @@ struct EmergencyPill: View {
                     .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
+        .contentShape(Rectangle())
         .padding(Spacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
@@ -63,7 +64,7 @@ struct EmergencyPill: View {
             description: "Available at information desk 24/7. In case of any health issues please contact the service at information desk."
         )
         EmergencyPill(
-            icon: "arrow.up.forward.square",
+            icon: "door.left.hand.open",
             title: "Leaving Camp",
             description: "In case of leaving camp please report this to information desk and your group leader in advance."
         )

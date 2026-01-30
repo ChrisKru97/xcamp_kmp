@@ -46,7 +46,7 @@ struct InfoView: View {
                 )
 
                 EmergencyPill(
-                    icon: "arrow.up.forward.square.fill",
+                    icon: "door.left.hand.open",
                     title: Strings.Info.shared.LEAVING_CAMP_TITLE,
                     description: Strings.Info.shared.LEAVING_CAMP_TEXT
                 )

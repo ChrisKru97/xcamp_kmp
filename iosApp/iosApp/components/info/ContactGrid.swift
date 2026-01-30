@@ -30,7 +30,7 @@ struct ContactGrid: View {
         InfoLink(title: "Telefon", url: "tel:+420732378740", type: InfoLinkType.phone),
         InfoLink(title: "Email", url: "mailto:info@xcamp.cz", type: InfoLinkType.email),
         InfoLink(title: "Web", url: "https://xcamp.cz", type: InfoLinkType.web),
-        InfoLink(title: "Mapa", url: "https://maps.google.com", type: InfoLinkType.map)
+        InfoLink(title: "Adresa", url: "https://maps.google.com", type: InfoLinkType.address)
     ])
     .padding()
     .background(Color.gray.opacity(0.1))

@@ -39,7 +39,7 @@ object Strings {
         const val CONTACT_US = "Kontakty"
         const val CONTACT_EMAIL = "info@xcamp.cz"
         const val CONTACT_WEB = "Webové stránky"
-        const val CONTACT_MAP = "Mapa"
+        const val CONTACT_ADDRESS = "Adresa"
         const val CONTACT_REGISTRATION = "Registrace"
         const val CONTACT_PHONE_LABEL = "Telefon:"
     }
