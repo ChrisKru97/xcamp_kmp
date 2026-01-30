@@ -62,11 +62,15 @@ This tab combines Speakers and Places using a segmented picker interface:
 - **Individual Speaker Pages**: Detailed speaker information
 - **Speaker Information**: Include photo, name, bio and list of his scheduled parts of program (sections)
 
+> **See also:** [`SPEAKERS.md`](../SPEAKERS.md) for complete Firestore speaker ID mapping
+
 ### Places Sub-Tab ("Místa")
 - **Areal Map**: Full-screen camp areal/map image at top with QuickLook support for zoom/pan
 - **Interactive Map**: Location information and details - as an image
 - **Place List**: List of all camp important locations with basic information
-- **Place Details**: Individual location pages with comprehensive information - name, photo, location 
+- **Place Details**: Individual location pages with comprehensive information - name, photo, location
+
+> **See also:** [`PLACES.md`](../PLACES.md) for complete Firestore place ID mapping 
 
 ## Rating Tab ("Hodnocení") 
 **Available only after the event ends (if showAppData = true)**

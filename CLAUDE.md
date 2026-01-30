@@ -10,6 +10,8 @@ XcamP is a Kotlin Multiplatform camp/event management app targeting Android (Jet
 - `APP_FEATURES.md` - Feature specs, navigation, app state
 - `FIREBASE_STRUCTURE.md` - Firestore collections, Storage structure
 - `HIDDEN_FEATURES.md` - Advanced features and optimizations
+- `PLACES.md` - Firestore place name → ID mapping
+- `SPEAKERS.md` - Firestore speaker name → ID mapping
 
 ## Essential Commands
 
@@ -87,6 +89,8 @@ Dynamic bottom tabs controlled by Remote Config `showAppData`:
 **Collections**:
 - Persistent: `chrost`, `feedback`, `info`, `places`, `rating`, `songs`, `speakers`, `textRating`, `users`, `notifications`, `merch`
 - Event-specific (deleted post-event): `schedule`, `groupLeaders`, `news`
+
+> **See also:** [`PLACES.md`](PLACES.md) for Firestore place ID mapping, [`SPEAKERS.md`](SPEAKERS.md) for Firestore speaker ID mapping
 
 For Firebase implementation details, see `.claude/subagents/firebase-integration.md`
 

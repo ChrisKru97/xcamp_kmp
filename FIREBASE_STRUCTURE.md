@@ -134,8 +134,10 @@ Camp location data with GPS coordinates and descriptions.
 }
 ```
 
-**Document ID:** Auto-generated Firestore ID  
+**Document ID:** Auto-generated Firestore ID
 **Usage:** Interactive camp map, location finder, navigation
+
+> **See also:** [`PLACES.md`](../PLACES.md) for complete name → ID mapping
 
 #### 7. `rating` Collection
 Numeric ratings for events, sessions, or content.
@@ -183,8 +185,10 @@ Speaker profiles and biographical information.
 }
 ```
 
-**Document ID:** Auto-generated Firestore ID  
+**Document ID:** Auto-generated Firestore ID
 **Usage:** Speaker profiles, session information, about pages
+
+> **See also:** [`SPEAKERS.md`](../SPEAKERS.md) for complete name → ID mapping
 
 #### 10. `textRating` Collection
 Textual feedback for specific events or sessions.
