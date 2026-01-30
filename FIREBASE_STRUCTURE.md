@@ -1,7 +1,7 @@
 # XcamP Firebase Structure Documentation
 
 ## Overview
-This document outlines the complete Firebase structure for the XcamP Flutter application, including Firestore collections and Firebase Storage organization.
+This document outlines the complete Firebase structure for the XcamP Kotlin Multiplatform application, including Firestore collections and Firebase Storage organization.
 
 **Project ID:** `xcamp-dea26`
 
@@ -391,27 +391,12 @@ Event announcements, updates, and real-time communications.
 
 ---
 
-## App Architecture Integration
-
-### Flutter Provider Classes
-```dart
-// Persistent providers
-SpeakersProvider     // speakers collection
-SongsProvider        // songs collection  
-PlacesProvider       // places collection
-NotificationsProvider // notifications + users collections
-
-// Event-specific providers (when collections exist)
-ScheduleProvider     // schedule collection
-GroupLeadersProvider // groupLeaders collection  
-NewsProvider         // news collection
-```
-
-### Data Sync Strategy
-- **Offline-First:** All data cached in ObjectBox local database
+## Data Sync Strategy
+- **Offline-First:** All data cached in SQLDelight (SQLite) local database
+- **Repository Pattern:** BaseRepository provides syncFromFirestore() methods
 - **5-Second Timeouts:** All Firestore operations have timeout protection
-- **Graceful Degradation:** Falls back to local cache on sync failures
-- **Selective Sync:** Providers sync only relevant data subsets
+- **Graceful Degradation:** Falls back to local cache on sync failures (Result<T> error handling)
+- **Selective Sync:** Repositories sync only relevant data subsets
 
 ### Security & Access Patterns
 
@@ -498,11 +483,10 @@ Event data preserved in `scripts/` directory as JSON:
 - `news` (when active) - Administrative announcements
 
 ### Performance Optimizations
-- **ObjectBox Integration:** Local-first data access
-- **Selective Listeners:** Providers use targeted queries
-- **Image Caching:** Firebase Storage URLs cached locally
-- **Timeout Protection:** All operations limited to 5 seconds
-- **Error Handling:** Comprehensive Firebase Crashlytics integration
+- **SQLDelight Integration:** Type-safe local database access
+- **Repository Pattern:** BaseRepository provides common sync methods
+- **Image Caching:** Firebase Storage URLs cached locally (imageUrl field)
+- **Error Handling:** Result<T> pattern for graceful failure handling
 
 ---
 
@@ -510,7 +494,7 @@ Event data preserved in `scripts/` directory as JSON:
 
 ### Health Checks
 - Monitor collection document counts
-- Track sync failure rates via Crashlytics  
+- Track sync failure rates via Result<T> error handling
 - Verify FCM token validity in `users` collection
 - Check image reference integrity between Firestore and Storage
 
@@ -523,7 +507,7 @@ Event data preserved in `scripts/` directory as JSON:
 ### Troubleshooting
 - **Empty Storage:** Expected post-event, files moved to CDN or deleted
 - **Missing Collections:** Check event phase - some collections temporary
-- **Sync Failures:** Firestore operations timeout after 5 seconds
+- **Sync Failures:** See Data Sync Strategy for timeout protection details
 - **Rating Mismatches:** Event IDs in ratings may reference deleted schedule items
 
 ---
