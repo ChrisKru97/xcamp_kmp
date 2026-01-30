@@ -1,0 +1,20 @@
+[
+  {
+    "id": "a7f3c9e2-4b8d-4a1e-9f2c-3d8e5b7a1c6f",
+    "name": "Noční klid",
+    "days": [18, 19, 20, 21, 22, 23],
+    "startTime": "23:00",
+    "endTime": "05:00",
+    "type": "internal",
+    "description": "V hlavním stanu až od půlnoci"
+  },
+  {
+    "id": "f9e2d8c1-5b4a-4f3e-8a7c-2b9d1e6f4a8b",
+    "name": "Noční klid",
+    "days": [24],
+    "startTime": "23:59",
+    "endTime": "05:00",
+    "type": "internal",
+    "description": "V hlavním stanu až od 1:00"
+  }
+]

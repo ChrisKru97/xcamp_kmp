@@ -20,6 +20,7 @@ Each JSON file contains an array of schedule entries:
 ```json
 [
   {
+    "id": "550e8400-e29b-41d4-a716-446655440001",
     "name": "Umění knihařství: Ruční šití notesů*",
     "days": [21, 22],
     "startTime": "12:00",
@@ -30,6 +31,7 @@ Each JSON file contains an array of schedule entries:
     "place": "elqXMvc9fP9b7vG016UJ"
   },
   {
+    "id": "550e8400-e29b-41d4-a716-446655440002",
     "name": "Moje zkušenost se závislostí",
     "days": [21],
     "startTime": "09:00",
@@ -44,6 +46,7 @@ Each JSON file contains an array of schedule entries:
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
+| `id` | string (UUID v4) | Yes | Stable document ID. Use a UUID v4 format (e.g., `a1b2c3d4-e5f6-4a5b-8c7d-9e0f1a2b3c4d`). |
 | `name` | string | Yes | Event name |
 | `days` | array[int] | Yes | Day numbers in event month (e.g., `[21, 22]` for July 21-22) |
 | `startTime` | string | Yes | Start time in `HH:MM` format |
@@ -70,6 +73,7 @@ Multi-day events are stored as **single** Firestore documents with a `days` arra
 Example:
 ```json
 {
+  "id": "550e8400-e29b-41d4-a716-446655440003",
   "name": "Dvojdílný workshop: Knihařství",
   "days": [21, 22],
   "startTime": "14:00",
@@ -79,6 +83,10 @@ Example:
 ```
 
 This creates one document that appears on both July 21 and July 22 in the app.
+
+## ID Uniqueness
+
+If the same `id` appears in multiple entries, the last entry will overwrite previous ones. Ensure IDs are unique across all files.
 
 ## Referencing Places and Speakers
 
@@ -110,9 +118,10 @@ python upload_schedule.py
 
 The script will:
 1. Load all JSON files from `schedule_data/`
-2. Validate each entry (required fields, time format, type values)
-3. Generate a UUID v4 for each entry as the document ID
-4. Upload to Firestore in batches of 500
+2. Validate each entry (including `id` format)
+3. Use the `id` field as the document ID in Firestore
+4. Store the document ID as `uid` in Firestore
+5. Upload to Firestore in batches of 500
 
 ## Date Base
 

@@ -39,6 +39,15 @@ def generate_uid() -> str:
     return str(uuid.uuid4())
 
 
+def validate_uuid_format(uuid_str: str) -> bool:
+    """Validate if a string is a valid UUID v4 format."""
+    try:
+        uuid_obj = uuid.UUID(uuid_str)
+        return uuid_obj.version == 4
+    except (ValueError, AttributeError):
+        return False
+
+
 def validate_time_format(time_str: str) -> bool:
     """Validate HH:MM time format."""
     try:
@@ -95,6 +104,13 @@ def validate_entry(entry: dict[str, Any], filename: str) -> tuple[bool, str]:
 
     if "description" in entry and not isinstance(entry["description"], str):
         return False, "description must be a string"
+
+    # Validate optional 'id' field
+    if "id" in entry:
+        if not isinstance(entry["id"], str):
+            return False, "id must be a string"
+        if not validate_uuid_format(entry["id"]):
+            return False, f"Invalid UUID v4 format for 'id': '{entry['id']}'. Expected format: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"
 
     return True, ""
 
@@ -184,6 +200,8 @@ def upload_entries(db: firestore.Client, entries: List[dict[str, Any]]) -> int:
     collection = db.collection(COLLECTION_NAME)
     uploaded = 0
     failed = 0
+    auto_generated = 0
+    stable_ids = 0
 
     # Firestore batch size limit is 500
     batch_size = 500
@@ -193,8 +211,14 @@ def upload_entries(db: firestore.Client, entries: List[dict[str, Any]]) -> int:
         batch_entries = entries[i:i + batch_size]
 
         for entry in batch_entries:
-            # Generate UID for each entry
-            uid = generate_uid()
+            # Use provided 'id' or generate UID
+            uid = entry.get("id") or generate_uid()
+
+            # Track statistics
+            if "id" in entry:
+                stable_ids += 1
+            else:
+                auto_generated += 1
 
             # Create document reference with UID as document ID
             doc_ref = collection.document(uid)
@@ -209,15 +233,10 @@ def upload_entries(db: firestore.Client, entries: List[dict[str, Any]]) -> int:
                 "type": entry["type"],
             }
 
-            # Add optional fields
-            if "place" in entry:
-                doc_data["place"] = entry["place"]
-            if "speakers" in entry:
-                doc_data["speakers"] = entry["speakers"]
-            if "leader" in entry:
-                doc_data["leader"] = entry["leader"]
-            if "description" in entry:
-                doc_data["description"] = entry["description"]
+            # Add optional fields (excluding 'id' which is used as document ID)
+            for key in ["place", "speakers", "leader", "description"]:
+                if key in entry:
+                    doc_data[key] = entry[key]
 
             # Add to batch
             batch.set(doc_ref, doc_data)
@@ -229,6 +248,12 @@ def upload_entries(db: firestore.Client, entries: List[dict[str, Any]]) -> int:
         except Exception as e:
             print(f"Error uploading batch: {e}")
             failed += len(batch_entries)
+
+    print()
+    print("Document ID Summary:")
+    print(f"  Stable IDs (from JSON): {stable_ids}")
+    print(f"  Auto-generated IDs: {auto_generated}")
+    print(f"  Total: {uploaded}")
 
     return uploaded
 

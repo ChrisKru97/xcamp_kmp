@@ -1,0 +1,20 @@
+[
+  {
+    "id": "b8a7d3e0-5c9f-4a8e-9d2b-1f3e4a5c6d7e",
+    "name": "Modlitební setkání",
+    "days": [18, 19, 20, 21, 22, 23],
+    "startTime": "23:00",
+    "endTime": "24:00",
+    "type": "main",
+    "place": "pSumjXNG4JE3doQFBCUU"
+  },
+  {
+    "id": "c9e8f4a1-6d0e-5b9f-0e3c-2a4f5b6d7e8f",
+    "name": "Modlitební setkání",
+    "days": [24],
+    "startTime": "23:59",
+    "endTime": "01:00",
+    "type": "main",
+    "place": "pSumjXNG4JE3doQFBCUU"
+  }
+]
