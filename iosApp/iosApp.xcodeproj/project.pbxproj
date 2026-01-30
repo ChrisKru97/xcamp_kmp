@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0C44B48B2F2D16A600B73EB3 /* Icon.icon in Resources */ = {isa = PBXBuildFile; fileRef = 0C44B48A2F2D16A600B73EB3 /* Icon.icon */; };
 		0C80B72C2E86EB15002CB15A /* shared.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0C80B72B2E86EB15002CB15A /* shared.framework */; };
 		0CE234842E8FAF8600A03730 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 0CE234832E8FAF8600A03730 /* FirebaseAuth */; };
 		0CE234862E8FAF8600A03730 /* FirebaseCore in Frameworks */ = {isa = PBXBuildFile; productRef = 0CE234852E8FAF8600A03730 /* FirebaseCore */; };
@@ -22,6 +23,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0C44B48A2F2D16A600B73EB3 /* Icon.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = Icon.icon; sourceTree = "<group>"; };
 		0C80B72B2E86EB15002CB15A /* shared.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = shared.framework; path = ../shared/build/bin/iosArm64/debugFramework/shared.framework; sourceTree = SOURCE_ROOT; };
 		0CE2349F2E8FC3C500A03730 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		0CE520802E8D92AF0099DFDA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -95,6 +97,7 @@
 				3CE7405A53C83AF8AC17F099 /* ContentView.swift */,
 				0CE520802E8D92AF0099DFDA /* Assets.xcassets */,
 				0CE2349F2E8FC3C500A03730 /* GoogleService-Info.plist */,
+				0C44B48A2F2D16A600B73EB3 /* Icon.icon */,
 			);
 			path = iosApp;
 			sourceTree = "<group>";
@@ -166,6 +169,7 @@
 			isa = PBXResourcesBuildPhase;
 			files = (
 				0CE520812E8D92AF0099DFDA /* Assets.xcassets in Resources */,
+				0C44B48B2F2D16A600B73EB3 /* Icon.icon in Resources */,
 				0CE234A02E8FC3C500A03730 /* GoogleService-Info.plist in Resources */,
 			);
 		};
@@ -331,7 +335,7 @@
 		7555FF90242A565B00829871 /* Debug configuration for PBXNativeTarget "iosApp" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = Icon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 57;
 				ENABLE_PREVIEWS = YES;
@@ -361,7 +365,7 @@
 		7555FF91242A565B00829871 /* Release configuration for PBXNativeTarget "iosApp" */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_APPICON_NAME = Icon;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 57;
 				ENABLE_PREVIEWS = YES;
@@ -422,7 +426,6 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/onevcat/Kingfisher";
 			requirement = {
-				branch = "master";
 				kind = upToNextMajorVersion;
 				minimumVersion = 8.0.0;
 			};
