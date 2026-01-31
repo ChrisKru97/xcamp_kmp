@@ -90,7 +90,7 @@ struct ScheduleFilterView: View {
             }
         }
         .background(Color.background)
-        .navigationTitle("Filtrovat")
+        .navigationTitle(Strings.Schedule.shared.FILTER_TITLE)
         .navigationBarTitleDisplayMode(.inline)
     }
 

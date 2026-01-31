@@ -16,7 +16,7 @@ struct RatingView: View {
 
     private var contentView: some View {
         ScrollView {
-            Text("TODO")
+            Text(Strings.Rating.shared.COMING_SOON)
         }
         .navigationTitle(Strings.Tabs.shared.RATING)
         .modifier(iOS16TabBarBackgroundModifier())

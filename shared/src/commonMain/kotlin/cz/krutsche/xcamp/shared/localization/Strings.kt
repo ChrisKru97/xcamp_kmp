@@ -119,4 +119,8 @@ object Strings {
             const val DETAIL_REMOVE_FROM_FAVORITES = "Odebrat z oblíbených"
         }
     }
+
+    object Rating {
+        const val COMING_SOON = "Připravujeme"
+    }
 }
