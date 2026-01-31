@@ -5,7 +5,7 @@ struct PlaceListItem: View, Equatable {
     let place: Place
 
     static func == (lhs: PlaceListItem, rhs: PlaceListItem) -> Bool {
-        lhs.place.id == rhs.place.id
+        lhs.place.uid == rhs.place.uid
     }
 
     var body: some View {
@@ -22,7 +22,7 @@ struct PlaceListItem: View, Equatable {
 
 #Preview("Place List Item") {
     PlaceListItem(place: Place(
-        id: "test",
+        uid: "test",
         name: "Test Place",
         description: "This is a test description for the place",
         priority: 1,
@@ -39,7 +39,7 @@ struct PlaceListItem: View, Equatable {
 
 #Preview("Place List Item - Without Image") {
     PlaceListItem(place: Place(
-        id: "test2",
+        uid: "test2",
         name: "Another Place",
         description: nil,
         priority: 2,

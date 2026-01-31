@@ -48,7 +48,7 @@ struct PlacesContentView: View {
                 }
 
                 LazyVGrid(columns: columns, spacing: Spacing.md) {
-                    ForEach(places, id: \.id) { place in
+                    ForEach(places, id: \.uid) { place in
                         NavigationLink(destination: PlaceDetailView(place: place)) {
                             PlaceListItem(place: place)
                                 .equatable()

@@ -5,7 +5,7 @@ struct SpeakerListItem: View, Equatable {
     let speaker: Speaker
 
     static func == (lhs: SpeakerListItem, rhs: SpeakerListItem) -> Bool {
-        lhs.speaker.id == rhs.speaker.id
+        lhs.speaker.uid == rhs.speaker.uid
     }
 
     var body: some View {
@@ -22,7 +22,7 @@ struct SpeakerListItem: View, Equatable {
 
 #Preview("Speaker List Item") {
     SpeakerListItem(speaker: Speaker(
-        id: "test1",
+        uid: "test1",
         name: "Jan Novák",
         description: nil,
         priority: 1,
@@ -37,7 +37,7 @@ struct SpeakerListItem: View, Equatable {
 
 #Preview("Speaker List Item - Light") {
     SpeakerListItem(speaker: Speaker(
-        id: "test2",
+        uid: "test2",
         name: "Marie Svobodová",
         description: nil,
         priority: 2,

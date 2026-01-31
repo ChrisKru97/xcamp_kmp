@@ -35,7 +35,7 @@ struct SpeakersContentView: View {
     private func speakersList(_ speakers: [Speaker]) -> some View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: Spacing.md) {
-                ForEach(speakers, id: \.id) { speaker in
+                ForEach(speakers, id: \.uid) { speaker in
                     NavigationLink(destination: SpeakerDetailView(speaker: speaker)) {
                         SpeakerListItem(speaker: speaker)
                             .equatable()

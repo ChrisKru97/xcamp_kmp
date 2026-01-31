@@ -31,7 +31,7 @@ struct SectionDetailView: View {
                 Button(action: {
                     Task {
                         isFavorite.toggle()
-                        try? await service.toggleFavorite(sectionId: section.id, favorite: isFavorite)
+                        try? await service.toggleFavorite(sectionUid: section.uid, favorite: isFavorite)
                         onFavoriteToggled()
                     }
                 }) {

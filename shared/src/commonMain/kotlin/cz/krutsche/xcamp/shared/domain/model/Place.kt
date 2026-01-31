@@ -1,51 +1,36 @@
 package cz.krutsche.xcamp.shared.domain.model
 
 import kotlinx.serialization.Serializable
-import kotlin.math.abs
 
 /**
  * Place domain model
  *
  * Matches Firestore structure where:
- * - id (String): Firestore document ID - used as uid in database
+ * - uid (String): Firestore document ID - used as primary key
  * - name (String): Place name
  * - description (String?): Optional description text
  * - priority (Long): Sorting priority (lower = higher priority)
  * - latitude (Double?): Optional GPS coordinate
  * - longitude (Double?): Optional GPS coordinate
  * - image (String?): Optional Firebase Storage reference
- *
- * The numeric id for the database is generated from the uid (document ID).
  */
 @Serializable
 data class Place(
-    val id: String,  // Firestore document ID - becomes uid in database
+    val uid: String,
     val name: String,
     val description: String? = null,
     val priority: Long,
     val latitude: Double? = null,
     val longitude: Double? = null,
     val image: String? = null,
-    val imageUrl: String? = null  // Computed URL for display
+    val imageUrl: String? = null
 ) {
     companion object {
-        /**
-         * Generate a numeric ID from the document ID for database storage
-         * Uses a simple hash of the document ID
-         */
-        fun generateId(uid: String): Long {
-            return abs(uid.hashCode()).toLong()
-        }
-
-        /**
-         * Create a Place from Firestore data with document ID injected
-         * @throws IllegalArgumentException if required fields are invalid
-         */
         fun fromFirestoreData(documentId: String, data: FirestorePlace): Place {
             require(documentId.isNotBlank()) { "Place document ID cannot be blank" }
             require(data.name.isNotBlank()) { "Place name cannot be blank" }
             return Place(
-                id = documentId,
+                uid = documentId,
                 name = data.name,
                 description = data.description,
                 priority = data.priority,
@@ -58,11 +43,6 @@ data class Place(
     }
 }
 
-/**
- * Firestore Place data model (without id field).
- * Used for deserializing Firestore documents that don't have an explicit 'id' field.
- * The document ID is injected separately from the DocumentSnapshot.id property.
- */
 @Serializable
 data class FirestorePlace(
     val name: String,
@@ -73,13 +53,9 @@ data class FirestorePlace(
     val image: String? = null
 )
 
-/**
- * Convert Firestore Place to database format with generated numeric ID
- */
 fun Place.toDbPlace(): cz.krutsche.xcamp.shared.db.Place {
     return cz.krutsche.xcamp.shared.db.Place(
-        id = Place.generateId(this.id),
-        uid = this.id,
+        uid = this.uid,
         name = this.name,
         description = this.description,
         priority = this.priority,

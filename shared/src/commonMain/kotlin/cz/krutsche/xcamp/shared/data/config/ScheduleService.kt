@@ -40,13 +40,13 @@ class ScheduleService : RepositoryService<ScheduleRepository>() {
     }
 
     /**
-     * Retrieves a specific section by its numeric ID.
+     * Retrieves a specific section by its uid.
      *
-     * @param id The numeric ID of the section (generated from document ID)
+     * @param uid The uid of the section (Firebase document ID)
      * @return The section if found, null otherwise
      */
-    suspend fun getSectionById(id: Long): Section? {
-        return repository.getSectionById(id)
+    suspend fun getSectionById(uid: String): Section? {
+        return repository.getSectionById(uid)
     }
 
     /**
@@ -126,13 +126,13 @@ class ScheduleService : RepositoryService<ScheduleRepository>() {
      *
      * Updates the favorite flag for a specific section in the local database.
      *
-     * @param sectionId The numeric ID of the section
+     * @param sectionUid The uid of the section
      * @param favorite The new favorite status (true to favorite, false to unfavorite)
      * @return Result.Success on success, Result.Failure on error
      */
-    suspend fun toggleFavorite(sectionId: Long, favorite: Boolean): Result<Unit> {
+    suspend fun toggleFavorite(sectionUid: String, favorite: Boolean): Result<Unit> {
         return try {
-            repository.toggleFavorite(sectionId, favorite)
+            repository.toggleFavorite(sectionUid, favorite)
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)

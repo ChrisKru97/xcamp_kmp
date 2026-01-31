@@ -36,13 +36,13 @@ class PlacesService : RepositoryService<PlacesRepository>() {
     }
 
     /**
-     * Retrieves a specific place by its numeric ID.
+     * Retrieves a specific place by its uid.
      *
-     * @param id The numeric ID of the place (generated from document ID)
+     * @param uid The uid of the place (Firebase document ID)
      * @return The place if found, null otherwise
      */
-    suspend fun getPlaceById(id: Long): Place? {
-        return repository.getPlaceById(id)
+    suspend fun getPlaceById(uid: String): Place? {
+        return repository.getPlaceById(uid)
     }
 
     /**

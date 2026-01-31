@@ -4,11 +4,11 @@ package cz.krutsche.xcamp.shared.data.repository
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.domain.model.ExpandedSection
+import cz.krutsche.xcamp.shared.domain.model.FirestoreSection
 import cz.krutsche.xcamp.shared.domain.model.Section
 import cz.krutsche.xcamp.shared.domain.model.SectionType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeout
 import kotlinx.serialization.json.Json
 import cz.krutsche.xcamp.shared.db.XcampDatabaseQueries
 import cz.krutsche.xcamp.shared.db.Section as DbSection
@@ -17,7 +17,6 @@ import kotlin.time.Duration.Companion.seconds
 private const val DEFAULT_START_DATE = "2026-07-18"
 
 private fun DbSection.toDomain(json: Json): Section = Section(
-    id = id,
     uid = uid,
     name = name,
     description = description,
@@ -25,7 +24,7 @@ private fun DbSection.toDomain(json: Json): Section = Section(
     startTime = startTime,
     endTime = endTime,
     place = place,
-    speakers = speakers?.let { json.decodeFromString<List<Long>>(it) },
+    speakers = speakers?.let { json.decodeFromString<List<String>>(it) },
     leader = leader,
     type = SectionType.valueOf(type),
     favorite = favorite > 0
@@ -36,7 +35,6 @@ private fun Section.toDbInsert(
     json: Json
 ) {
     queries.insertSection(
-        id = id,
         uid = uid,
         name = name,
         description = description,
@@ -52,38 +50,40 @@ private fun Section.toDbInsert(
 }
 
 class ScheduleRepository(
-    private val databaseManager: DatabaseManager,
-    private val firestoreService: FirestoreService
-) {
-    private val queries = databaseManager.queries
+    databaseManager: DatabaseManager,
+    firestoreService: FirestoreService
+) : BaseRepository<Section>(databaseManager, firestoreService) {
+
+    override val collectionName = "schedule"
+
     private val json = Json { ignoreUnknownKeys = true }
 
     suspend fun getAllSections(): List<Section> {
-        return withContext(Dispatchers.Default) {
+        return withDatabase {
             queries.selectAllSections().executeAsList().map { it.toDomain(json) }
         }
     }
 
-    suspend fun getSectionById(id: Long): Section? {
-        return withContext(Dispatchers.Default) {
-            queries.selectSectionById(id).executeAsOneOrNull()?.let { it.toDomain(json) }
+    suspend fun getSectionById(uid: String): Section? {
+        return withDatabase {
+            queries.selectSectionById(uid).executeAsOneOrNull()?.let { it.toDomain(json) }
         }
     }
 
     suspend fun getSectionsByType(type: SectionType): List<Section> {
-        return withContext(Dispatchers.Default) {
+        return withDatabase {
             queries.selectSectionsByType(type.name).executeAsList().map { it.toDomain(json) }
         }
     }
 
     suspend fun getFavoriteSections(): List<Section> {
-        return withContext(Dispatchers.Default) {
+        return withDatabase {
             queries.selectFavoriteSections().executeAsList().map { it.toDomain(json) }
         }
     }
 
     suspend fun getExpandedSections(dayNumber: Int, startDate: String = DEFAULT_START_DATE): List<ExpandedSection> {
-        return withContext(Dispatchers.Default) {
+        return withDatabase {
             getAllSections()
                 .flatMap { section ->
                     if (dayNumber in section.days) {
@@ -97,27 +97,27 @@ class ScheduleRepository(
     }
 
     suspend fun getAllExpandedSections(startDate: String = DEFAULT_START_DATE): List<ExpandedSection> {
-        return withContext(Dispatchers.Default) {
+        return withDatabase {
             getAllSections()
                 .flatMap { it.expand(startDate) }
                 .sortedBy { it.startTime }
         }
     }
 
-    suspend fun toggleFavorite(sectionId: Long, favorite: Boolean) {
-        withContext(Dispatchers.Default) {
-            queries.updateSectionFavorite(if (favorite) 1 else 0, sectionId)
+    suspend fun toggleFavorite(sectionUid: String, favorite: Boolean) {
+        withDatabase {
+            queries.updateSectionFavorite(if (favorite) 1 else 0, sectionUid)
         }
     }
 
     suspend fun insertSection(section: Section) {
-        withContext(Dispatchers.Default) {
+        withDatabase {
             section.toDbInsert(queries, json)
         }
     }
 
     suspend fun insertSections(sections: List<Section>) {
-        withContext(Dispatchers.Default) {
+        withDatabase {
             queries.transaction {
                 sections.forEach { section ->
                     section.toDbInsert(queries, json)
@@ -127,43 +127,36 @@ class ScheduleRepository(
     }
 
     suspend fun syncFromFirestore(): Result<Unit> {
-        return try {
-            withTimeout(5.seconds) {
-                val result = firestoreService.getCollection("schedule", Section.serializer())
-                result.fold(
-                    onSuccess = { sections ->
-                        val favoriteIds = withContext(Dispatchers.Default) {
-                            val ids = queries.selectFavoriteSections()
-                                .executeAsList()
-                                .map { it.id }
-                                .toSet()
-                            queries.deleteAllSections()
-                            ids
-                        }
-                        insertSections(sections)
-                        if (favoriteIds.isNotEmpty()) {
-                            withContext(Dispatchers.Default) {
-                                queries.transaction {
-                                    favoriteIds.forEach { id ->
-                                        queries.updateSectionFavorite(1, id)
-                                    }
-                                }
+        return syncFromFirestoreWithIds(
+            deserializer = FirestoreSection.serializer(),
+            injectId = { documentId, firestoreSection ->
+                Section.fromFirestoreData(documentId, firestoreSection)
+            },
+            insertItems = { sections -> insertSections(sections) },
+            clearItems = {
+                val favoriteUids = withDatabase {
+                    val uids = queries.selectFavoriteSections()
+                        .executeAsList()
+                        .map { it.uid }
+                        .toSet()
+                    queries.deleteAllSections()
+                    uids
+                }
+                if (favoriteUids.isNotEmpty()) {
+                    withDatabase {
+                        queries.transaction {
+                            favoriteUids.forEach { uid ->
+                                queries.updateSectionFavorite(1, uid)
                             }
                         }
-                        Result.success(Unit)
-                    },
-                    onFailure = { error ->
-                        Result.failure(error)
                     }
-                )
+                }
             }
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+        )
     }
 
     suspend fun clearAllSections() {
-        withContext(Dispatchers.Default) {
+        withDatabase {
             queries.deleteAllSections()
         }
     }

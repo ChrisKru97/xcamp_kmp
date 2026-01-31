@@ -4,7 +4,7 @@ import shared
 enum ScheduleState {
     case loading
     case loaded([shared.ExpandedSection])
-    case error
+    case error(String)
 }
 
 @MainActor
@@ -66,7 +66,7 @@ class ScheduleViewModel: ObservableObject {
             // Auto-select current day if applicable
             selectCurrentDay(sections: sections)
         } catch {
-            state = .error
+            state = .error(error.localizedDescription)
         }
     }
 
@@ -84,7 +84,7 @@ class ScheduleViewModel: ObservableObject {
 
     func toggleFavorite(section: shared.ExpandedSection, service: ScheduleService) async {
         do {
-            try await service.toggleFavorite(sectionId: section.id, favorite: !section.favorite)
+            try await service.toggleFavorite(sectionUid: section.uid, favorite: !section.favorite)
             await loadSections(service: service)
             lastError = nil
         } catch {
@@ -117,7 +117,7 @@ class ScheduleViewModel: ObservableObject {
             let sections = try await service.getExpandedSections(dayNumber: Int32(dayNumber), startDate: startDate)
             state = .loaded(sections)
         } catch {
-            state = .error
+            state = .error(error.localizedDescription)
         }
     }
 

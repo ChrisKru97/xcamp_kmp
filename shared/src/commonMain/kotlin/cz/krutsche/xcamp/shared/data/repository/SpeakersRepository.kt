@@ -22,8 +22,8 @@ class SpeakersRepository(
         }
     }
 
-    suspend fun getSpeakerById(id: Long): Speaker? = withDatabase {
-        queries.selectSpeakerById(id).executeAsOneOrNull()?.let(::mapToSpeaker)
+    suspend fun getSpeakerById(uid: String): Speaker? = withDatabase {
+        queries.selectSpeakerById(uid).executeAsOneOrNull()?.let(::mapToSpeaker)
     }
 
     suspend fun insertSpeakers(speakers: List<Speaker>) = withDatabase {
@@ -31,7 +31,6 @@ class SpeakersRepository(
             speakers.forEach { speaker ->
                 val dbSpeaker = speaker.toDbSpeaker()
                 queries.insertSpeaker(
-                    id = dbSpeaker.id,
                     uid = dbSpeaker.uid,
                     name = dbSpeaker.name,
                     description = dbSpeaker.description,
@@ -63,7 +62,7 @@ class SpeakersRepository(
 
     private fun mapToSpeaker(dbSpeaker: cz.krutsche.xcamp.shared.db.Speaker): Speaker =
         cz.krutsche.xcamp.shared.domain.model.Speaker(
-            id = dbSpeaker.uid,  // Use uid as id for domain model
+            uid = dbSpeaker.uid,
             name = dbSpeaker.name,
             description = dbSpeaker.description,
             priority = dbSpeaker.priority,

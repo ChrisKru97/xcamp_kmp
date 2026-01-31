@@ -3,22 +3,42 @@ package cz.krutsche.xcamp.shared.domain.model
 
 import kotlin.time.Instant
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 
 @Serializable
 data class Section(
-    val id: Long,
     val uid: String,
     val name: String,
     val description: String? = null,
     val days: List<Int>,
     val startTime: String,
     val endTime: String,
-    val place: Long? = null,
-    val speakers: List<Long>? = null,
+    val place: String? = null,
+    val speakers: List<String>? = null,
     val leader: String? = null,
     val type: SectionType,
     val favorite: Boolean = false
 ) {
+    companion object {
+        private val json = Json { ignoreUnknownKeys = true }
+
+        fun fromFirestoreData(documentId: String, data: FirestoreSection): Section {
+            return Section(
+                uid = documentId,
+                name = data.name,
+                description = data.description,
+                days = data.days,
+                startTime = data.startTime,
+                endTime = data.endTime,
+                place = data.place,
+                speakers = data.speakers?.let { json.decodeFromString<List<String>>(it) },
+                leader = data.leader,
+                type = SectionType.valueOf(data.type.uppercase()),
+                favorite = data.favorite
+            )
+        }
+    }
+
     fun expand(startDate: String): List<ExpandedSection> {
         val (baseYear, baseMonth, _) = startDate.split("-").map { it.toInt() }
         return days.mapIndexed { index, day ->
@@ -59,13 +79,12 @@ data class ExpandedSection(
     val startTime: Instant,
     val endTime: Instant
 ) {
-    val id: Long get() = base.id
     val uid: String get() = base.uid
     val name: String get() = base.name
     val description: String? get() = base.description
     val day: Int get() = base.days[dayIndex]
-    val place: Long? get() = base.place
-    val speakers: List<Long>? get() = base.speakers
+    val place: String? get() = base.place
+    val speakers: List<String>? get() = base.speakers
     val leader: String? get() = base.leader
     val type: SectionType get() = base.type
     val favorite: Boolean get() = base.favorite
@@ -78,3 +97,18 @@ enum class SectionType {
     GOSPEL,
     FOOD
 }
+
+@Serializable
+data class FirestoreSection(
+    val uid: String,
+    val name: String,
+    val description: String? = null,
+    val days: List<Int>,
+    val startTime: String,
+    val endTime: String,
+    val place: String? = null,
+    val speakers: String? = null,
+    val leader: String? = null,
+    val type: String,
+    val favorite: Boolean = false
+)

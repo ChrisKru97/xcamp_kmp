@@ -36,13 +36,13 @@ class SpeakersService : RepositoryService<SpeakersRepository>() {
     }
 
     /**
-     * Retrieves a specific speaker by its numeric ID.
+     * Retrieves a specific speaker by its uid.
      *
-     * @param id The numeric ID of the speaker (generated from document ID)
+     * @param uid The uid of the speaker (Firebase document ID)
      * @return The speaker if found, null otherwise
      */
-    suspend fun getSpeakerById(id: Long): Speaker? {
-        return repository.getSpeakerById(id)
+    suspend fun getSpeakerById(uid: String): Speaker? {
+        return repository.getSpeakerById(uid)
     }
 
     /**

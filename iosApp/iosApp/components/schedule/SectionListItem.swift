@@ -5,7 +5,7 @@ struct SectionListItem: View, Equatable {
     let section: shared.ExpandedSection
 
     static func == (lhs: SectionListItem, rhs: SectionListItem) -> Bool {
-        lhs.section.id == rhs.section.id && lhs.section.favorite == rhs.section.favorite
+        lhs.section.uid == rhs.section.uid && lhs.section.favorite == rhs.section.favorite
     }
 
     var body: some View {
@@ -18,14 +18,6 @@ struct SectionListItem: View, Equatable {
                     .font(.headline)
                     .foregroundColor(.primary)
                     .fixedSize(horizontal: false, vertical: true)
-                let description = section.description
-                if !description.isEmpty {
-                    Text(description.prefix(80) + (description.count > 80 ? "..." : ""))
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                        .lineLimit(2)
-                        .fixedSize(horizontal: false, vertical: true)
-                }
             }
             Spacer(minLength: Spacing.xs)
             if section.favorite {
@@ -66,10 +58,6 @@ struct SectionListItem: View, Equatable {
                 Text("Main Session")
                     .font(.headline)
                     .foregroundColor(.primary)
-                Text("Opening worship and welcome message...")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
             }
             Spacer()
             Image(systemName: "star.fill")
@@ -100,10 +88,6 @@ struct SectionListItem: View, Equatable {
                 Text("Workshop: Compose Multiplatform")
                     .font(.headline)
                     .foregroundColor(.primary)
-                Text("Learn Kotlin multiplatform UI development...")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .lineLimit(2)
             }
             Spacer()
             Image(systemName: "chevron.right")

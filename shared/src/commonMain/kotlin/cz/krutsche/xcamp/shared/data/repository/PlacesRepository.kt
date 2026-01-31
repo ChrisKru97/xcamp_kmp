@@ -23,8 +23,8 @@ class PlacesRepository(
         }
     }
 
-    suspend fun getPlaceById(id: Long): Place? = withDatabase {
-        queries.selectPlaceById(id).executeAsOneOrNull()?.let(::mapToPlace)
+    suspend fun getPlaceById(uid: String): Place? = withDatabase {
+        queries.selectPlaceById(uid).executeAsOneOrNull()?.let(::mapToPlace)
     }
 
     suspend fun insertPlaces(places: List<Place>) = withDatabase {
@@ -32,7 +32,6 @@ class PlacesRepository(
             places.forEach { place ->
                 val dbPlace = place.toDbPlace()
                 queries.insertPlace(
-                    id = dbPlace.id,
                     uid = dbPlace.uid,
                     name = dbPlace.name,
                     description = dbPlace.description,
@@ -66,7 +65,7 @@ class PlacesRepository(
 
     private fun mapToPlace(dbPlace: cz.krutsche.xcamp.shared.db.Place): Place {
         return cz.krutsche.xcamp.shared.domain.model.Place(
-            id = dbPlace.uid,  // Use uid as id for domain model
+            uid = dbPlace.uid,
             name = dbPlace.name,
             description = dbPlace.description,
             priority = dbPlace.priority,

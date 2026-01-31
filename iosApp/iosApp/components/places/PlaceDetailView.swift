@@ -44,7 +44,7 @@ struct PlaceDetailView: View {
     if #available(iOS 16.0, *) {
         NavigationStack {
             PlaceDetailView(place: Place(
-                id: "test",
+                uid: "test",
                 name: "Test Place",
                 description: "This is a longer description that should wrap nicely. It can contain multiple lines of text describing the place in detail.",
                 priority: 1,
@@ -57,7 +57,7 @@ struct PlaceDetailView: View {
         .preferredColorScheme(.dark)
     } else {
         PlaceDetailView(place: Place(
-            id: "test",
+            uid: "test",
             name: "Test Place",
             description: "This is a longer description that should wrap nicely. It can contain multiple lines of text describing the place in detail.",
             priority: 1,
@@ -74,7 +74,7 @@ struct PlaceDetailView: View {
     if #available(iOS 16.0, *) {
         NavigationStack {
             PlaceDetailView(place: Place(
-                id: "test2",
+                uid: "test2",
                 name: "Place Without Description",
                 description: nil,
                 priority: 2,
@@ -87,7 +87,7 @@ struct PlaceDetailView: View {
         .preferredColorScheme(.light)
     } else {
         PlaceDetailView(place: Place(
-            id: "test2",
+            uid: "test2",
             name: "Place Without Description",
             description: nil,
             priority: 2,
@@ -104,7 +104,7 @@ struct PlaceDetailView: View {
     if #available(iOS 16.0, *) {
         NavigationStack {
             PlaceDetailView(place: Place(
-                id: "test3",
+                uid: "test3",
                 name: "Place Without Location",
                 description: "A place that has a description but no GPS coordinates.",
                 priority: 3,
@@ -117,7 +117,7 @@ struct PlaceDetailView: View {
         .preferredColorScheme(.dark)
     } else {
         PlaceDetailView(place: Place(
-            id: "test3",
+            uid: "test3",
             name: "Place Without Location",
             description: "A place that has a description but no GPS coordinates.",
             priority: 3,
