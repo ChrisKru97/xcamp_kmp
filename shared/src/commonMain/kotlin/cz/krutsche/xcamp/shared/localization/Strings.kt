@@ -82,7 +82,7 @@ object Strings {
         const val EMPTY_TITLE = "Žádný program"
         const val ERROR_TITLE = "Nepodařilo se načíst program"
         const val RETRY = "Zkusit znovu"
-        const val FILTER_TITLE = "Filtr typů"
+        const val FILTER_TITLE = "Filtrovat"
         const val FILTER_ALL = "Všechny typy"
         const val FAVORITES = "Oblíbené"
         const val SHOW_ALL = "Zobrazit vše"

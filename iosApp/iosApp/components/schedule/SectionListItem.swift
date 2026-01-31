@@ -29,10 +29,10 @@ struct SectionListItem: View, Equatable {
                 .foregroundColor(.secondary)
                 .font(.caption)
         }
-        .fillMaxWidthLeading()
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
         .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
-        .fillMaxWidthLeading()
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private func formatTime(_ millis: Int64) -> String {

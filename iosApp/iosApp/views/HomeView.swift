@@ -42,7 +42,7 @@ struct HomeView: View {
             .padding(.horizontal, Spacing.md)
             .padding(.top, Spacing.md)
         }
-        .modifier(iOS16TabBarBackgroundModifier())
+        .tabBarBackground()
     }
 
     private var mainInfo: String {

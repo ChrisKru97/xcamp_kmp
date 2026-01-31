@@ -27,7 +27,7 @@ struct InfoView: View {
         .background(Color.background)
         .navigationTitle(Strings.Tabs.shared.ABOUT_FESTIVAL)
         .navigationBarTitleDisplayMode(.inline)
-        .modifier(iOS16TabBarBackgroundModifier())
+        .tabBarBackground()
     }
 
     private var emergencySection: some View {

@@ -49,7 +49,7 @@ struct SpeakersAndPlacesView: View {
         }
         .navigationTitle(Strings.Tabs.shared.SPEAKERS_AND_PLACES)
         .navigationBarTitleDisplayMode(.inline)
-        .modifier(iOS16TabBarBackgroundModifier())
+        .tabBarBackground()
     }
 }
 

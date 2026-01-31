@@ -19,7 +19,7 @@ struct RatingView: View {
             Text(Strings.Rating.shared.COMING_SOON)
         }
         .navigationTitle(Strings.Tabs.shared.RATING)
-        .modifier(iOS16TabBarBackgroundModifier())
+        .tabBarBackground()
     }
 }
 

@@ -16,7 +16,7 @@ struct EntityDetailView<T: EntityDetailRepresentable>: View {
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
         .background(Color.background)
-        .modifier(iOS16ToolbarHiddenModifier())
+        .hideTabBar()
     }
 
     private var heroImage: some View {
