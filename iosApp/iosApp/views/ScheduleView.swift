@@ -12,10 +12,6 @@ struct ScheduleView: View {
     @State private var showingDayPicker = false
 
     var body: some View {
-        contentView
-    }
-
-    private var contentView: some View {
         ZStack(alignment: .bottomTrailing) {
             Color.background.ignoresSafeArea()
 

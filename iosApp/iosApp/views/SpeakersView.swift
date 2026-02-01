@@ -6,10 +6,6 @@ struct SpeakersView: View {
     @EnvironmentObject var appViewModel: AppViewModel
 
     var body: some View {
-        contentView
-    }
-
-    private var contentView: some View {
         SpeakersContentView()
             .navigationTitle(Strings.Tabs.shared.SPEAKERS)
             .navigationBarTitleDisplayMode(.inline)

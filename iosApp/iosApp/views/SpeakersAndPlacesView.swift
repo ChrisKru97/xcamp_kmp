@@ -20,10 +20,6 @@ struct SpeakersAndPlacesView: View {
     @State private var selectedTab: Tab = .speakers
 
     var body: some View {
-        contentView
-    }
-
-    private var contentView: some View {
         VStack(spacing: 0) {
             Picker("", selection: $selectedTab) {
                 ForEach(Tab.allCases, id: \.self) { tab in

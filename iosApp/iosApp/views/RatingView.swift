@@ -6,10 +6,6 @@ struct RatingView: View {
     @EnvironmentObject var appViewModel: AppViewModel
 
     var body: some View {
-        contentView
-    }
-
-    private var contentView: some View {
         ScrollView {
             Text(Strings.Rating.shared.COMING_SOON)
         }

@@ -6,10 +6,6 @@ struct MediaView: View {
     @EnvironmentObject var appViewModel: AppViewModel
 
     var body: some View {
-        contentView
-    }
-
-    private var contentView: some View {
         ScrollView {
             MediaGrid(links: mediaLinks)
                 .padding(.horizontal, Spacing.md)

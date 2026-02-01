@@ -9,10 +9,6 @@ struct ScheduleFilterView: View {
     private let allTypes: [SectionType] = [.main, .internal, .gospel, .food]
 
     var body: some View {
-        contentView
-    }
-
-    private var contentView: some View {
         VStack(spacing: 0) {
             ScrollView {
                 VStack(spacing: Spacing.md) {

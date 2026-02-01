@@ -6,10 +6,6 @@ struct InfoView: View {
     @EnvironmentObject var appViewModel: AppViewModel
 
     var body: some View {
-        contentView
-    }
-
-    private var contentView: some View {
         ScrollView {
             VStack(spacing: Spacing.lg) {
                 emergencySection

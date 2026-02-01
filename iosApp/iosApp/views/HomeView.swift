@@ -12,10 +12,6 @@ struct HomeView: View {
     }
 
     var body: some View {
-        contentView
-    }
-
-    private var contentView: some View {
         ZStack {
             Color.background.ignoresSafeArea()
 
