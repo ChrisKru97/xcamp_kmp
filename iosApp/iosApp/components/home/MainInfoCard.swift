@@ -18,7 +18,6 @@ struct MainInfoCard: View {
                 .multilineTextAlignment(.leading)
         }
         .padding()
-        .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
     }
 }
 

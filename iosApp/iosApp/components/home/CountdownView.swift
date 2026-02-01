@@ -19,7 +19,6 @@ struct CountdownView: View {
             timeRemaining = countdownCalculator.getTimeRemaining()
         }
         .padding()
-        .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
     }
 
     private var countdownCalculator: CountdownCalculator {

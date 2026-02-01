@@ -1,17 +1,12 @@
 import SwiftUI
+import SwiftUIBackports
 import shared
 
 struct InfoView: View {
     @EnvironmentObject var appViewModel: AppViewModel
 
     var body: some View {
-        if #available(iOS 16.0, *) {
-            NavigationStack {
-                contentView
-            }
-        } else {
-            contentView
-        }
+        contentView
     }
 
     private var contentView: some View {
@@ -27,7 +22,6 @@ struct InfoView: View {
         .background(Color.background)
         .navigationTitle(Strings.Tabs.shared.ABOUT_FESTIVAL)
         .navigationBarTitleDisplayMode(.inline)
-        .tabBarBackground()
     }
 
     private var emergencySection: some View {

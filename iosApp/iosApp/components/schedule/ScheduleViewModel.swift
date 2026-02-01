@@ -18,6 +18,7 @@ class ScheduleViewModel: ObservableObject {
     @Published private(set) var lastError: Error?
 
     private var remoteConfigService: RemoteConfigService?
+    private var userHasSelectedDay: Bool = false
 
     private var eventDays: [Int] {
         guard let remoteConfigService,
@@ -44,6 +45,10 @@ class ScheduleViewModel: ObservableObject {
         }
 
         return sections.filter { section in
+            guard section.day == Int32(eventDays[selectedDayIndex]) else {
+                return false
+            }
+
             guard visibleTypes.contains(section.type) else {
                 return false
             }
@@ -63,8 +68,10 @@ class ScheduleViewModel: ObservableObject {
             let sections = try await service.getAllExpandedSections(startDate: startDate)
             state = .loaded(sections)
 
-            // Auto-select current day if applicable
-            selectCurrentDay(sections: sections)
+            // Auto-select current day only if user hasn't manually selected one
+            if !userHasSelectedDay {
+                selectCurrentDay(sections: sections)
+            }
         } catch {
             state = .error(error.localizedDescription)
         }
@@ -106,6 +113,7 @@ class ScheduleViewModel: ObservableObject {
 
     func selectDay(index: Int) {
         selectedDayIndex = index
+        userHasSelectedDay = true
     }
 
     func loadDay(service: ScheduleService, dayIndex: Int) async {

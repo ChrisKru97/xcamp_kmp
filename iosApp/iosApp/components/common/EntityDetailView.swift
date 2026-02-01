@@ -16,7 +16,6 @@ struct EntityDetailView<T: EntityDetailRepresentable>: View {
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
         .background(Color.background)
-        .hideTabBar()
     }
 
     private var heroImage: some View {
@@ -46,7 +45,6 @@ struct EntityDetailView<T: EntityDetailRepresentable>: View {
                     .foregroundColor(.primary)
                     .lineSpacing(4)
                     .padding()
-                    .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
                     .padding(.horizontal, Spacing.lg)
             }
         }

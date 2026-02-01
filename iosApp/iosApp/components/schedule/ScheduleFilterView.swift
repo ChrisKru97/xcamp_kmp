@@ -9,13 +9,7 @@ struct ScheduleFilterView: View {
     private let allTypes: [SectionType] = [.main, .internal, .gospel, .food]
 
     var body: some View {
-        if #available(iOS 16.0, *) {
-            NavigationStack {
-                contentView
-            }
-        } else {
-            contentView
-        }
+        contentView
     }
 
     private var contentView: some View {
@@ -144,7 +138,6 @@ struct FilterTypeRow: View {
             .background(
                 EmptyView()
                     .padding()
-                    .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
             )
         }
         .buttonStyle(PlainButtonStyle())
@@ -182,7 +175,6 @@ struct FilterToggleRow: View {
             .background(
                 EmptyView()
                     .padding()
-                    .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
             )
         }
         .buttonStyle(PlainButtonStyle())

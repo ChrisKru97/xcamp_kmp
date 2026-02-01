@@ -12,13 +12,7 @@ struct HomeView: View {
     }
 
     var body: some View {
-        if #available(iOS 16.0, *) {
-            NavigationStack {
-                contentView
-            }
-        } else {
-            contentView
-        }
+        contentView
     }
 
     private var contentView: some View {
@@ -42,7 +36,6 @@ struct HomeView: View {
             .padding(.horizontal, Spacing.md)
             .padding(.top, Spacing.md)
         }
-        .tabBarBackground()
     }
 
     private var mainInfo: String {

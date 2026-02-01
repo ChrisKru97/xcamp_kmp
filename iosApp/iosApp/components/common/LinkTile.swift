@@ -15,7 +15,6 @@ struct LinkTile<T: LinkData>: View {
             tileContent
         }
         .buttonStyle(ScaleButtonStyle())
-        .backport.impactFeedback(trigger: isPressed)
     }
 
     @ViewBuilder
@@ -24,7 +23,6 @@ struct LinkTile<T: LinkData>: View {
             Image(systemName: item.icon)
                 .font(.system(size: 24, weight: .medium))
                 .foregroundStyle(.primary.opacity(0.8))
-                .backport.bounceSymbol(trigger: isPressed)
 
             Text(item.title)
                 .font(.caption)
@@ -36,7 +34,6 @@ struct LinkTile<T: LinkData>: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, Spacing.lg)
         .padding(.horizontal, Spacing.sm)
-        .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
     }
 }
 

@@ -25,7 +25,6 @@ struct SectionTimeCard: View {
                 .foregroundColor(.primary)
         }
         .padding()
-        .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(Strings.ScheduleDetail.shared.DETAIL_TIME): \(startTimeString) - \(endTimeString)")
     }
@@ -50,7 +49,6 @@ struct SectionDescriptionCard: View {
                 .lineSpacing(4)
         }
         .padding()
-        .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(Strings.ScheduleDetail.shared.DETAIL_DESCRIPTION): \(description)")
     }

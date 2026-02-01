@@ -30,7 +30,6 @@ struct ImageNameCard: View, Equatable {
         }
         .frame(maxWidth: .infinity)
         .padding(Spacing.sm)
-        .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
     }
 
     @ViewBuilder

@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftUIBackports
 import shared
 
 // Typealias to avoid ambiguity with SwiftUI.Section
@@ -11,13 +12,7 @@ struct ScheduleView: View {
     @State private var showingDayPicker = false
 
     var body: some View {
-        if #available(iOS 16.0, *) {
-            NavigationStack {
-                contentView
-            }
-        } else {
-            contentView
-        }
+        contentView
     }
 
     private var contentView: some View {
@@ -68,7 +63,6 @@ struct ScheduleView: View {
                 }
             }
         }
-        .modifier(iOS16TabBarBackgroundModifier())
         .onAppear {
             viewModel.setRemoteConfigService(appViewModel.remoteConfigService)
         }
@@ -76,25 +70,12 @@ struct ScheduleView: View {
             await viewModel.loadSections(service: appViewModel.scheduleService)
         }
         .sheet(isPresented: $showingFilter) {
-            if #available(iOS 16.4, *) {
-                ScheduleFilterView(
-                    visibleTypes: $viewModel.visibleTypes,
-                    favoritesOnly: $viewModel.favoritesOnly
-                )
-                .presentationDragIndicator(.visible)
-                .presentationBackground(.ultraThinMaterial)
-            } else if #available(iOS 16.0, *) {
-                ScheduleFilterView(
-                    visibleTypes: $viewModel.visibleTypes,
-                    favoritesOnly: $viewModel.favoritesOnly
-                )
-                .presentationDragIndicator(.visible)
-            } else {
-                ScheduleFilterView(
-                    visibleTypes: $viewModel.visibleTypes,
-                    favoritesOnly: $viewModel.favoritesOnly
-                )
-            }
+            ScheduleFilterView(
+                visibleTypes: $viewModel.visibleTypes,
+                favoritesOnly: $viewModel.favoritesOnly
+            )
+            .backport.presentationDetents([.medium, .large])
+            .backport.presentationDragIndicator(.visible)
         }
     }
 
@@ -103,14 +84,8 @@ struct ScheduleView: View {
             Image(systemName: "line.3.horizontal.decrease.circle")
                 .font(.title2)
                 .foregroundColor(.primary)
-                .frame(width: 56, height: 56)
-                .background(.ultraThinMaterial, in: Circle())
-                .overlay {
-                    Circle()
-                        .strokeBorder(.white.opacity(0.15), lineWidth: 0.5)
-                }
-                .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 4)
-                .contentShape(Circle())
+                .frame(width: 44, height: 44)
+                .contentShape(Rectangle())
         }
         .buttonStyle(ScaleButtonStyle())
     }
@@ -122,6 +97,8 @@ struct ScheduleView: View {
                     NavigationLink(destination: SectionDetailView(
                         section: section.base,
                         service: appViewModel.scheduleService,
+                        placesService: appViewModel.placesService,
+                        speakersService: appViewModel.speakersService,
                         onFavoriteToggled: {
                             Task {
                                 await viewModel.loadDay(service: appViewModel.scheduleService, dayIndex: viewModel.selectedDayIndex)
@@ -163,7 +140,7 @@ struct ScheduleView: View {
                 .font(.body)
                 .foregroundColor(.secondary)
         }
-        .fillMaxSize()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.background)
     }
 
@@ -182,7 +159,7 @@ struct ScheduleView: View {
             }
             .buttonStyle(.bordered)
         }
-        .fillMaxSize()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.background)
     }
 
@@ -204,7 +181,7 @@ struct ScheduleView: View {
             }
             .buttonStyle(.bordered)
         }
-        .fillMaxSize()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.background)
     }
 

@@ -16,7 +16,6 @@ struct EmergencyPill: View {
             pillContent
         }
         .buttonStyle(.plain)
-        .backport.impactFeedback(trigger: isExpanded)
     }
 
     @ViewBuilder
@@ -52,7 +51,6 @@ struct EmergencyPill: View {
         .contentShape(Rectangle())
         .padding(Spacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
     }
 }
 

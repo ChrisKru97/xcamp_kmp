@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftUIBackports
 import shared
 
 // MARK: - Main View
@@ -19,13 +20,7 @@ struct SpeakersAndPlacesView: View {
     @State private var selectedTab: Tab = .speakers
 
     var body: some View {
-        if #available(iOS 16.0, *) {
-            NavigationStack {
-                contentView
-            }
-        } else {
-            contentView
-        }
+        contentView
     }
 
     private var contentView: some View {
@@ -49,7 +44,6 @@ struct SpeakersAndPlacesView: View {
         }
         .navigationTitle(Strings.Tabs.shared.SPEAKERS_AND_PLACES)
         .navigationBarTitleDisplayMode(.inline)
-        .tabBarBackground()
     }
 }
 

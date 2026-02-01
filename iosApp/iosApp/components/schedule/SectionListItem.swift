@@ -31,8 +31,7 @@ struct SectionListItem: View, Equatable {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
-        .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .contentShape(Rectangle())
     }
 
     private func formatTime(_ millis: Int64) -> String {
@@ -68,7 +67,6 @@ struct SectionListItem: View, Equatable {
                 .font(.caption)
         }
         .padding()
-        .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
     }
     .padding()
     .background(Color.background)
@@ -95,7 +93,6 @@ struct SectionListItem: View, Equatable {
                 .font(.caption)
         }
         .padding()
-        .backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
     }
     .padding()
     .background(Color.background)

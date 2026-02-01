@@ -1,17 +1,12 @@
 import SwiftUI
+import SwiftUIBackports
 import shared
 
 struct RatingView: View {
     @EnvironmentObject var appViewModel: AppViewModel
 
     var body: some View {
-        if #available(iOS 16.0, *) {
-            NavigationStack {
-                contentView
-            }
-        } else {
-            contentView
-        }
+        contentView
     }
 
     private var contentView: some View {
@@ -19,7 +14,6 @@ struct RatingView: View {
             Text(Strings.Rating.shared.COMING_SOON)
         }
         .navigationTitle(Strings.Tabs.shared.RATING)
-        .tabBarBackground()
     }
 }
 
