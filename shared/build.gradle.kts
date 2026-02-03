@@ -1,9 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import javax.inject.Inject
 import org.gradle.api.tasks.TaskAction
-import org.gradle.api.tasks.Optional
-import org.gradle.api.provider.Property
-import org.gradle.api.provider.Provider
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.process.ExecOperations
 import org.gradle.api.DefaultTask
@@ -140,6 +137,8 @@ tasks.register<CreateVsCodeFrameworkSymlinkTask>("createVsCodeFrameworkSymlink")
 }
 
 // Automatically run symlink task after simulator framework builds
-tasks.named("linkDebugFrameworkIosSimulatorArm64") {
-    finalizedBy("createVsCodeFrameworkSymlink")
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeLink>().configureEach {
+    if (name.startsWith("linkDebugFramework") && name.contains("ios")) {
+        finalizedBy("createVsCodeFrameworkSymlink")
+    }
 }
