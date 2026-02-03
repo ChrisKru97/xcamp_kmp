@@ -11,21 +11,21 @@ struct SectionTimeCard: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.xs) {
-            HStack {
-                Image(systemName: "clock")
-                    .foregroundColor(.secondary)
-                Text(Strings.ScheduleDetail.shared.DETAIL_TIME)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                Spacer()
+        GlassCard {
+            VStack(alignment: .leading, spacing: Spacing.xs) {
+                HStack {
+                    Image(systemName: "clock")
+                        .foregroundColor(.secondary)
+                    Text(Strings.ScheduleDetail.shared.DETAIL_TIME)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                }
+                Text("\(startTimeString) - \(endTimeString)")
+                    .font(.body)
+                    .foregroundColor(.primary)
             }
-            Text("\(startTimeString) - \(endTimeString)")
-                .font(.body)
-                .foregroundColor(.primary)
         }
-        .padding()
-        .backport.glassEffect(.regular)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(Strings.ScheduleDetail.shared.DETAIL_TIME): \(startTimeString) - \(endTimeString)")
     }
@@ -35,22 +35,22 @@ struct SectionDescriptionCard: View {
     let description: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.sm) {
-            HStack {
-                Image(systemName: "text.alignleft")
-                    .foregroundColor(.secondary)
-                Text(Strings.ScheduleDetail.shared.DETAIL_DESCRIPTION)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                Spacer()
+        GlassCard {
+            VStack(alignment: .leading, spacing: Spacing.sm) {
+                HStack {
+                    Image(systemName: "text.alignleft")
+                        .foregroundColor(.secondary)
+                    Text(Strings.ScheduleDetail.shared.DETAIL_DESCRIPTION)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Spacer()
+                }
+                Text(description)
+                    .font(.body)
+                    .foregroundColor(.primary)
+                    .lineSpacing(4)
             }
-            Text(description)
-                .font(.body)
-                .foregroundColor(.primary)
-                .lineSpacing(4)
         }
-        .padding()
-        .backport.glassEffect(.regular)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(Strings.ScheduleDetail.shared.DETAIL_DESCRIPTION): \(description)")
     }

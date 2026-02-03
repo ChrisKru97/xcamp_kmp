@@ -8,29 +8,29 @@ struct SectionSpeakersCard: View {
     @State private var speakers: [Speaker] = []
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.sm) {
-            labelSection
+        GlassCard {
+            VStack(alignment: .leading, spacing: Spacing.sm) {
+                labelSection
 
-            if speakers.isEmpty {
-                ProgressView()
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical)
-            } else {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: Spacing.sm) {
-                        ForEach(speakers, id: \.uid) { speaker in
-                            NavigationLink(destination: SpeakerDetailView(speaker: speaker)) {
-                                speakerChip(speaker)
+                if speakers.isEmpty {
+                    ProgressView()
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical)
+                } else {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: Spacing.sm) {
+                            ForEach(speakers, id: \.uid) { speaker in
+                                NavigationLink(destination: SpeakerDetailView(speaker: speaker)) {
+                                    speakerChip(speaker)
+                                }
+                                .buttonStyle(PlainButtonStyle())
                             }
-                            .buttonStyle(PlainButtonStyle())
                         }
+                        .padding(.horizontal, Spacing.sm)
                     }
-                    .padding(.horizontal, Spacing.sm)
                 }
             }
         }
-        .padding()
-        .backport.glassEffect(.regular)
         .task {
             await loadSpeakers()
         }

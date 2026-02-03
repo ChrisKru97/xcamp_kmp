@@ -20,38 +20,37 @@ struct EmergencyPill: View {
 
     @ViewBuilder
     private var pillContent: some View {
-        VStack(alignment: .leading, spacing: isExpanded ? Spacing.sm : 0) {
-            HStack(spacing: Spacing.md) {
-                Image(systemName: icon)
-                    .font(.system(size: 16))
-                    .foregroundStyle(.secondary)
-                    .frame(width: 20, alignment: .leading)
+        GlassCard(padding: Spacing.md) {
+            VStack(alignment: .leading, spacing: isExpanded ? Spacing.sm : 0) {
+                HStack(spacing: Spacing.md) {
+                    Image(systemName: icon)
+                        .font(.system(size: 16))
+                        .foregroundStyle(.secondary)
+                        .frame(width: 20, alignment: .leading)
 
-                Text(title)
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.primary)
+                    Text(title)
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.primary)
 
-                Spacer()
+                    Spacer()
 
-                Image(systemName: "chevron.down")
-                    .font(.system(size: 12, weight: .medium))
-                    .foregroundStyle(.tertiary)
-                    .rotationEffect(.degrees(isExpanded ? 180 : 0))
+                    Image(systemName: "chevron.down")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundStyle(.tertiary)
+                        .rotationEffect(.degrees(isExpanded ? 180 : 0))
+                }
+
+                if isExpanded {
+                    Text(description)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .padding(.leading, Spacing.lg)
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                }
             }
-
-            if isExpanded {
-                Text(description)
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-                    .padding(.leading, Spacing.lg)
-                    .transition(.opacity.combined(with: .move(edge: .top)))
-            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .contentShape(Rectangle())
-        .padding(Spacing.md)
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .backport.glassEffect(.regular)
     }
 }
 

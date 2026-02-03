@@ -26,18 +26,18 @@ struct SectionPlaceCard: View {
     }
 
     private func cardContent(_ placeName: String) -> some View {
-        HStack {
-            labelSection
-            Spacer()
-            Text(placeName)
-                .font(.body)
-                .foregroundColor(.primary)
-            Image(systemName: "chevron.right")
-                .font(.caption)
-                .foregroundColor(.secondary)
+        GlassCard {
+            HStack {
+                labelSection
+                Spacer()
+                Text(placeName)
+                    .font(.body)
+                    .foregroundColor(.primary)
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
         }
-        .padding()
-        .backport.glassEffect(.regular)
     }
 
     private var labelSection: some View {

@@ -9,30 +9,29 @@ struct SectionListItem: View, Equatable {
     }
 
     var body: some View {
-        HStack(spacing: Spacing.md) {
-            VStack(alignment: .leading, spacing: Spacing.xs) {
-                Text(formatTime(section.startTime.epochMillis))
-                    .font(.caption)
+        GlassCard {
+            HStack(spacing: Spacing.md) {
+                VStack(alignment: .leading, spacing: Spacing.xs) {
+                    Text(formatTime(section.startTime.epochMillis))
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                    Text(section.name)
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer(minLength: Spacing.xs)
+                if section.favorite {
+                    Image(systemName: "star.fill")
+                        .foregroundColor(.yellow)
+                        .font(.caption)
+                }
+                Image(systemName: "chevron.right")
                     .foregroundColor(.secondary)
-                Text(section.name)
-                    .font(.headline)
-                    .foregroundColor(.primary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            Spacer(minLength: Spacing.xs)
-            if section.favorite {
-                Image(systemName: "star.fill")
-                    .foregroundColor(.yellow)
                     .font(.caption)
             }
-            Image(systemName: "chevron.right")
-                .foregroundColor(.secondary)
-                .font(.caption)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding()
-        .contentShape(Rectangle())
-        .backport.glassEffect(.regular)
     }
 
     private func formatTime(_ millis: Int64) -> String {

@@ -19,22 +19,22 @@ struct LinkTile<T: LinkData>: View {
 
     @ViewBuilder
     private var tileContent: some View {
-        VStack(spacing: Spacing.sm) {
-            Image(systemName: item.icon)
-                .font(.system(size: 24, weight: .medium))
-                .foregroundStyle(.primary.opacity(0.8))
+        GlassCard(padding: Spacing.sm) {
+            VStack(spacing: Spacing.sm) {
+                Image(systemName: item.icon)
+                    .font(.system(size: 24, weight: .medium))
+                    .foregroundStyle(.primary.opacity(0.8))
 
-            Text(item.title)
-                .font(.caption)
-                .fontWeight(.medium)
-                .foregroundStyle(.primary.opacity(0.8))
-                .lineLimit(2)
-                .multilineTextAlignment(.center)
+                Text(item.title)
+                    .font(.caption)
+                    .fontWeight(.medium)
+                    .foregroundStyle(.primary.opacity(0.8))
+                    .lineLimit(2)
+                    .multilineTextAlignment(.center)
+            }
+            .frame(maxWidth: .infinity)
+            .padding(.vertical, Spacing.md)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, Spacing.lg)
-        .padding(.horizontal, Spacing.sm)
-        .backport.glassEffect(.regular)
     }
 }
 

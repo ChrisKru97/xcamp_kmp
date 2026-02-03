@@ -5,20 +5,20 @@ struct MainInfoCard: View {
     let infoText: String
 
     var body: some View {
-        HStack(alignment: .top, spacing: Spacing.sm) {
-            Image(systemName: "info.circle")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 20, height: 20)
-                .foregroundStyle(.primary)
+        GlassCard {
+            HStack(alignment: .top, spacing: Spacing.sm) {
+                Image(systemName: "info.circle")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 20, height: 20)
+                    .foregroundStyle(.primary)
 
-            Text(infoText)
-                .foregroundColor(.secondary)
-                .lineSpacing(2)
-                .multilineTextAlignment(.leading)
+                Text(infoText)
+                    .foregroundColor(.secondary)
+                    .lineSpacing(2)
+                    .multilineTextAlignment(.leading)
+            }
         }
-        .padding()
-        .backport.glassEffect(.regular)
     }
 }
 
