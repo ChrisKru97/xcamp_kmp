@@ -235,3 +235,10 @@ SELECT COUNT(*) FROM Section;
 
 countRatings:
 SELECT COUNT(*) FROM Rating;
+
+-- Indexes for query optimization
+CREATE INDEX IF NOT EXISTS idx_song_name ON Song(name);
+
+CREATE INDEX IF NOT EXISTS idx_section_type ON Section(type);
+
+CREATE INDEX IF NOT EXISTS idx_section_favorite ON Section(favorite);
