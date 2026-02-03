@@ -6,7 +6,6 @@ import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.consts.StoragePaths
 import cz.krutsche.xcamp.shared.domain.model.FirestorePlace
 import cz.krutsche.xcamp.shared.domain.model.Place
-import cz.krutsche.xcamp.shared.domain.model.populateImageUrls
 import cz.krutsche.xcamp.shared.domain.model.toDbPlace
 
 class PlacesRepository(
@@ -52,11 +51,14 @@ class PlacesRepository(
                 Place.fromFirestoreData(documentId, firestorePlace)
             },
             insertItems = { places ->
-                val placesWithUrls = places.populateImageUrls(
-                    storageService = storageService,
-                    entityName = "place",
-                    copyWithUrl = { imageUrl -> this.copy(imageUrl = imageUrl) }
-                )
+                val placesWithUrls = places.map { place ->
+                    if (place.image != null) {
+                        val urlResult = storageService.getDownloadUrl(place.image)
+                        place.copy(imageUrl = urlResult.getOrNull())
+                    } else {
+                        place
+                    }
+                }
                 insertPlaces(placesWithUrls)
             },
             clearItems = { withDatabase { queries.deleteAllPlaces() } }

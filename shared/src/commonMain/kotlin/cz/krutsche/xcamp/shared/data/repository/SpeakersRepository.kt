@@ -5,7 +5,6 @@ import cz.krutsche.xcamp.shared.data.firebase.StorageService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.domain.model.FirestoreSpeaker
 import cz.krutsche.xcamp.shared.domain.model.Speaker
-import cz.krutsche.xcamp.shared.domain.model.populateImageUrls
 import cz.krutsche.xcamp.shared.domain.model.toDbSpeaker
 
 class SpeakersRepository(
@@ -49,11 +48,14 @@ class SpeakersRepository(
                 Speaker.fromFirestoreData(documentId, firestoreSpeaker)
             },
             insertItems = { speakers ->
-                val speakersWithUrls = speakers.populateImageUrls(
-                    storageService = storageService,
-                    entityName = "speaker",
-                    copyWithUrl = { imageUrl -> this.copy(imageUrl = imageUrl) }
-                )
+                val speakersWithUrls = speakers.map { speaker ->
+                    if (speaker.image != null) {
+                        val urlResult = storageService.getDownloadUrl(speaker.image)
+                        speaker.copy(imageUrl = urlResult.getOrNull())
+                    } else {
+                        speaker
+                    }
+                }
                 insertSpeakers(speakersWithUrls)
             },
             clearItems = { withDatabase { queries.deleteAllSpeakers() } }
