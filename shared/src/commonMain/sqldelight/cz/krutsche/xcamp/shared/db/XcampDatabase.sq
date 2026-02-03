@@ -1,3 +1,9 @@
+-- Xcamp Database Schema Version 1.0.0
+-- SQLDelight version: 1
+--
+-- Version History:
+--   1.0.0 (schema version 1): Initial schema with 7 tables
+
 -- GroupLeader table
 CREATE TABLE IF NOT EXISTS GroupLeader (
     id INTEGER NOT NULL PRIMARY KEY,

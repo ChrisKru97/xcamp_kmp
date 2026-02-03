@@ -1,4 +1,13 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import javax.inject.Inject
+import org.gradle.api.tasks.TaskAction
+import org.gradle.api.tasks.Optional
+import org.gradle.api.provider.Property
+import org.gradle.api.provider.Provider
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.process.ExecOperations
+import org.gradle.api.DefaultTask
+import org.gradle.api.tasks.Internal
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -90,37 +99,44 @@ sqldelight {
 }
 
 // VS Code SourceKit-LSP support: Create version-independent symlink to framework
-tasks.register("createVsCodeFrameworkSymlink") {
-    group = "ide"
-    description = "Create symlink for VS Code SourceKit-LSP (points to current framework version)"
+abstract class CreateVsCodeFrameworkSymlinkTask : DefaultTask() {
+    @get:Inject
+    abstract val execOperations: ExecOperations
 
-    doLast {
-        val frameworkBaseDir = layout.buildDirectory.dir("xcode-frameworks/Debug").get().asFile
-        val linkDir = layout.buildDirectory.dir("xcode-frameworks").get().asFile
+    @get:Internal
+    abstract val buildDir: DirectoryProperty
 
-        // Skip if the directory doesn't exist (e.g., when building from command line)
+    @TaskAction
+    fun createSymlink() {
+        val frameworkBaseDir = buildDir.get().asFile.resolve("xcode-frameworks/Debug")
+        val linkDir = buildDir.get().asFile.resolve("xcode-frameworks")
+
         if (!frameworkBaseDir.exists()) {
             println("Skipping VS Code symlink creation: $frameworkBaseDir does not exist")
-            return@doLast
+            return
         }
 
-        // Find the simulator framework directory (e.g., iphonesimulator26.2)
         val simulatorDir = frameworkBaseDir.listFiles()?.firstOrNull {
             it.name.startsWith("iphonesimulator")
         }
 
         if (simulatorDir == null) {
             println("Skipping VS Code symlink creation: no simulator framework directory found in $frameworkBaseDir")
-            return@doLast
+            return
         }
 
-        // Create symlink using ln -sf (relative path from xcode-frameworks to Debug/iphonesimulator26.2)
-        exec {
+        execOperations.exec {
             commandLine("ln", "-sf", "Debug/${simulatorDir.name}", "${linkDir.absolutePath}/vscode-current")
         }
 
         println("Created VS Code framework symlink: vscode-current -> ${simulatorDir.name}")
     }
+}
+
+tasks.register<CreateVsCodeFrameworkSymlinkTask>("createVsCodeFrameworkSymlink") {
+    group = "ide"
+    description = "Create symlink for VS Code SourceKit-LSP (points to current framework version)"
+    buildDir.set(layout.buildDirectory)
 }
 
 // Automatically run symlink task after simulator framework builds

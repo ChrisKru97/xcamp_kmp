@@ -69,8 +69,6 @@ struct ScheduleView: View {
                 visibleTypes: $viewModel.visibleTypes,
                 favoritesOnly: $viewModel.favoritesOnly
             )
-            .backport.presentationDetents([.medium, .large])
-            .backport.presentationDragIndicator(.visible)
         }
     }
 
