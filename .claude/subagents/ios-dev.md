@@ -79,6 +79,60 @@ Apply consistently:
 - `.padding(Spacing.md)` for outer padding
 - `spacing: Spacing.md` for VStack/HStack
 
+### View Body Patterns
+
+**AVOID** - Redundant wrapper in body:
+```swift
+var body: some View {
+    contentView  // Bad: body only returns one thing
+}
+
+private var contentView: some View {
+    ScrollView { ... }
+}
+```
+
+**ACCEPTABLE** - Wrapper with conditional logic in body:
+```swift
+var body: some View {
+    if isLoading {
+        LoadingView()
+    } else {
+        mainContentView  // Good: body has conditional logic
+    }
+}
+```
+
+**ACCEPTABLE** - Wrapper to avoid code duplication:
+```swift
+@ViewBuilder
+private var imageView: some View {
+    if shape == .circle {
+        baseImage.clipShape(Circle())
+    } else {
+        baseImage.clipShape(RoundedRectangle(...))
+    }
+}
+
+private var baseImage: some View { ... }  // Good: avoids duplication
+```
+
+**ACCEPTABLE** - Button labels as properties:
+```swift
+var body: some View {
+    Button { ... } label: {
+        tileContent  // Good: separates label from action
+    }
+}
+```
+
+**Guidelines**:
+- Inline content directly when body only returns one thing
+- Use wrapper properties when body has conditional logic
+- Use wrapper properties to avoid duplicating complex view code
+- Button labels extracted to properties are acceptable
+- Toolbar items with their own logic are acceptable
+
 ### Styling
 - **Colors**: Use named colors from Assets.xcassets
 - **Typography**: `.font(.title)`, `.font(.title3)`, `.fontWeight(.semibold)`

@@ -24,9 +24,9 @@ enum IconProvider {
     static func iconName(for title: String) -> String {
         switch title {
         case Strings.Media.shared.YOUTUBE: return "play.rectangle.fill"
-        case Strings.Media.shared.SPOTIFY: return "wave.3.up.circle"
-        case Strings.Media.shared.APPLE_PODCASTS: return "apple.podcasts.pages"
-        case Strings.Media.shared.FACEBOOK: return "f.cursive"
+        case Strings.Media.shared.SPOTIFY: return SFSymbolCompat.icon(for: .spotify)
+        case Strings.Media.shared.APPLE_PODCASTS: return SFSymbolCompat.icon(for: .applePodcasts)
+        case Strings.Media.shared.FACEBOOK: return SFSymbolCompat.icon(for: .facebook)
         case Strings.Media.shared.INSTAGRAM: return "camera"
         case Strings.Media.shared.WEBSITE: return "globe"
         default: return "link"

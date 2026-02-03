@@ -1,5 +1,4 @@
 import SwiftUI
-import SwiftUIBackports
 import shared
 
 // Typealias to avoid ambiguity with SwiftUI.Section
@@ -77,7 +76,7 @@ struct ScheduleView: View {
 
     private var filterFab: some View {
         Button(action: { showingFilter = true }) {
-            Image(systemName: "line.3.horizontal.decrease.circle")
+            SFSymbolCompat.systemImage(.filterButton)
                 .font(.title2)
                 .foregroundColor(.primary)
                 .frame(width: 44, height: 44)

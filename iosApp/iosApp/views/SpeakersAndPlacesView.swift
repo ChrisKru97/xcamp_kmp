@@ -1,5 +1,4 @@
 import SwiftUI
-import SwiftUIBackports
 import shared
 
 // MARK: - Main View
