@@ -20,6 +20,12 @@ enum IconKey {
     case spotify
     case applePodcasts
     case facebook
+    case homeTab
+    case scheduleTab
+    case speakersAndPlacesTab
+    case ratingTab
+    case mediaTab
+    case aboutFestivalTab
 
     var iOS16Symbol: String {
         switch self {
@@ -27,6 +33,12 @@ enum IconKey {
         case .spotify: return "wave.3.up.circle"
         case .applePodcasts: return "apple.podcasts.pages"
         case .facebook: return "f.cursive"
+        case .homeTab: return "house.fill"
+        case .scheduleTab: return "calendar"
+        case .speakersAndPlacesTab: return "info.circle.text.page.fill"
+        case .ratingTab: return "star.fill"
+        case .mediaTab: return "photo.on.rectangle.angled.fill"
+        case .aboutFestivalTab: return "questionmark.circle.fill"
         }
     }
 
@@ -36,6 +48,12 @@ enum IconKey {
         case .spotify: return "waveform"
         case .applePodcasts: return "podcast.fill"
         case .facebook: return "f.circle"
+        case .homeTab: return "house.fill"
+        case .scheduleTab: return "calendar"
+        case .speakersAndPlacesTab: return "person.2.fill"
+        case .ratingTab: return "star.fill"
+        case .mediaTab: return "rectangle.stack.fill"
+        case .aboutFestivalTab: return "questionmark.circle.fill"
         }
     }
 }
