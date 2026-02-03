@@ -34,6 +34,7 @@ struct LinkTile<T: LinkData>: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, Spacing.lg)
         .padding(.horizontal, Spacing.sm)
+        .backport.glassEffect(.regular)
     }
 }
 

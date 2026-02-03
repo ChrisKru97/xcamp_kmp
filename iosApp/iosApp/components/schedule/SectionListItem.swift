@@ -32,6 +32,7 @@ struct SectionListItem: View, Equatable {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding()
         .contentShape(Rectangle())
+        .backport.glassEffect(.regular)
     }
 
     private func formatTime(_ millis: Int64) -> String {

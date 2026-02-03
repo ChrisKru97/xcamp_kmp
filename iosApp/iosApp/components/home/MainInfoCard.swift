@@ -18,6 +18,7 @@ struct MainInfoCard: View {
                 .multilineTextAlignment(.leading)
         }
         .padding()
+        .backport.glassEffect(.regular)
     }
 }
 

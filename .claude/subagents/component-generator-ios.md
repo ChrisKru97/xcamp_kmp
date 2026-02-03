@@ -418,26 +418,29 @@ Button("Click me") { }
 
 ## iOS Version Compatibility
 
-Use the backport namespace pattern for version-specific APIs:
+**CRITICAL**: Always use the backport namespace pattern for version-specific APIs defined in `utils/SwiftUIBackports.swift`.
 
 ```swift
-// Use the backport namespace for version-specific APIs
+// Backport namespace - use this pattern instead of #available checks
 content.backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
-iconView.backport.bounceSymbol(trigger: isPressed)
-buttonView.backport.impactFeedback(trigger: isPressed)
 ```
 
 **Do NOT use inline `#available` checks** in your views - the backport namespace handles version compatibility internally.
 
-### Available Backports
+### Available Backports (SwiftUIBackports.swift)
 
-| Backport Method | Modern API | Fallback | Min iOS |
-|----------------|-----------|----------|---------|
-| `.backport.glassEffect(in:)` | iOS 26.0 `.glassEffect(.clear, in:)` | `.background(.ultraThinMaterial, in:)` | 15.0+ |
-| `.backport.bounceSymbol(trigger:)` | iOS 17.0 `.symbolEffect(.bounce, value:)` | No-op | 15.0+ |
-| `.backport.impactFeedback(trigger:)` | iOS 17.0 `.sensoryFeedback(.impact(flexibility: .soft), trigger:)` | No-op | 15.0+ |
+| Backport Method | Modern API | Min iOS | Category |
+|----------------|-----------|---------|----------|
+| `.backport.contentTransition(_:)` | iOS 17.0 `.contentTransition()` | 14+ | Transitions |
+| `.backport.presentationSizeForm()` | iOS 18.0 `.presentationSizing(.form)` | 14+ | Presentation |
+| `.backport.zoom(sourceID:in:)` | iOS 18.0 `.navigationTransition(.zoom)` | 14+ | Navigation |
+| `.backport.matchedTransitionSource(id:in:)` | iOS 18.0 `.matchedTransitionSource()` | 14+ | Navigation |
+| `.backport.glassEffect(_:in:)` | iOS 26.0 `.glassEffect()` | 14+ | Glass |
+| `.backport.glassEffectTransition(_:)` | iOS 26.0 `.glassEffectTransition()` | 14+ | Glass |
+| `.backport.glassEffectContainer(spacing:)` | iOS 26.0 `GlassEffectContainer` | 14+ | Glass |
+| `.backport.glassButtonStyle(fallbackStyle:)` | iOS 26.0 `.buttonStyle(.glass)` | 14+ | Glass |
 
-**Reference**: `iosApp/iosApp/utils/BackportModifiers.swift`
+**Reference**: `iosApp/iosApp/utils/SwiftUIBackports.swift`
 
 ## KISS/DRY Decision Guidelines
 

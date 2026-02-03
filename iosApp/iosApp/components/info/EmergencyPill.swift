@@ -51,6 +51,7 @@ struct EmergencyPill: View {
         .contentShape(Rectangle())
         .padding(Spacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
+        .backport.glassEffect(.regular)
     }
 }
 

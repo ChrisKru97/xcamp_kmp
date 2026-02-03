@@ -37,6 +37,7 @@ struct SectionPlaceCard: View {
                 .foregroundColor(.secondary)
         }
         .padding()
+        .backport.glassEffect(.regular)
     }
 
     private var labelSection: some View {

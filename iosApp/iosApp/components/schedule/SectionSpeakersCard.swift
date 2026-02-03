@@ -30,6 +30,7 @@ struct SectionSpeakersCard: View {
             }
         }
         .padding()
+        .backport.glassEffect(.regular)
         .task {
             await loadSpeakers()
         }
