@@ -78,6 +78,7 @@ kotlin {
 android {
     namespace = "cz.krutsche.xcamp.shared"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
+    ndkVersion = "26.1.10909125"
     defaultConfig {
         minSdk = libs.versions.android.minSdk.get().toInt()
     }

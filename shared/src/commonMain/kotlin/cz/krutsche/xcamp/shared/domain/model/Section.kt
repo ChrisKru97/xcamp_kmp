@@ -20,6 +20,8 @@ data class Section(
     val favorite: Boolean = false
 ) {
     companion object {
+        private val json = Json { ignoreUnknownKeys = true }
+
         fun fromFirestoreData(documentId: String, data: FirestoreSection): Section {
             require(documentId.isNotBlank()) { "Section document ID cannot be blank" }
             require(data.name.isNotBlank()) { "Section name cannot be blank" }
@@ -31,7 +33,7 @@ data class Section(
                 startTime = data.startTime,
                 endTime = data.endTime,
                 place = data.place,
-                speakers = data.speakers?.let { Json { ignoreUnknownKeys = true }.decodeFromString<List<String>>(it) },
+                speakers = data.speakers?.let { json.decodeFromString<List<String>>(it) },
                 leader = data.leader,
                 type = SectionType.valueOf(data.type.uppercase()),
                 favorite = data.favorite

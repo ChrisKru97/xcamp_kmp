@@ -35,6 +35,7 @@ kotlin {
 android {
     namespace = "cz.krutsche.xcamp"
     compileSdk = libs.versions.android.compileSdk.get().toInt()
+    ndkVersion = "26.1.10909125"
 
     sourceSets["main"].manifest.srcFile("src/androidMain/AndroidManifest.xml")
     sourceSets["main"].res.srcDirs("src/androidMain/res")
