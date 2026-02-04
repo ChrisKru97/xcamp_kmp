@@ -2,50 +2,49 @@ import SwiftUI
 import shared
 
 struct SpeakerDetailView: View {
-    let speaker: Speaker
+    let speakerUid: String
+    @Environment(\.speakersService) private var speakersService
+    @State private var speaker: Speaker?
+    @State private var isLoading = true
 
     var body: some View {
-        EntityDetailView(
-            entity: speaker,
-            config: .speaker
-        )
+        Group {
+            if let speaker = speaker {
+                EntityDetailView(entity: speaker, config: .speaker)
+            } else if isLoading {
+                ProgressView()
+            } else {
+                Text("Speaker not found")
+            }
+        }
+        .task {
+            await loadSpeaker()
+        }
+    }
+
+    private func loadSpeaker() async {
+        guard speaker == nil else { return }
+        speaker = try? await speakersService.getSpeakerById(uid: speakerUid)
+        isLoading = false
     }
 }
 
 // MARK: - Previews
 
 #Preview("Speaker Detail View - With Description") {
-    SpeakerDetailView(speaker: Speaker(
-                uid: "test1",
-                name: "Jan Novák",
-                description: "Pastor a řečník s mnoha lety zkušeností. Slouží církvi a víře již více než 20 let. Jeho posláním je šířit evangelium a pomáhat lidem najít cestu k Bohu.",
-                priority: 1,
-                image: nil,
-                imageUrl: nil
-            ))
+    SpeakerDetailView(speakerUid: "test1")
+        .environment(\.speakersService, SpeakersService())
         .preferredColorScheme(.dark)
 }
 
 #Preview("Speaker Detail View - Long Biography") {
-    SpeakerDetailView(speaker: Speaker(
-        uid: "test2",
-        name: "Marie Svobodová",
-        description: "Známá kazatelka a autorka mnoha knih. Její posláním je šířit evangelium a pomáhat lidem najít cestu k Bohu. Pravidelně přednáší na konferencích a setkáních po celé České republice i v zahraničí. Věnuje se také poradenství pro mladé páry a rodiny. Je vdaná a má tři děti.",
-        priority: 2,
-        image: nil,
-        imageUrl: nil
-    ))
-    .preferredColorScheme(.light)
+    SpeakerDetailView(speakerUid: "test2")
+        .environment(\.speakersService, SpeakersService())
+        .preferredColorScheme(.light)
 }
 
 #Preview("Speaker Detail View - Without Description") {
-    SpeakerDetailView(speaker: Speaker(
-        uid: "test3",
-        name: "Tomáš Dvořák",
-        description: nil,
-        priority: 3,
-        image: nil,
-        imageUrl: nil
-    ))
-    .preferredColorScheme(.dark)
+    SpeakerDetailView(speakerUid: "test3")
+        .environment(\.speakersService, SpeakersService())
+        .preferredColorScheme(.dark)
 }

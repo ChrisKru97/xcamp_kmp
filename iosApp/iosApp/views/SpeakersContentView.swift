@@ -3,6 +3,7 @@ import shared
 
 struct SpeakersContentView: View {
     @EnvironmentObject var appViewModel: AppViewModel
+    @EnvironmentObject var router: AppRouter
     @StateObject private var viewModel = SpeakersViewModel()
 
     var body: some View {
@@ -36,7 +37,9 @@ struct SpeakersContentView: View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: Spacing.md) {
                 ForEach(speakers, id: \.uid) { speaker in
-                    NavigationLink(destination: SpeakerDetailView(speaker: speaker)) {
+                    Button {
+                        router.push(speaker.uid)
+                    } label: {
                         SpeakerListItem(speaker: speaker)
                             .equatable()
                     }

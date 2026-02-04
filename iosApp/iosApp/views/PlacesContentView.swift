@@ -3,6 +3,7 @@ import shared
 
 struct PlacesContentView: View {
     @EnvironmentObject var appViewModel: AppViewModel
+    @EnvironmentObject var router: AppRouter
     @StateObject private var viewModel = PlacesViewModel()
 
     @State private var showFullscreen = false
@@ -49,7 +50,9 @@ struct PlacesContentView: View {
 
                 LazyVGrid(columns: columns, spacing: Spacing.md) {
                     ForEach(places, id: \.uid) { place in
-                        NavigationLink(destination: PlaceDetailView(place: place)) {
+                        Button {
+                            router.push(place.uid)
+                        } label: {
                             PlaceListItem(place: place)
                                 .equatable()
                         }

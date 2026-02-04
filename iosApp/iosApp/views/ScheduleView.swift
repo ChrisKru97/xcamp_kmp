@@ -6,6 +6,7 @@ typealias ScheduleSection = shared.ExpandedSection
 
 struct ScheduleView: View {
     @EnvironmentObject var appViewModel: AppViewModel
+    @EnvironmentObject var router: AppRouter
     @StateObject private var viewModel = ScheduleViewModel()
     @State private var showingFilter = false
     @State private var showingDayPicker = false
@@ -78,26 +79,32 @@ struct ScheduleView: View {
                 .font(.title2)
                 .foregroundColor(.primary)
                 .frame(width: 44, height: 44)
-                .contentShape(Rectangle())
+                .background {
+                    glassBackground
+                }
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 2)
+                .backport.glassEffect(BackportGlass.regular, in: RoundedRectangle(cornerRadius: 12))
         }
         .buttonStyle(ScaleButtonStyle())
+    }
+
+    @ViewBuilder
+    private var glassBackground: some View {
+        if #available(iOS 26.0, *) {
+            Color.clear
+        } else {
+            Rectangle().fill(.thinMaterial)
+        }
     }
 
     private func scheduleContent(_ sections: [ScheduleSection]) -> some View {
         ScrollView {
             LazyVStack(spacing: Spacing.md) {
                 ForEach(sections, id: \.uid) { section in
-                    NavigationLink(destination: SectionDetailView(
-                        section: section.base,
-                        service: appViewModel.scheduleService,
-                        placesService: appViewModel.placesService,
-                        speakersService: appViewModel.speakersService,
-                        onFavoriteToggled: {
-                            Task {
-                                await viewModel.loadDay(service: appViewModel.scheduleService, dayIndex: viewModel.selectedDayIndex)
-                            }
-                        }
-                    )) {
+                    Button {
+                        router.push(section.base.uid)
+                    } label: {
                         SectionListItem(section: section)
                             .equatable()
                     }

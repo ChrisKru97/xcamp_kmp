@@ -5,12 +5,15 @@ struct SectionPlaceCard: View {
     let placeUid: String
     let placesService: PlacesService
 
+    @EnvironmentObject var router: AppRouter
     @State private var place: Place?
 
     var body: some View {
         Group {
             if let place = place {
-                NavigationLink(destination: PlaceDetailView(place: place)) {
+                Button {
+                    router.push(place.uid)
+                } label: {
                     cardContent(place.name)
                 }
             } else {

@@ -5,8 +5,12 @@ struct RatingView: View {
     @EnvironmentObject var appViewModel: AppViewModel
 
     var body: some View {
-        ScrollView {
-            Text(Strings.Rating.shared.COMING_SOON)
+        ZStack {
+            Color.background.ignoresSafeArea()
+
+            ScrollView {
+                Text(Strings.Rating.shared.COMING_SOON)
+            }
         }
         .navigationTitle(Strings.Tabs.shared.RATING)
     }

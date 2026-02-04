@@ -5,16 +5,19 @@ struct InfoView: View {
     @EnvironmentObject var appViewModel: AppViewModel
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: Spacing.lg) {
-                emergencySection
-                contactSection
+        ZStack {
+            Color.background.ignoresSafeArea()
+
+            ScrollView {
+                VStack(spacing: Spacing.lg) {
+                    emergencySection
+                    contactSection
+                }
+                .padding(.horizontal, Spacing.md)
+                .padding(.top, Spacing.md)
+                .padding(.bottom, Spacing.xxl)
             }
-            .padding(.horizontal, Spacing.md)
-            .padding(.top, Spacing.md)
-            .padding(.bottom, Spacing.xxl)
         }
-        .background(Color.background)
         .navigationTitle(Strings.Tabs.shared.ABOUT_FESTIVAL)
         .navigationBarTitleDisplayMode(.inline)
     }

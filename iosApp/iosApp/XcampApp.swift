@@ -5,6 +5,7 @@ import Kingfisher
 @main
 struct XcampApp: App {
     @StateObject private var appViewModel = AppViewModel()
+    @StateObject private var router = AppRouter()
 
     init() {
         FirebaseApp.configure()
@@ -15,6 +16,7 @@ struct XcampApp: App {
         WindowGroup {
             ContentView()
                 .environmentObject(appViewModel)
+                .environmentObject(router)
                 .onAppear {
                     appViewModel.initializeApp()
                 }
@@ -23,12 +25,8 @@ struct XcampApp: App {
 
     private func configureKingfisherCache() {
         let cache = ImageCache.default
-
-        // Configure disk cache with 30-day expiration for stale-while-revalidate pattern
-        cache.diskStorage.config.sizeLimit = 300 * 1024 * 1024  // 300 MB
+        cache.diskStorage.config.sizeLimit = 300 * 1024 * 1024
         cache.diskStorage.config.expiration = .days(30)
-
-        // Keep memory cache at 300 MB for instant access during app session
-        cache.memoryStorage.config.totalCostLimit = 300 * 1024 * 1024  // 300 MB
+        cache.memoryStorage.config.totalCostLimit = 300 * 1024 * 1024
     }
 }

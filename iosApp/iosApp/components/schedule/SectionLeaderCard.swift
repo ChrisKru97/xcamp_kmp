@@ -5,12 +5,15 @@ struct SectionLeaderCard: View {
     let leaderUid: String
     let speakersService: SpeakersService
 
+    @EnvironmentObject var router: AppRouter
     @State private var leader: Speaker?
 
     var body: some View {
         Group {
             if let leader = leader {
-                NavigationLink(destination: SpeakerDetailView(speaker: leader)) {
+                Button {
+                    router.push(leader.uid)
+                } label: {
                     cardContent(leader.name)
                 }
             } else {

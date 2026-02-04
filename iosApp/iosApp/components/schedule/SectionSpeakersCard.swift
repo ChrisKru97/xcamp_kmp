@@ -5,6 +5,7 @@ struct SectionSpeakersCard: View {
     let speakerUids: [String]
     let speakersService: SpeakersService
 
+    @EnvironmentObject var router: AppRouter
     @State private var speakers: [Speaker] = []
 
     var body: some View {
@@ -20,7 +21,9 @@ struct SectionSpeakersCard: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: Spacing.sm) {
                             ForEach(speakers, id: \.uid) { speaker in
-                                NavigationLink(destination: SpeakerDetailView(speaker: speaker)) {
+                                Button {
+                                    router.push(speaker.uid)
+                                } label: {
                                     speakerChip(speaker)
                                 }
                             }

@@ -19,22 +19,26 @@ struct SpeakersAndPlacesView: View {
     @State private var selectedTab: Tab = .speakers
 
     var body: some View {
-        VStack(spacing: 0) {
-            Picker("", selection: $selectedTab) {
-                ForEach(Tab.allCases, id: \.self) { tab in
-                    Text(tab.title).tag(tab)
-                }
-            }
-            .pickerStyle(.segmented)
-            .padding(.horizontal, Spacing.md)
-            .padding(.vertical, Spacing.sm)
-            .background(Color.background)
+        ZStack {
+            Color.background.ignoresSafeArea()
 
-            switch selectedTab {
-            case .speakers:
-                SpeakersContentView()
-            case .places:
-                PlacesContentView()
+            VStack(spacing: 0) {
+                Picker("", selection: $selectedTab) {
+                    ForEach(Tab.allCases, id: \.self) { tab in
+                        Text(tab.title).tag(tab)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .padding(.horizontal, Spacing.md)
+                .padding(.vertical, Spacing.sm)
+                .background(Color.background)
+
+                switch selectedTab {
+                case .speakers:
+                    SpeakersContentView()
+                case .places:
+                    PlacesContentView()
+                }
             }
         }
         .navigationTitle(Strings.Tabs.shared.SPEAKERS_AND_PLACES)

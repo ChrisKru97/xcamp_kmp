@@ -3,6 +3,7 @@ import SwiftUI
 struct GlassCard<Content: View>: View {
     let content: Content
     var padding: CGFloat = 16
+    private let cornerRadius: CGFloat = 12
 
     init(padding: CGFloat = 16, @ViewBuilder content: () -> Content) {
         self.content = content()
@@ -10,27 +11,18 @@ struct GlassCard<Content: View>: View {
     }
 
     var body: some View {
-        cardBody
-    }
-
-    private var cardBody: some View {
         content
             .padding(padding)
             .background {
-                glassBackground
+                if #available(iOS 26.0, *) {
+                    Color.clear
+                } else {
+                    Rectangle().fill(.thinMaterial)
+                }
             }
-            .clipShape(RoundedRectangle(cornerRadius: 12))
+            .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
             .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 2)
-            .backport.glassEffect(BackportGlass.regular, in: RoundedRectangle(cornerRadius: 12))
-    }
-
-    @ViewBuilder
-    private var glassBackground: some View {
-        if #available(iOS 26.0, *) {
-            Color.clear
-        } else {
-            Rectangle().fill(.thinMaterial)
-        }
+            .backport.glassEffect(BackportGlass.regular, in: RoundedRectangle(cornerRadius: cornerRadius))
     }
 }
 
@@ -73,7 +65,7 @@ struct GlassCard<Content: View>: View {
                         .font(.caption)
                         .foregroundColor(.secondary)
                 }
-                Text("Glass card with thinMaterial fallback on iOS 15-25")
+                Text("Glass card with thinMaterial fallback on iOS 15-18")
                     .font(.body)
             }
         }

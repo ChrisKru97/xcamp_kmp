@@ -2,26 +2,44 @@ import SwiftUI
 import shared
 
 struct SectionDetailView: View {
-    let section: shared.Section
-    let service: ScheduleService
-    let placesService: PlacesService
-    let speakersService: SpeakersService
+    let sectionUid: String
     let onFavoriteToggled: () -> Void
 
-    @State private var isFavorite: Bool
+    @Environment(\.scheduleService) private var scheduleService
+    @Environment(\.placesService) private var placesService
+    @Environment(\.speakersService) private var speakersService
 
-    init(section: shared.Section, service: ScheduleService, placesService: PlacesService, speakersService: SpeakersService, onFavoriteToggled: @escaping () -> Void) {
-        self.section = section
-        self.service = service
-        self.placesService = placesService
-        self.speakersService = speakersService
-        self.onFavoriteToggled = onFavoriteToggled
-        self._isFavorite = State(initialValue: section.favorite)
-    }
+    @State private var section: shared.Section?
+    @State private var isFavorite: Bool = false
+    @State private var isLoading = true
 
     var body: some View {
+        Group {
+            if let section = section {
+                sectionContentView(section)
+            } else if isLoading {
+                ProgressView()
+            } else {
+                Text("Section not found")
+            }
+        }
+        .task {
+            await loadSection()
+        }
+    }
+
+    private func loadSection() async {
+        guard section == nil else { return }
+        section = try? await scheduleService.getSectionById(uid: sectionUid)
+        if let section = section {
+            isFavorite = section.favorite
+        }
+        isLoading = false
+    }
+
+    private func sectionContentView(_ section: shared.Section) -> some View {
         ScrollView {
-            contentSection
+            contentSection(section)
         }
         .navigationTitle(section.name)
         .navigationBarTitleDisplayMode(.inline)
@@ -31,7 +49,7 @@ struct SectionDetailView: View {
                 Button(action: {
                     Task {
                         isFavorite.toggle()
-                        try? await service.toggleFavorite(sectionUid: section.uid, favorite: isFavorite)
+                        try? await scheduleService.toggleFavorite(sectionUid: section.uid, favorite: isFavorite)
                         onFavoriteToggled()
                     }
                 }) {
@@ -43,7 +61,7 @@ struct SectionDetailView: View {
         }
     }
 
-    private var contentSection: some View {
+    private func contentSection(_ section: shared.Section) -> some View {
         VStack(alignment: .leading, spacing: Spacing.lg) {
             SectionTypeBadge(type: section.type)
                 .padding(.horizontal, Spacing.md)
