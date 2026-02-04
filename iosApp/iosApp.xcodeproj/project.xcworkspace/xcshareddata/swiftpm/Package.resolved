@@ -1,5 +1,5 @@
 {
-  "originHash" : "c0f2d5284e7aa0587bd09b2a512cea8978786adf377c5a298fb673e1d10f83b7",
+  "originHash" : "336e546efd0030f2f17bd2c455c90012836ca5f9daab8f15ec029f67a265e6d4",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -119,6 +119,15 @@
       }
     },
     {
+      "identity" : "navigationbackport",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/johnpatrickmorgan/NavigationBackport",
+      "state" : {
+        "revision" : "5baf99855f6a0a02022f9b479cc41ad99a8e070c",
+        "version" : "0.11.5"
+      }
+    },
+    {
       "identity" : "promises",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/google/promises.git",
@@ -134,6 +143,24 @@
       "state" : {
         "revision" : "2547102afd04fe49f1b286090f13ebce07284980",
         "version" : "1.31.1"
+      }
+    },
+    {
+      "identity" : "swiftbackports",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/shaps80/SwiftBackports",
+      "state" : {
+        "revision" : "19ce89c82df9c042f4153d204c03fc904cab9c98",
+        "version" : "26.0.1"
+      }
+    },
+    {
+      "identity" : "swiftuibackports",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/shaps80/SwiftUIBackports",
+      "state" : {
+        "revision" : "2beebc6960375b3af3655447586e768a5271a5c2",
+        "version" : "26.0.1"
       }
     }
   ],

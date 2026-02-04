@@ -149,6 +149,60 @@ content.backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
 
 Use the reusable `GlassCard<Content: View>` component for consistency.
 
+## SwiftUIBackports Packages
+
+### Package Overview
+The project includes shaps80 backport packages for iOS version compatibility:
+
+| Package | Version | Repository |
+|---------|---------|------------|
+| SwiftUIBackports | 26.0.1 | https://github.com/shaps80/SwiftUIBackports |
+| SwiftBackports | 26.0.1 | https://github.com/shaps80/SwiftBackports |
+
+### Usage Pattern
+The shaps80 packages use a namespace pattern for discoverability:
+
+**Types (use `@Backport` prefix):**
+```swift
+@Backport.AppStorage("filter-enabled")
+private var filterEnabled: Bool = false
+```
+
+**Modifiers (use `.backport` prefix):**
+```swift
+.sheet(isPresented: $showPrompt) {
+    Prompt()
+        .backport.presentationDetents([.medium, .large])
+}
+```
+
+**Environment values:**
+```swift
+@Environment(\.backportRefresh) private var refreshAction
+```
+
+### Key Backports Available
+
+**SwiftUI:**
+- `AsyncImage`, `AppStorage`, `ShareLink`, `StateObject`
+- `presentationDetents`, `presentationDragIndicator`
+- `Refreshable` (pull-to-refresh)
+- `onChange`, `task`, `openURL`
+- `scrollDisabled`, `scrollIndicators`, `scrollDismissesKeyboard`
+
+**UIKit Extras:**
+- `FittingGeometryReader` - Auto-sizing GeometryReader
+- `FittingScrollView` - ScrollView that respects Spacers
+
+### Local vs Package Backports
+
+| Source | Location | Namespace | Purpose |
+|--------|----------|-----------|---------|
+| Local | `utils/SwiftUIBackports.swift` | `.backport` | Custom glass/transition effects (iOS 26+) |
+| shaps80 Package | Swift Package | `Backport` / `.backport` | General SwiftUI backports (iOS 13+) |
+
+**Important**: The local `SwiftUIBackports.swift` file (from superwall/iOS-Backports) provides custom glass/transition implementations. The shaps80 packages provide additional general-purpose backports. They can coexist.
+
 ## iOS Version Compatibility
 
 **CRITICAL**: Always use the backport namespace pattern for version-specific APIs defined in `utils/SwiftUIBackports.swift`.
@@ -160,7 +214,7 @@ content.backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
 
 **Do NOT use inline `#available` checks** in your views - the backport namespace handles version compatibility internally.
 
-### Available Backports (SwiftUIBackports.swift)
+### Local Backport Implementation (utils/SwiftUIBackports.swift)
 
 | Backport Method | Modern API | Min iOS | Category |
 |----------------|-----------|---------|----------|
@@ -178,7 +232,89 @@ content.backport.glassEffect(in: .rect(cornerRadius: CornerRadius.medium))
 **Reference**: `iosApp/iosApp/utils/SwiftUIBackports.swift`
 
 ## Navigation & Toolbar
-- `.navigationViewStyle(.automatic)` for consistency
+
+### Navigation Backport (Recommended for iOS 15+)
+
+**CRITICAL**: Use `NavigationBackport` for navigation instead of legacy `NavigationView`. The project includes NavigationBackport v0.11.5 which provides modern `NavigationStack` APIs with iOS 15+ compatibility.
+
+**Why**: Modern navigation with value-based linking, deep-linking support, and automatic fallback to native `NavigationStack` on iOS 16+.
+
+**API Mapping**:
+| Modern API | Backport API |
+|------------|--------------|
+| `NavigationStack` | `NBNavigationStack` |
+| `NavigationLink(value:)` | `NBNavigationLink(value:)` |
+| `NavigationPath` | `NBNavigationPath` |
+| `navigationDestination(for:)` | `nbNavigationDestination(for:)` |
+
+**Basic Usage**:
+```swift
+import NavigationBackport
+
+struct ContentView: View {
+    @State var path = NBNavigationPath()
+
+    var body: some View {
+        NBNavigationStack(path: $path) {
+            HomeView()
+                .nbNavigationDestination(for: Screen.self) { screen in
+                    screen.destination
+                }
+        }
+    }
+}
+
+enum Screen: Hashable {
+    case detail(id: String)
+    case settings
+
+    @ViewBuilder var destination: some View {
+        switch self {
+        case .detail(let id): DetailView(id: id)
+        case .settings: SettingsView()
+        }
+    }
+}
+
+struct HomeView: View {
+    var body: some View {
+        NBNavigationLink(value: Screen.detail(id: "123")) {
+            Text("Go to Detail")
+        }
+    }
+}
+```
+
+**Programmatic Navigation**:
+```swift
+@EnvironmentObject var navigator: PathNavigator
+
+// Push screen
+navigator.push(Screen.detail(id: "123"))
+// or: path.append(Screen.detail(id: "123"))
+
+// Pop current screen
+navigator.pop()
+// or: path.removeLast()
+
+// Pop to root
+navigator.popToRoot()
+// or: path.removeSubrange(...)
+
+// Pop to specific screen type
+navigator.popTo(Screen.self)
+```
+
+**Deep-linking** (multiple screens in one update):
+```swift
+// This works even on iOS 15 - NavigationBackport breaks it into multiple updates
+path.append(Screen.schedule)
+path.append(Screen.day(1))
+path.append(Screen.session(id: "abc"))
+```
+
+### Standard Toolbar Patterns
+- `.navigationViewStyle(.automatic)` for consistency (when using NavigationView)
 - Toolbar items: `.toolbar { ToolbarItem(placement: .principal) { ... } }`
 - Extract toolbar content into separate view components
 

@@ -109,6 +109,13 @@ For Firebase implementation details, see `.claude/subagents/firebase-integration
 - Use latest KMP-compatible framework versions
 - For shared module patterns, see `.claude/subagents/shared-logic.md`
 
+## MCP Tools
+
+For web searching and fetching, use the available MCP tools:
+- `web-search` - Search the web using DuckDuckGo
+- `playwright` - Browser automation for scraping and testing
+- `web_reader` - Fetch and convert web pages to markdown
+
 ## Development Agents
 
 Specialized Claude Code plugin agents for parallel platform work. These agents can be spawned via the Task tool for autonomous, focused work.
