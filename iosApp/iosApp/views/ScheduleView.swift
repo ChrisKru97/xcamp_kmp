@@ -101,7 +101,6 @@ struct ScheduleView: View {
                         SectionListItem(section: section)
                             .equatable()
                     }
-                    .buttonStyle(PlainButtonStyle())
                 }
             }
             .padding(.horizontal, Spacing.md)

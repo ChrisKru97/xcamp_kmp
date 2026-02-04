@@ -40,7 +40,6 @@ struct SpeakersContentView: View {
                         SpeakerListItem(speaker: speaker)
                             .equatable()
                     }
-                    .buttonStyle(PlainButtonStyle())
                 }
             }
             .padding(.horizontal, Spacing.md)

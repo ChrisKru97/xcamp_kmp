@@ -13,7 +13,6 @@ struct SectionLeaderCard: View {
                 NavigationLink(destination: SpeakerDetailView(speaker: leader)) {
                     cardContent(leader.name)
                 }
-                .buttonStyle(PlainButtonStyle())
             } else {
                 ProgressView()
                     .frame(maxWidth: .infinity)

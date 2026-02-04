@@ -23,7 +23,6 @@ struct SectionSpeakersCard: View {
                                 NavigationLink(destination: SpeakerDetailView(speaker: speaker)) {
                                     speakerChip(speaker)
                                 }
-                                .buttonStyle(PlainButtonStyle())
                             }
                         }
                         .padding(.horizontal, Spacing.sm)

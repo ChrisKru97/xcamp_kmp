@@ -53,7 +53,6 @@ struct PlacesContentView: View {
                             PlaceListItem(place: place)
                                 .equatable()
                         }
-                        .buttonStyle(PlainButtonStyle())
                     }
                 }
             }

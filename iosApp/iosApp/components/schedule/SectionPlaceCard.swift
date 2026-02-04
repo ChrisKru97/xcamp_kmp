@@ -13,7 +13,6 @@ struct SectionPlaceCard: View {
                 NavigationLink(destination: PlaceDetailView(place: place)) {
                     cardContent(place.name)
                 }
-                .buttonStyle(PlainButtonStyle())
             } else {
                 ProgressView()
                     .frame(maxWidth: .infinity)
