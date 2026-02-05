@@ -5,11 +5,14 @@ struct ContentView: View {
     @EnvironmentObject var appViewModel: AppViewModel
 
     var body: some View {
-        if appViewModel.isLoading {
-            SplashView()
-        } else {
-            NavigationContainer()
+        ZStack {
+            if appViewModel.isLoading {
+                SplashView()
+            } else {
+                NavigationContainer()
+            }
         }
+        .background(Color.background.ignoresSafeArea())
     }
 }
 

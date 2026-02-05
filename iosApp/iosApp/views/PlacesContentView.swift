@@ -49,7 +49,7 @@ struct PlacesContentView: View {
                 LazyVGrid(columns: columns, spacing: Spacing.md) {
                     ForEach(places, id: \.uid) { place in
                         Button {
-                            router.push(place.uid)
+                            router.push(place.uid, type: .place)
                         } label: {
                             PlaceListItem(place: place)
                                 .equatable()

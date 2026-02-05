@@ -11,30 +11,21 @@ struct SectionDetailView: View {
 
     @State private var section: shared.Section?
     @State private var isFavorite: Bool = false
-    @State private var isLoading = true
 
     var body: some View {
         Group {
-            if let section = section {
+            if let section {
                 sectionContentView(section)
-            } else if isLoading {
-                ProgressView()
             } else {
-                Text("Section not found")
+                ProgressView()
             }
         }
         .task {
-            await loadSection()
+            section = try? await scheduleService.getSectionById(uid: sectionUid)
+            if let section = section {
+                isFavorite = section.favorite
+            }
         }
-    }
-
-    private func loadSection() async {
-        guard section == nil else { return }
-        section = try? await scheduleService.getSectionById(uid: sectionUid)
-        if let section = section {
-            isFavorite = section.favorite
-        }
-        isLoading = false
     }
 
     private func sectionContentView(_ section: shared.Section) -> some View {

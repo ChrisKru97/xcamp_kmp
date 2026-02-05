@@ -5,11 +5,10 @@ struct PlaceDetailView: View {
     let placeUid: String
     @Environment(\.placesService) private var placesService
     @State private var place: Place?
-    @State private var isLoading = true
 
     var body: some View {
         Group {
-            if let place = place {
+            if let place {
                 EntityDetailView(
                     entity: place,
                     config: .place
@@ -19,21 +18,13 @@ struct PlaceDetailView: View {
                         mapsButton(place)
                     }
                 }
-            } else if isLoading {
-                ProgressView()
             } else {
-                Text("Place not found")
+                ProgressView()
             }
         }
         .task {
-            await loadPlace()
+            place = try? await placesService.getPlaceById(uid: placeUid)
         }
-    }
-
-    private func loadPlace() async {
-        guard place == nil else { return }
-        place = try? await placesService.getPlaceById(uid: placeUid)
-        isLoading = false
     }
 
     @ViewBuilder

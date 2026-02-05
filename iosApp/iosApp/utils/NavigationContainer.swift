@@ -7,25 +7,21 @@ struct NavigationContainer: View {
     @EnvironmentObject var appViewModel: AppViewModel
 
     var body: some View {
-        ZStack {
-            Color.background.ignoresSafeArea()
-
-            TabView(selection: $router.selectedTab) {
-                ForEach(availableTabs, id: \.self) { tab in
-                    NBNavigationStack(path: pathForTab(tab)) {
-                        rootView(for: tab)
-                            .nbNavigationDestination(for: String.self) { uid in
-                                destinationView(uid: uid)
-                            }
-                    }
-                    .tabItem {
-                        Label(label(for: tab), systemImage: icon(for: tab))
-                    }
-                    .tag(tab)
+        TabView(selection: $router.selectedTab) {
+            ForEach(availableTabs, id: \.self) { (tab: AppTab) in
+                NBNavigationStack(path: pathForTab(tab)) {
+                    rootView(for: tab)
+                        .nbNavigationDestination(for: NavigationDestination.self) { destination in
+                            destinationView(destination: destination)
+                        }
                 }
+                .tabItem {
+                    Label(label(for: tab), systemImage: icon(for: tab))
+                }
+                .tag(tab)
             }
-            .tabViewStyle(.automatic)
         }
+        .tabViewStyle(.automatic)
         .injectServices()
     }
 
@@ -37,15 +33,15 @@ struct NavigationContainer: View {
     }
 
     @ViewBuilder
-    private func destinationView(uid: String) -> some View {
-        switch router.selectedTab {
-        case .schedule:
-            SectionDetailView(sectionUid: uid) {}
-        case .speakersAndPlaces:
-            SpeakerDetailView(speakerUid: uid)
-        case .rating, .media, .aboutFestival, .home:
-            EmptyView()
-        default:
+    private func destinationView(destination: NavigationDestination) -> some View {
+        switch destination.type {
+        case .section:
+            SectionDetailView(sectionUid: destination.uid) {}
+        case .speaker:
+            SpeakerDetailView(speakerUid: destination.uid)
+        case .place:
+            PlaceDetailView(placeUid: destination.uid)
+        case .none:
             EmptyView()
         }
     }
@@ -92,11 +88,10 @@ struct NavigationContainer: View {
     }
 }
 
-private struct ServiceInjectionView<Content: View>: View {
+private struct ServiceInjectionModifier: ViewModifier {
     @EnvironmentObject var appViewModel: AppViewModel
-    let content: Content
 
-    var body: some View {
+    func body(content: Content) -> some View {
         content
             .environment(\.scheduleService, appViewModel.scheduleService)
             .environment(\.speakersService, appViewModel.speakersService)
@@ -106,6 +101,6 @@ private struct ServiceInjectionView<Content: View>: View {
 
 extension View {
     func injectServices() -> some View {
-        ServiceInjectionView(content: self)
+        modifier(ServiceInjectionModifier())
     }
 }

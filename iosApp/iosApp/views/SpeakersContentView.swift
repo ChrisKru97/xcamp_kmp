@@ -36,7 +36,7 @@ struct SpeakersContentView: View {
             LazyVGrid(columns: columns, spacing: Spacing.md) {
                 ForEach(speakers, id: \.uid) { speaker in
                     Button {
-                        router.push(speaker.uid)
+                        router.push(speaker.uid, type: .speaker)
                     } label: {
                         SpeakerListItem(speaker: speaker)
                             .equatable()

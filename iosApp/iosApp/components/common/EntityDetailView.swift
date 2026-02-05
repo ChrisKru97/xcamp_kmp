@@ -37,16 +37,14 @@ struct EntityDetailView<T: EntityDetailRepresentable>: View {
         }
     }
 
+    @ViewBuilder
     private var entityDescription: some View {
-        Group {
-            if let description = entity.description_, !description.isEmpty {
-                Text(description)
-                    .font(.body)
-                    .foregroundColor(.primary)
-                    .lineSpacing(4)
-                    .padding()
-                    .padding(.horizontal, Spacing.lg)
-            }
+        if let description = entity.description_, !description.isEmpty {
+            Text(description)
+                .font(.body)
+                .foregroundColor(.primary)
+                .lineSpacing(4)
+                .padding(.horizontal, Spacing.lg)
         }
     }
 }

@@ -5,27 +5,18 @@ struct SpeakerDetailView: View {
     let speakerUid: String
     @Environment(\.speakersService) private var speakersService
     @State private var speaker: Speaker?
-    @State private var isLoading = true
 
     var body: some View {
         Group {
-            if let speaker = speaker {
+            if let speaker {
                 EntityDetailView(entity: speaker, config: .speaker)
-            } else if isLoading {
-                ProgressView()
             } else {
-                Text("Speaker not found")
+                ProgressView()
             }
         }
         .task {
-            await loadSpeaker()
+            speaker = try? await speakersService.getSpeakerById(uid: speakerUid)
         }
-    }
-
-    private func loadSpeaker() async {
-        guard speaker == nil else { return }
-        speaker = try? await speakersService.getSpeakerById(uid: speakerUid)
-        isLoading = false
     }
 }
 
