@@ -9,7 +9,6 @@ enum DestinationType: String {
 }
 
 struct NavigationDestination: Hashable {
-    let tab: AppTab
     let uid: String
     let type: DestinationType?
 }
@@ -21,7 +20,7 @@ final class AppRouter: ObservableObject {
 
     func push(_ uid: String, type: DestinationType? = nil) {
         var currentPath = paths[selectedTab] ?? NBNavigationPath()
-        currentPath.append(NavigationDestination(tab: selectedTab, uid: uid, type: type))
+        currentPath.append(NavigationDestination(uid: uid, type: type))
         paths[selectedTab] = currentPath
     }
 }

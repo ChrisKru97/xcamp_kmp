@@ -16,7 +16,7 @@ struct NavigationContainer: View {
                         }
                 }
                 .tabItem {
-                    Label(label(for: tab), systemImage: icon(for: tab))
+                    Label(label(for: tab), systemImage: tab.tabIcon)
                 }
                 .tag(tab)
             }
@@ -61,18 +61,6 @@ struct NavigationContainer: View {
 
     private var availableTabs: [AppTab] {
         appViewModel.appConfigService.getAvailableTabs()
-    }
-
-    private func icon(for tab: AppTab) -> String {
-        switch tab {
-        case .home: return SFSymbolCompat.icon(for: .homeTab)
-        case .schedule: return SFSymbolCompat.icon(for: .scheduleTab)
-        case .speakersAndPlaces: return SFSymbolCompat.icon(for: .speakersAndPlacesTab)
-        case .rating: return SFSymbolCompat.icon(for: .ratingTab)
-        case .media: return SFSymbolCompat.icon(for: .mediaTab)
-        case .aboutFestival: return SFSymbolCompat.icon(for: .aboutFestivalTab)
-        default: return "circle.fill"
-        }
     }
 
     private func label(for tab: AppTab) -> String {
