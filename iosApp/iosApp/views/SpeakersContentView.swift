@@ -12,11 +12,7 @@ struct SpeakersContentView: View {
             case .loading:
                 loadingView
             case .loaded(let speakers):
-                if speakers.isEmpty {
-                    emptyView
-                } else {
-                    speakersList(speakers)
-                }
+                speakersList(speakers)
             case .error:
                 errorView
             }
@@ -59,23 +55,7 @@ struct SpeakersContentView: View {
                 .font(.body)
                 .foregroundColor(.secondary)
         }
-    }
-
-    private var emptyView: some View {
-        VStack(spacing: Spacing.lg) {
-            Image(systemName: "person.3")
-                .font(.system(size: 50))
-                .foregroundColor(.secondary)
-            Text(Strings.Speakers.shared.EMPTY_TITLE)
-                .font(.headline)
-                .foregroundColor(.secondary)
-            Button(Strings.Speakers.shared.RETRY) {
-                Task {
-                    await viewModel.loadSpeakers(service: appViewModel.speakersService)
-                }
-            }
-            .buttonStyle(.bordered)
-        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private var errorView: some View {

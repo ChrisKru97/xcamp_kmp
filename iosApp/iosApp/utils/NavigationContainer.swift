@@ -49,7 +49,7 @@ struct NavigationContainer: View {
     @ViewBuilder
     private func rootView(for tab: AppTab) -> some View {
         ZStack {
-            Color.background.ignoresSafeArea()
+            MeshGradientBackground()
 
             switch tab {
             case .home: HomeView()

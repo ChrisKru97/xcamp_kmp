@@ -56,30 +56,21 @@ object Strings {
 
     object Places {
         const val LOADING = "Načítám místa..."
-        const val EMPTY_TITLE = "Žádná místa"
         const val ERROR_TITLE = "Nepodařilo se načíst místa"
         const val RETRY = "Zkusit znovu"
         const val SHOW_ON_MAP = "Zobrazit na mapě"
         const val OPEN_IN_MAPS = "Otevřít v mapách"
-        const val RETRY_HINT = "Tap to retry loading places"
-        const val DETAIL_HINT = "Tap to view place details"
-        const val DETAIL_DESCRIPTION_HINT = "Place description and information"
     }
 
     object Speakers {
         const val LOADING = "Načítám řečníky..."
-        const val EMPTY_TITLE = "Žádní řečníci"
         const val ERROR_TITLE = "Nepodařilo se načíst řečníky"
         const val RETRY = "Zkusit znovu"
-        const val RETRY_HINT = "Tap to retry loading speakers"
-        const val DETAIL_HINT = "Tap to view speaker details"
-        const val DETAIL_BIO_HINT = "Speaker biography and information"
         const val BIOGRAPHY = "Biografie"
     }
 
     object Schedule {
         const val LOADING = "Načítám program..."
-        const val EMPTY_TITLE = "Žádný program"
         const val ERROR_TITLE = "Nepodařilo se načíst program"
         const val RETRY = "Zkusit znovu"
         const val FILTER_TITLE = "Filtrovat"

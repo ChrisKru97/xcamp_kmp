@@ -17,11 +17,7 @@ struct ScheduleView: View {
             case .loading:
                 loadingView
             case .loaded:
-                if viewModel.filteredSections.isEmpty {
-                    emptyView
-                } else {
-                    scheduleContent(viewModel.filteredSections)
-                }
+                scheduleContent(viewModel.filteredSections)
             case .error(let message):
                 errorView(message)
             }
@@ -136,24 +132,6 @@ struct ScheduleView: View {
             Text(Strings.Schedule.shared.LOADING)
                 .font(.body)
                 .foregroundColor(.secondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-
-    private var emptyView: some View {
-        VStack(spacing: Spacing.lg) {
-            Image(systemName: "calendar")
-                .font(.system(size: 50))
-                .foregroundColor(.secondary)
-            Text(Strings.Schedule.shared.EMPTY_TITLE)
-                .font(.headline)
-                .foregroundColor(.secondary)
-            Button(Strings.Schedule.shared.RETRY) {
-                Task {
-                    await viewModel.loadSections(service: appViewModel.scheduleService)
-                }
-            }
-            .buttonStyle(.bordered)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }

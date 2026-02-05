@@ -19,11 +19,7 @@ struct PlacesContentView: View {
             case .loading:
                 loadingView
             case .loaded(let places):
-                if places.isEmpty {
-                    emptyView
-                } else {
-                    placesList(places)
-                }
+                placesList(places)
             case .error:
                 errorView
             }
@@ -73,23 +69,7 @@ struct PlacesContentView: View {
                 .font(.body)
                 .foregroundColor(.secondary)
         }
-    }
-
-    private var emptyView: some View {
-        VStack(spacing: Spacing.lg) {
-            Image(systemName: "location.slash")
-                .font(.system(size: 50))
-                .foregroundColor(.secondary)
-            Text(Strings.Places.shared.EMPTY_TITLE)
-                .font(.headline)
-                .foregroundColor(.secondary)
-            Button(Strings.Places.shared.RETRY) {
-                Task {
-                    await viewModel.loadPlaces(service: appViewModel.placesService)
-                }
-            }
-            .buttonStyle(.bordered)
-        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private var errorView: some View {
