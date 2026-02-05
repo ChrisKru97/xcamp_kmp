@@ -14,9 +14,7 @@ struct PlacesContentView: View {
     ]
 
     var body: some View {
-        ZStack {
-            Color.background.ignoresSafeArea()
-
+        Group {
             switch viewModel.state {
             case .loading:
                 loadingView

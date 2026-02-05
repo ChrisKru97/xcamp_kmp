@@ -5,15 +5,11 @@ struct MediaView: View {
     @EnvironmentObject var appViewModel: AppViewModel
 
     var body: some View {
-        ZStack {
-            Color.background.ignoresSafeArea()
-
-            ScrollView {
-                MediaGrid(links: mediaLinks)
-                    .padding(.horizontal, Spacing.md)
-                    .padding(.top, Spacing.md)
-                    .padding(.bottom, Spacing.xxl)
-            }
+        ScrollView {
+            MediaGrid(links: mediaLinks)
+                .padding(.horizontal, Spacing.md)
+                .padding(.top, Spacing.md)
+                .padding(.bottom, Spacing.xxl)
         }
         .navigationTitle(Strings.Tabs.shared.MEDIA)
         .navigationBarTitleDisplayMode(.inline)

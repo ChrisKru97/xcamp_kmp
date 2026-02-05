@@ -12,26 +12,22 @@ struct HomeView: View {
     }
 
     var body: some View {
-        ZStack {
-            Color.background.ignoresSafeArea()
+        VStack(spacing: Spacing.md) {
+            HomeHeaderView()
+                .padding(.bottom, Spacing.sm)
 
-            VStack(spacing: Spacing.md) {
-                HomeHeaderView()
-                    .padding(.bottom, Spacing.sm)
-
-                if showCountdown {
-                    CountdownView()
-                }
-
-                if !mainInfo.isEmpty {
-                    MainInfoCard(infoText: mainInfo)
-                }
-
-                Spacer()
+            if showCountdown {
+                CountdownView()
             }
-            .padding(.horizontal, Spacing.md)
-            .padding(.top, Spacing.md)
+
+            if !mainInfo.isEmpty {
+                MainInfoCard(infoText: mainInfo)
+            }
+
+            Spacer()
         }
+        .padding(.horizontal, Spacing.md)
+        .padding(.top, Spacing.md)
     }
 
     private var mainInfo: String {

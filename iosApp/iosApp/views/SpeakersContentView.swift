@@ -7,9 +7,7 @@ struct SpeakersContentView: View {
     @StateObject private var viewModel = SpeakersViewModel()
 
     var body: some View {
-        ZStack {
-            Color.background.ignoresSafeArea()
-
+        Group {
             switch viewModel.state {
             case .loading:
                 loadingView

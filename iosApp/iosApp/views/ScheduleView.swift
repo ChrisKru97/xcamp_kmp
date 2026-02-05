@@ -13,8 +13,6 @@ struct ScheduleView: View {
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            Color.background.ignoresSafeArea()
-
             switch viewModel.state {
             case .loading:
                 loadingView
@@ -140,7 +138,6 @@ struct ScheduleView: View {
                 .foregroundColor(.secondary)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.background)
     }
 
     private var emptyView: some View {
@@ -159,7 +156,6 @@ struct ScheduleView: View {
             .buttonStyle(.bordered)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.background)
     }
 
     private func errorView(_ message: String) -> some View {
@@ -181,7 +177,6 @@ struct ScheduleView: View {
             .buttonStyle(.bordered)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color.background)
     }
 
     private var dayTitle: String {

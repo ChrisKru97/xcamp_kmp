@@ -111,7 +111,53 @@ For Firebase implementation details, see `.claude/subagents/firebase-integration
 
 ## MCP Tools
 
-For web searching and fetching, use the available MCP tools:
+### XcodeBuild MCP (iOS)
+
+For iOS development, the XcodeBuild MCP server provides comprehensive simulator and build automation:
+
+**Session Setup** (required before most operations):
+```
+session-set-defaults({
+  "projectPath": "/Users/christiankrutsche/Documents/xcamp_kmp/iosApp/iosApp.xcodeproj",
+  "scheme": "iosApp",
+  "simulatorId": "<UUID>",
+  "useLatestOS": true
+})
+```
+
+**Available Simulators** (discover with `list_sims`):
+- iPhone 16e (iOS 18.6): `210C8C91-3D13-4AC9-8922-6EED3EBB15B1`
+- iPhone Air (iOS 26.2): `CE3EE1DB-76CF-4F2B-A9D8-699FA2B0CEE2`
+- iPhone SE (3rd gen) (iOS 15.5): `17E4EB1E-2D9F-4983-BA42-172F77C769C9`
+
+**Common Commands**:
+| Tool | Purpose |
+|------|---------|
+| `list_sims` | List all available simulators |
+| `boot_sim` | Boot a simulator |
+| `build_run_sim` | Build and run app on simulator |
+| `screenshot` | Capture screenshot of simulator |
+| `describe_ui` | Get UI element hierarchy with coordinates |
+| `tap` / `swipe` / `gesture` | Interact with UI elements |
+| `launch_app_logs_sim` | Launch app and capture logs |
+| `stop_app_sim` | Stop running app |
+
+**Alternative CLI Commands** (without MCP):
+```bash
+# Boot simulator
+xcrun simctl boot "<UUID>"
+
+# Open Simulator
+open -a Simulator
+
+# Build and run
+xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -sdk iphonesimulator \
+  -destination 'id=<UUID>' build
+```
+
+### Web & Browser MCP Tools
+
+For web searching and fetching:
 - `web-search` - Search the web using DuckDuckGo
 - `playwright` - Browser automation for scraping and testing
 - `web_reader` - Fetch and convert web pages to markdown

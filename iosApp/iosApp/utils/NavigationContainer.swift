@@ -7,21 +7,25 @@ struct NavigationContainer: View {
     @EnvironmentObject var appViewModel: AppViewModel
 
     var body: some View {
-        TabView(selection: $router.selectedTab) {
-            ForEach(availableTabs, id: \.self) { tab in
-                NBNavigationStack(path: pathForTab(tab)) {
-                    rootView(for: tab)
-                        .nbNavigationDestination(for: String.self) { uid in
-                            destinationView(uid: uid)
-                        }
+        ZStack {
+            Color.background.ignoresSafeArea()
+
+            TabView(selection: $router.selectedTab) {
+                ForEach(availableTabs, id: \.self) { tab in
+                    NBNavigationStack(path: pathForTab(tab)) {
+                        rootView(for: tab)
+                            .nbNavigationDestination(for: String.self) { uid in
+                                destinationView(uid: uid)
+                            }
+                    }
+                    .tabItem {
+                        Label(label(for: tab), systemImage: icon(for: tab))
+                    }
+                    .tag(tab)
                 }
-                .tabItem {
-                    Label(label(for: tab), systemImage: icon(for: tab))
-                }
-                .tag(tab)
             }
+            .tabViewStyle(.automatic)
         }
-        .tabViewStyle(.automatic)
         .injectServices()
     }
 
