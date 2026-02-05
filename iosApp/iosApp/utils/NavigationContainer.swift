@@ -48,14 +48,18 @@ struct NavigationContainer: View {
 
     @ViewBuilder
     private func rootView(for tab: AppTab) -> some View {
-        switch tab {
-        case .home: HomeView()
-        case .schedule: ScheduleView()
-        case .speakersAndPlaces: SpeakersAndPlacesView()
-        case .rating: RatingView()
-        case .media: MediaView()
-        case .aboutFestival: InfoView()
-        default: EmptyView()
+        ZStack {
+            Color.background.ignoresSafeArea()
+
+            switch tab {
+            case .home: HomeView()
+            case .schedule: ScheduleView()
+            case .speakersAndPlaces: SpeakersAndPlacesView()
+            case .rating: RatingView()
+            case .media: MediaView()
+            case .aboutFestival: InfoView()
+            default: EmptyView()
+            }
         }
     }
 
