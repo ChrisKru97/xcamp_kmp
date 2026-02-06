@@ -26,8 +26,6 @@ struct SectionTimeCard: View {
                     .foregroundColor(.primary)
             }
         }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(Strings.ScheduleDetail.shared.DETAIL_TIME): \(startTimeString) - \(endTimeString)")
     }
 }
 
@@ -51,8 +49,6 @@ struct SectionDescriptionCard: View {
                     .lineSpacing(4)
             }
         }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(Strings.ScheduleDetail.shared.DETAIL_DESCRIPTION): \(description)")
     }
 }
 

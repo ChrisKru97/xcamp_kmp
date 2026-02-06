@@ -72,17 +72,17 @@ private struct FallbackGradientView: View {
 
     private var lightColors: [Color] {
         [
-            Color(red: 0.51, green: 0.85, blue: 0.98),
-            Color(red: 0.37, green: 0.60, blue: 0.85),
-            Color(red: 0.05, green: 0.38, blue: 0.68)
+            Color(red: 0.73, green: 0.89, blue: 0.91),
+            Color(red: 0.59, green: 0.83, blue: 0.92),
+            Color(red: 0.51, green: 0.85, blue: 0.98)
         ]
     }
 
     private var darkColors: [Color] {
         [
+            Color(red: 0.33, green: 0.60, blue: 0.88),
             Color(red: 0.05, green: 0.38, blue: 0.68),
-            Color(red: 0.07, green: 0.27, blue: 0.48),
-            Color(red: 0.05, green: 0.25, blue: 0.45)
+            Color(red: 0.07, green: 0.27, blue: 0.48)
         ]
     }
 }

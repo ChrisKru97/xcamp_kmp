@@ -3,7 +3,7 @@ import SwiftUI
 struct SplashView: View {
     var body: some View {
         ZStack {
-            MeshGradientBackground()
+            Color.background
                 .ignoresSafeArea()
 
             Image("logo")

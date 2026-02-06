@@ -37,7 +37,6 @@ struct PlaceDetailView: View {
             } label: {
                 Image(systemName: "map.fill")
             }
-            .accessibilityLabel("Open in Maps")
         }
     }
 
