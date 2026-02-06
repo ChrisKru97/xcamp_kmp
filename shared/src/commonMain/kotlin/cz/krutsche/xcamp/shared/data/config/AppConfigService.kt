@@ -50,9 +50,6 @@ class AppConfigService(
      * Determines current app state based on event dates and showAppData flag
      */
     fun getAppState(): AppState {
-        // TEMPORARY: Force ACTIVE_EVENT mode for testing scroll-away header
-        return AppState.ACTIVE_EVENT
-
         val showAppData = remoteConfigService.shouldShowAppData()
 
         return when {

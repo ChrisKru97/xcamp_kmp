@@ -15,6 +15,12 @@ class AppViewModel: ObservableObject {
     lazy var speakersService = SpeakersService()
     lazy var scheduleService = ScheduleService()
 
+    #if targetEnvironment(simulator)
+    var isSimulator: Bool { true }
+    #else
+    var isSimulator: Bool { false }
+    #endif
+
     func initializeApp() {
         let authService = AuthService()
 
@@ -28,7 +34,12 @@ class AppViewModel: ObservableObject {
                 try await appInitializer.initialize()
 
                 await MainActor.run {
-                    self.appState = appConfigService.getAppState()
+                    var calculatedState = appConfigService.getAppState()
+                    // Override to ACTIVE_EVENT when running in simulator for development
+                    if isSimulator {
+                        calculatedState = .activeEvent
+                    }
+                    self.appState = calculatedState
                     self.isLoading = false
                 }
                 // Lazy load places, speakers, and schedule in parallel after Remote Config loads

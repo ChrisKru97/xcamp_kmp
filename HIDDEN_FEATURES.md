@@ -8,7 +8,7 @@ This document covers advanced features, hidden behaviors, and non-obvious functi
 ### Dynamic Navigation System
 - **Adaptive Tab Order**: Bottom navigation dynamically changes based on event state and remote config
   - Pre-Event: Home → Media → Info (3 tabs)
-  - Active Event: Home → Schedule → Speakers → Places → Media → Info (6 tabs)
+  - Active Event: Home → Schedule → Speakers & Places → Media → Info (5 tabs)
   - Post-Event: Home → Schedule → Rating → Media → Info (5 tabs)
 - **Context-Aware State Management**: Tab availability controlled by `showAppData` remote config flag
 
@@ -28,25 +28,6 @@ This document covers advanced features, hidden behaviors, and non-obvious functi
 - **Adaptive Duration**: Animation timing adjusts based on device capabilities
 - **Smooth Transitions**: All tab switches include optimized fade and slide animations
 
-### Adaptive Performance System
-- **Sophisticated Device Detection**: App uses advanced 4-tier performance classification via PerformanceDetector (High/Medium/Low/Minimal)
-- **Platform-Specific Analysis**: 
-  - **iOS**: Model-based detection (iPhone 15/14/13/12 = High, iPhone 11/X = Medium, iPhone 8/7 = Low, iPhone 6s = Minimal)
-  - **Android**: Memory-based detection (8GB+ = High, 6GB = High, 4GB = Medium, 3GB = Low, <3GB = Minimal)
-- **Granular Animation Adaptation**: Each performance tier gets optimized animation durations and curves
-  - **High Tier**: Full animations (300ms durations, complex curves like easeInOutQuart, elasticOut)
-  - **Medium Tier**: Moderate animations (250ms durations, easeInOutCubic curves)
-  - **Low Tier**: Simplified animations (200ms durations, basic easeInOut curves)
-  - **Minimal Tier**: Ultra-light animations (150ms durations, linear curves only)
-- **Complete Animation Disabling**: Lowest-tier devices skip animations entirely to maintain 60fps
-- **Selective Haptic Feedback**: Haptic feedback disabled on low/minimal performance devices
-- **Motor Framework Integration**: High-performance devices use advanced spring physics animations
-- **Analytics Integration**: Device performance metrics tracked via Firebase Analytics for optimization insights
-- **Memory Optimization**: Lazy loading of providers prevents startup ANR (Application Not Responding)
-- **Timeout Protection**: 10-second initialization timeout prevents indefinite app hanging
-- **Background Sync**: All data syncing happens asynchronously without blocking UI
-- **Provider Performance**: All providers use `lazy: true` to prevent expensive startup operations
-
 ## 🔐 QR Code System - Advanced Features
 
 ### Multi-Mode QR Scanner
@@ -55,21 +36,8 @@ This document covers advanced features, hidden behaviors, and non-obvious functi
 - **Dual Purpose**: 
   - **Scan Mode**: Scan and save your personal QR code from registration
   - **Display Mode**: Show your personal QR code to others
-- **Data Persistence**: QR data stored locally with SharedPreferences
+- **Data Persistence**: QR data stored locally with platform-specific key-value storage
 - **Reset Functionality**: Hidden admin pin (configurable via Firebase Remote Config) can reset stored QR data
-
-### Group Management Integration
-- **Automatic Redirection**: After successful QR scan, app can auto-navigate to Group Leaders screen
-- **Group Number Storage**: Stores both QR data and extracted group number separately
-- **Offline Operation**: QR functionality works completely offline once data is stored
-
-## 🎨 Dynamic Theming & Design System
-
-### Firebase Remote Config Color System
-- **Live Theme Updates**: Colors can be changed remotely without app updates
-- **Backward Compatibility**: Legacy color system still supported alongside Modern Dark Design System
-- **Gradient Backgrounds**: Dynamic gradients using primary/secondary background colors
-- **Context-Aware Colors**: Different content types (main, internal, gospel, food) have distinct color schemes
 
 ### Modern Dark Design System
 - **Consistent Spacing**: 4px base unit system (xs: 4px, sm: 8px, md: 16px, lg: 24px, xl: 32px, 2xl: 48px, 3xl: 64px)
@@ -83,27 +51,25 @@ This document covers advanced features, hidden behaviors, and non-obvious functi
 - **SQLDelight Local Database**: Full app functionality without internet connection
 - **Background Sync**: Automatic synchronization with Firestore when connection available
 - **Graceful Degradation**: App continues working even if sync operations fail
-- **Smart Caching**: Images cached locally with `cached_network_image`
+- **Smart Caching**: Images cached locally for offline viewing
 - **Cleanup Service**: Automatic cleanup without app restart
 - **Data Integrity**: Robust error handling prevents data corruption during failed operations
 
-### Real-time Updates  
-- **Firebase Listeners**: Live data updates from Firestore without user action TODO don't do live data!, only fetch when needed
-- **Provider Pattern**: Efficient state management minimizes unnecessary rebuilds
-- **Selective Updates**: Only affected UI components rebuild when data changes
-- **Error Recovery**: Automatic retry logic for failed operations
-- **Smart Sync Triggers**: Data synchronization triggered only on specific tab navigation events
+### Automatic Cache Clearing on Event State Transitions
+- **Post → Pre Event Detection**: App detects when Remote Config `showAppData` transitions from post-event back to pre-event state
+- **Full Database Reset**: SQLDelight database completely cleared (all tables dropped/recreated)
+- **Image Cache Purge**: All cached images removed from local storage
+- **Storage Optimization**: Reduces app storage footprint significantly between events
+- **Transparent to User**: Happens automatically in background without user interaction
+- **One-Way Transition**: Only triggers when going from post-event → pre-event (not during normal pre→active→post progression)
+
+### Smart Sync Triggers: Data synchronization triggered only on specific tab navigation events
   - Speakers tab → Sync speaker data
   - Places tab → Sync places data
   - Songs navigation → Sync songs data
 - **Timeout Protection**: All database operations protected with 5-second timeouts
 
 ## 🔍 Advanced Search & Filtering
-
-### Songs Search System
-- **Real-time Search**: Search filters as you type with no delay
-- **Multi-field Search**: Searches across song titles, lyrics and number
-- **Czech Language Support**: Proper handling of Czech diacritics and special characters
 
 ### Schedule Smart Filtering
 - **Type-Based Filtering**: Filter events by type (main, internal, gospel, food)
@@ -122,47 +88,21 @@ This document covers advanced features, hidden behaviors, and non-obvious functi
 
 ### Rich Text Processing
 - **Link Detection**: Automatic conversion of `[text](url)` markdown-style links
-- **External URL Handling**: Smart handling of external links with `url_launcher`
 - **Context-Aware Colors**: Links styled with theme-appropriate colors
 - **Touch Feedback**: Haptic feedback on link interactions
 
-### Interactive Preview System (iOS-Style)
-- **Long-Press Gesture**: Hold any compatible list item to reveal content preview modal
-- **Smooth Animations**: Bounce-in scale animation with fade effects using custom curves
-- **Action Buttons**: Context-aware action buttons with proper localization ("Otevřít", "Zobrazit řečníka", etc.)
-- **Preview Content**: Rich preview displays include icons, titles, descriptions, and formatted content
-- **Haptic Feedback**: Medium haptic pulse when preview appears for tactile confirmation
-- **Smart Positioning**: Modal automatically positions to avoid screen edges and overlapping content
-- **Dismissal**: Can be dismissed by dragging, tapping outside, or using action buttons
-- **Component Integration**: Seamlessly integrated with existing ListItem components via optional properties
+## 📱 Platform Enhancements
 
-## 📱 Platform-Specific Enhancements
-
-### iOS Optimizations TODO those should be android optimizations as well
+### Platform Optimizations
 - **Screen Brightness Control**: QR code display automatically adjusts brightness
 - **Haptic Feedback**: Subtle haptic responses for interactions
-- **Safe Area Handling**: Proper layout for all iPhone screen types including notched displays
-- **iOS-Style Previews**: Long-press gesture support for content previews with animated modal dialogs, action buttons, and smooth transitions (similar to iOS Safari and Messages apps)
+- **Safe Area Handling**: Proper layout for all screen types including notched displays
 
 ### Performance Monitoring
 - **Firebase Crashlytics**: Automatic crash reporting and error tracking
 - **Analytics Integration**: User behavior tracking for app improvement
 - **ANR Prevention**: Startup optimizations prevent Application Not Responding errors
 - **Memory Management**: Automatic cleanup of unused resources
-
-## 🔄 Background Services & Sync TODO no background services!
-
-### Schedule Sync Service
-- **Intelligent Sync**: Only syncs when data has actually changed
-- **Conflict Resolution**: Handles conflicts between local and remote data
-- **Bandwidth Optimization**: Minimal data transfer using efficient queries
-- **Retry Logic**: Automatic retry on network failures with exponential backoff
-
-### Cleanup Service
-- **Automatic Cleanup**: Removes outdated data automatically
-- **Storage Optimization**: Prevents local database from growing too large
-- **Cache Management**: Intelligent image cache cleanup
-- **Memory Monitoring**: Prevents memory leaks from unused providers
 
 ## 🎯 User Experience Enhancements
 
@@ -172,11 +112,12 @@ This document covers advanced features, hidden behaviors, and non-obvious functi
 - **Real-time Updates**: Updates every second with smooth animations
 - **Timezone Handling**: Proper handling of timezone changes and daylight saving
 
-### Favorite System
-- **Persistent Storage**: Favorites saved locally and survive app restarts
-- **Visual Feedback**: Amber star with scale animation and haptic feedback
-- **Cross-Screen Access**: Favorites accessible from multiple screens
-- **Sync Integration**: Favorites can be synced across devices (if user authentication enabled) TODO remove this synchronization and notification system via this
+### Favorites & Filter System
+- **Filter FAB**: Floating action button on Schedule tab for quick access to filters
+- **Type Filtering**: Filter by section type (main, internal, gospel, food)
+- **Favorites Filter**: Toggle to show only favorited events
+- **Persistent State**: Filter state preserved across navigation via Environment values
+- **Visual Feedback**: Amber star with scale animation and haptic feedback when toggling favorites
 
 ### Loading States & Error Handling
 - **Skeleton Loading**: Content-aware skeleton screens during data loading
@@ -184,42 +125,15 @@ This document covers advanced features, hidden behaviors, and non-obvious functi
 - **Error Boundaries**: Isolated error handling prevents full app crashes
 - **Retry Mechanisms**: User-friendly retry options for failed operations
 
-## 🔧 Developer & Debug Features
-
-### Secret Developer Mode Activation
-- **Hidden Production Access**: Secret gesture sequence allows dev mode activation in production builds
-- **Security Implementation**: Time-limited (24-hour expiration) and rate-limited (3 attempts max with 30-second cooldown) TODO unnecessary
-- **Gesture Sequence**: Long press (3 seconds) + triple tap (within 2 seconds) on version text in Info screen
-- **Visual Feedback**: Version text changes to "Dev Mode Aktivován" on success, "Zkuste později" on cooldown TODO unnecessary, badge is enough
-- **Secret Mode Indicator**: Shows "SECRET" badge with warning orange color instead of "DEV"  TODO unnecessary, DEV is enough
-- **Production Warning**: DevSettings shows warning banner when secret mode is active in production builds
-- **Automatic Expiration**: Secret mode automatically expires after 24 hours for security
-
 ### Advanced Error Handling
 - **Intelligent Crashlytics**: Distinguishes between fatal errors and handled image loading errors
 - **Non-Fatal Image Errors**: Image loading failures logged as non-fatal for debugging without user impact
 - **Startup ANR Prevention**: Comprehensive timeout and lazy loading prevents Application Not Responding errors
 - **Firebase Initialization Resilience**: App continues working even if Firebase initialization fails
 
-### Hot Reload Support
-- **State Preservation**: Hot reload preserves navigation state and user data
-- **Provider Persistence**: State management survives hot reloads
-- **Asset Updates**: Images and assets update without full restart
-- **Anonymous User Management**: Automatic Firebase anonymous authentication
-
-### Remote Configuration
-- **Feature Flags**: Enable/disable features without app updates
-  - showAppData: Controls main event features availability
-- **Dynamic Event Configuration**: 
-  - startDate: Configurable event start date (default: '2026-07-18')
-  - Automatic event state detection
-- **Emergency Controls**: Remote kill switches for problematic features TODO remove this
-- **Content Updates**: Update text content and messaging remotely
-
 ## 📋 Power User Tips
 
 ### Navigation Shortcuts
-- **Double-tap Home**: Quick return to current day in schedule (implementation dependent) TODO what is that
 - **Swipe Gestures**: Context-sensitive swipe actions where available
 
 ### Data Management
@@ -236,7 +150,6 @@ This document covers advanced features, hidden behaviors, and non-obvious functi
 ## 🚀 Performance Features
 
 ### Battery Optimization
-- **Background Sync Control**: Intelligent background processing TODO remove this
 - **CPU Usage Monitoring**: Prevents excessive CPU usage during animations
 - **Network Efficiency**: Minimal network usage with smart caching
 - **GPU Optimization**: Efficient rendering for smooth animations

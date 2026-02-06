@@ -18,7 +18,7 @@ The app uses a **dynamic bottom tab system** that adapts based on event state an
 **Tabs:** Home → Media → O festivalu
 
 ### During Active Event
-**Tabs:** Home → Schedule → Informace → Media → O festivalu
+**Tabs:** Home → Schedule → Speakers & Places → Media → O festivalu
 
 ### Post-Event Mode (after event ends)
 **Tabs:** Home → Schedule → Rating → Media → O festivalu
@@ -50,12 +50,13 @@ The app uses a **dynamic bottom tab system** that adapts based on event state an
 - **Favorites System**: Star/unstar events across all days
 - **Smart Filtering**: Filter by event type via floating action button
 - **Time-Aware Display**: Past events dimmed or hidden
+- **Pull-to-Refresh**: Swipe down to refresh schedule data
 - **Individual Event Details**: Tap events to see full details page
 
-## Informace Tab ("Informace")
+## Speakers & Places Tab ("Informace")
 **Available only during active event and a while before it (if showAppData = true)**
 
-This tab combines Speakers and Places using a segmented picker interface:
+Combined tab using a segmented picker interface to switch between:
 
 ### Speakers Sub-Tab ("Řečníci")
 - **Speaker Profiles**: Masonry layout with photos and information
@@ -128,7 +129,7 @@ This tab combines Speakers and Places using a segmented picker interface:
 - **Granular Control**: Individual notification type toggles
 
 ### Important Information
-- Camp leaving procedures
+- **Emergency Pills**: Expandable cards for critical info (medical help, camp leaving procedures)
 - Health and safety guidelines
 
 ### App Information
@@ -211,7 +212,7 @@ This tab combines Speakers and Places using a segmented picker interface:
 - **Initialization**: Scans your QR code after registering at event and saves it locally
 - **Camera Permissions**: Graceful handling with instructions if denied
 - **Brightness Control**: Auto-adjusts screen brightness when displaying QR code
-- **Data Persistence**: QR data stored locally with SharedPreferences
+- **Data Persistence**: QR data stored locally with platform-specific key-value storage
 - **Admin Reset**: Hidden admin pin can reset stored QR data
 - **Group Management**: Link to Group Leaders feature
 - **Offline Operation**: Full functionality without internet connection
@@ -230,7 +231,6 @@ This tab combines Speakers and Places using a segmented picker interface:
   - Slide + fade for other routes
 - **Haptic Feedback**: Subtle feedback for interactions
 - **Auto-Navigation**: Smart navigation to current day in schedule
-- **iOS-Style Previews**: Long-press on any compatible list item to see content preview with action buttons (similar to iOS messages/Safari link previews)
 
 
 ---
@@ -247,7 +247,7 @@ This tab combines Speakers and Places using a segmented picker interface:
 ### Active Event (showAppData = true, event ongoing)
 - **Purpose**: Full camp management and information system
 - **Features**: Complete schedule, speakers, places, live updates
-- **Tabs**: Home, Schedule, Informace, Media, O festivalu
+- **Tabs**: Home, Schedule, Speakers & Places, Media, O festivalu
 
 ### Post-Event (showAppData = true, event ended)
 - **Purpose**: Feedback collection and media access
@@ -301,40 +301,4 @@ This tab combines Speakers and Places using a segmented picker interface:
 - **Songs**: Medium dataset (~30 songs), text-heavy content with numbering
 - **Group Leaders**: Event-specific, deleted post-event, loads by group number
 
----
-
-# Developer Features
-
-## 🛠️ Developer Settings Access
-
-### DEV Badge (Debug Builds Only)
-- **Location**: Top-right corner of Home screen (visible only in debug builds)
-- **Access**: Tap the "DEV" badge to open Developer Settings
-- **Purpose**: Provides access to advanced debugging and configuration options
-
-### Developer Settings Screen
-- **Development Mode Toggle**: Enable/disable remote config overrides
-- **Remote Config Overrides**: When enabled, allows overriding Firebase Remote Config values
-- **Available Overrides**:
-  - `showAppData` (boolean): Controls event mode vs. limited mode
-  - `qrResetPin` (integer): Admin pin for resetting QR data
-
-## 🚀 Event Modes
-
-### Limited Mode (showAppData = false)
-**Default Production State**
-- **Navigation**: 3 tabs (Home → Media → O festivalu)
-- **Features**: Countdown, news, media links, contact info
-- **Purpose**: Pre-event engagement and basic information access
-
-### Event Mode (showAppData = true)
-**Full Event Features Enabled**
-- **Navigation**: 5 tabs (Home → Program → Informace → Media → O festivalu)
-- **Additional Features**:
-  - QR Code scanner/display button (top-right on Home)
-  - Complete schedule with 8-day navigation
-  - Informace tab with segmented picker for Speakers and Places
-  - Speaker profiles with detailed biographies
-  - Interactive places/locations with map integration
-  - Schedule filtering (FAB on Schedule tab)
 

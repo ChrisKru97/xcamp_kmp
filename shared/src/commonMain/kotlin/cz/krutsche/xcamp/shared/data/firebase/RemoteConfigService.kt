@@ -35,11 +35,7 @@ class RemoteConfigService {
     }
 
     fun shouldShowAppData(): Boolean {
-        // TEMPORARY: Force return true for testing Firestore integration
-        // TODO: Remove this after verifying Firestore data fetching works
-        return true
-        // val actualValue = getBoolean("showAppData")
-        // return actualValue
+        return getBoolean("showAppData")
     }
 
     fun getStartDate(): String {
