@@ -228,8 +228,8 @@ Project-specific skills for specialized tasks:
 - `/kotlin-multiplatform` - Platform abstraction decision-making for XcamP KMP. Guides when to share vs keep platform-specific, source set placement (commonMain, androidMain, iosMain), expect/actual patterns, and KMP architecture decisions
 - `/kmp-sqldelight` - SQLDelight database patterns for KMP. Use when working with database schemas, queries, migrations, or local data persistence
 - `/sqldelight` - Work with SQLDelight database schemas, queries, and migrations
-- `/fullstack-developer` - Modern web development with React, Next.js, Node.js, databases, and full-stack architecture
-- `/mobile-developer` - React Native, Flutter, and native iOS/Android development with modern architecture patterns, offline sync, and app store optimization
+- `/mobile-developer` - Kotlin Multiplatform, SwiftUI, and Jetpack Compose development with modern architecture patterns, offline sync, and app store optimization
+- `/mobile-design` - Cross-platform mobile design thinking for iOS and Android. Touch interaction, performance patterns, platform conventions, anti-patterns. Use when building Kotlin Multiplatform, SwiftUI, or Jetpack Compose apps
 - `/mobile-ios-design` - iOS Human Interface Guidelines and SwiftUI patterns for native iOS apps
 - `/mobile-android-design` - Master Material Design 3 and Jetpack Compose patterns for building native Android apps. Use when designing Android interfaces, implementing Compose UI, or following Google's Material Design guidelines.
 
