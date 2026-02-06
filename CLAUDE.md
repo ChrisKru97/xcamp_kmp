@@ -41,7 +41,7 @@ open iosApp/iosApp.xcodeproj
 - `data/firebase/` - Firebase services (Auth, Firestore, Storage, Analytics, Crashlytics)
 - `data/local/` - DatabaseManager, SQLite operations
 - `data/repository/` - Repository pattern for each entity
-- `domain/model/` - Section, Speaker, Song, Place, News, GroupLeader, Rating
+- `domain/model/` - Section, Speaker, Song, Place, News, Rating
 
 **Database**: SQLDelight (`XcampDatabase.sq`) with async coroutine support, `INSERT OR REPLACE` pattern.
 
@@ -88,7 +88,7 @@ Dynamic bottom tabs controlled by Remote Config `showAppData`:
 
 **Collections**:
 - Persistent: `chrost`, `feedback`, `info`, `places`, `rating`, `songs`, `speakers`, `textRating`, `users`, `notifications`, `merch`
-- Event-specific (deleted post-event): `schedule`, `groupLeaders`, `news`
+- Event-specific (deleted post-event): `schedule`, `news`
 
 > **See also:** [`PLACES.md`](PLACES.md) for Firestore place ID mapping, [`SPEAKERS.md`](SPEAKERS.md) for Firestore speaker ID mapping
 

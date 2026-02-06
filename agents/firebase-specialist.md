@@ -90,7 +90,6 @@ You are a Firebase integration specialist for the XcamP Kotlin Multiplatform pro
 
 ### Event-Specific Collections (deleted post-event)
 - `schedule` - Event schedule/sections
-- `groupLeaders` - Group leader information
 - `news` - Event news and updates
 
 ## Critical Pattern: 5-Second Timeout

@@ -55,7 +55,6 @@ Firebase, Firestore, Storage, Remote Config, Auth
 
 ### Event-Specific Collections (deleted post-event)
 - `schedule` - Event schedule/sections
-- `groupLeaders` - Group leader information
 - `news` - Event news and updates
 
 ## 5-Second Timeout Pattern

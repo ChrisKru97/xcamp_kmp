@@ -10,7 +10,6 @@ class DatabaseManager(driverFactory: DatabaseDriverFactory) {
 
     suspend fun clearAllData() { // TODO invoke after showAppData turns false and run it once for every year (store last year in settings)
         queries.transaction {
-            queries.deleteAllGroupLeaders()
             queries.deleteAllPlaces()
             queries.deleteAllSongs()
             queries.deleteAllSpeakers()

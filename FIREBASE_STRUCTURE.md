@@ -31,7 +31,6 @@ The database contains collections serving different aspects of the camp manageme
 | Collection | Purpose | Document Count | Status |
 |------------|---------|----------------|--------|
 | `schedule` | Complete event schedule and sessions | 200+ | Deleted after event |
-| `groupLeaders` | Group leader information and portraits | 50+ | Deleted after event |
 | `news` | Event announcements and news updates | Multiple | Deleted after event |
 
 ---
@@ -288,23 +287,7 @@ Multi-day events are stored as **SINGLE** documents with a `days` array. The cli
 
 **Upload Script:** See `schedule_data/README.md` for JSON format and upload instructions.
 
-#### 13. `groupLeaders` Collection ⚠️ DELETED POST-EVENT
-Group leader profiles with contact information and portraits.
-
-**Document Structure:**
-```json
-{
-  "name": "Leader name",
-  "number": 12,                    // Group number
-  "portrait": "leaders/portrait.jpg", // Firebase Storage reference
-  "congregation": "Church name"     // Optional affiliation
-}
-```
-
-**Document ID:** Auto-generated Firestore ID  
-**Usage:** Group management, contact directory, group assignments
-
-#### 14. `news` Collection ⚠️ DELETED POST-EVENT  
+#### 13. `news` Collection ⚠️ DELETED POST-EVENT  
 Event announcements, updates, and real-time communications.
 
 **Document Structure:**
@@ -343,19 +326,14 @@ Event announcements, updates, and real-time communications.
 │   ├── infobudka.jpg
 │   ├── IMG_6428.jpeg
 │   └── alternativa.jpg
-├── merch/
-│   └── propiska.jpg
-└── leaders/          // Deleted with groupLeaders collection
-    ├── leader1.jpg
-    ├── leader2.jpg
-    └── ...
+└── merch/
+    └── propiska.jpg
 ```
 
 ### Storage Usage Patterns
 - **Speakers:** Profile photos for bio pages - Persistent
-- **Places:** Location photos for map/navigation - Persistent  
+- **Places:** Location photos for map/navigation - Persistent
 - **Merch:** Product images for store - Persistent
-- **Leaders:** Group leader portraits - Deleted post-event
 
 **Note:** Storage appears to be cleaned up after events, consistent with the post-event data cleanup strategy.
 
@@ -380,7 +358,6 @@ Event announcements, updates, and real-time communications.
 ### Event-Specific Relationships (When Active)
 - `schedule` → `places` (via place field reference)
 - `schedule` → `speakers` (via speakers array references)
-- `groupLeaders` → Firebase Storage (leaders/ directory)
 - `rating` & `textRating` → `schedule` (via event IDs as field names)
 
 ### Rating System
@@ -421,7 +398,7 @@ service cloud.firestore {
     // Event-specific data (when active)
     match /{collection}/{document} {
       allow read: if request.auth != null
-        && collection in ['schedule', 'groupLeaders', 'news'];
+        && collection in ['schedule', 'news'];
       allow write: if request.auth != null && hasRole('admin');
     }
   }
@@ -433,7 +410,7 @@ service cloud.firestore {
 ## Data Lifecycle Management
 
 ### Pre-Event Phase
-1. **Setup Collections:** Create `schedule`, `groupLeaders`, `news`  
+1. **Setup Collections:** Create `schedule`, `news`
 2. **Populate Content:** Load speakers, places, songs, schedule data
 3. **Configure Info:** Update contact info, policies, announcements
 
@@ -444,9 +421,8 @@ service cloud.firestore {
 
 ### Post-Event Phase
 1. **Data Preservation:** Export `rating`, `textRating`, `feedback` for analysis
-2. **Cleanup Collections:** Delete `schedule`, `groupLeaders`, `news`
-3. **Storage Cleanup:** Remove event-specific images (leaders/ directory)
-4. **Archive Preparation:** Backup event data to scripts/ directory
+2. **Cleanup Collections:** Delete `schedule`, `news`
+3. **Archive Preparation:** Backup event data to scripts/ directory
 
 ### Backup Strategy
 Event data preserved in `scripts/` directory as JSON:
@@ -457,7 +433,6 @@ Event data preserved in `scripts/` directory as JSON:
 - `schedule_data/seminars.json` - Teaching seminar data
 - `schedule_data/workshops.json` - Interactive workshop data
 - `scripts/speakers/speakers.json` - Speaker profiles
-- `scripts/group-leaders/data.json` - Group leader information
 
 ---
 

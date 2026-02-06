@@ -138,6 +138,33 @@ var body: some View {
 - **Typography**: `.font(.title)`, `.font(.title3)`, `.fontWeight(.semibold)`
 - **Images**: SF Symbols with `Image(systemName: "info.circle")`
 
+### Animation Patterns
+
+**USE INLINE ANIMATIONS** - Do not create animation constant files.
+
+Animations should be defined inline at their point of use. This keeps the animation behavior immediately visible and contextual.
+
+**Preferred:**
+```swift
+withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
+    isFavorite.toggle()
+}
+```
+
+**Avoid:**
+```swift
+// Do NOT create AnimationConstants.swift with:
+struct Animations {
+    static let springBouncy = Animation.spring(response: 0.4, dampingFraction: 0.6)
+}
+```
+
+**Common animation presets for reference:**
+- Bouncy spring: `.spring(response: 0.4, dampingFraction: 0.6)`
+- Standard spring: `.spring(response: 0.3, dampingFraction: 0.7)`
+- Quick ease: `.easeInOut(duration: 0.2)`
+- Fast fade: `.easeInOut(duration: 0.15)`
+
 ## Glass Effect Implementation
 
 Use the backport namespace for iOS version compatibility:

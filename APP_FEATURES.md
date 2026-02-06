@@ -20,7 +20,7 @@ The app uses a **dynamic bottom tab system** that adapts based on event state an
 ### During Active Event
 **Tabs:** Home → Schedule → Speakers & Places → Media → O festivalu
 
-### Post-Event Mode (after event ends)
+### Post-Event Mode
 **Tabs:** Home → Schedule → Rating → Media → O festivalu
 
 ---
@@ -32,7 +32,7 @@ The app uses a **dynamic bottom tab system** that adapts based on event state an
 ### Limited Mode (showAppData = false)
 - Countdown to the next event
 - Main info from Remote Config
-- Upcoming news from Firestore database
+- Upcoming news from Firestore
 - No QR code scanner access
 
 ### Full Mode (showAppData = true)
@@ -46,7 +46,7 @@ The app uses a **dynamic bottom tab system** that adapts based on event state an
 
 - **8-Day Schedule**: Sobota through Sobota (Saturday to Saturday)
 - **Auto-Navigation**: Automatically shows current day during event
-- **Event Types**: Main, Internal, Gospel, Food, Basic (deprecated, use Main) - each with distinct colors
+- **Event Types**: Main, Internal, Gospel, Food - each with distinct colors
 - **Favorites System**: Star/unstar events across all days
 - **Smart Filtering**: Filter by event type via floating action button
 - **Time-Aware Display**: Past events dimmed or hidden
@@ -63,7 +63,7 @@ Combined tab using a segmented picker interface to switch between:
 - **Individual Speaker Pages**: Detailed speaker information
 - **Speaker Information**: Include photo, name, bio and list of his scheduled parts of program (sections)
 
-> **See also:** [`SPEAKERS.md`](../SPEAKERS.md) for complete Firestore speaker ID mapping
+> **See also:** [`SPEAKERS.md`](SPEAKERS.md) for complete Firestore speaker ID mapping
 
 ### Places Sub-Tab ("Místa")
 - **Areal Map**: Full-screen camp areal/map image at top with QuickLook support for zoom/pan
@@ -71,22 +71,14 @@ Combined tab using a segmented picker interface to switch between:
 - **Place List**: List of all camp important locations with basic information
 - **Place Details**: Individual location pages with comprehensive information - name, photo, location
 
-> **See also:** [`PLACES.md`](../PLACES.md) for complete Firestore place ID mapping 
+> **See also:** [`PLACES.md`](PLACES.md) for complete Firestore place ID mapping
 
-## Rating Tab ("Hodnocení") 
+## Rating Tab ("Hodnocení")
 **Available only after the event ends (if showAppData = true)**
 
-- **Post-Event Feedback**: Rating and evaluation system for attendees for various event aspects
+- **Post-Event Feedback**: Rating and evaluation system for attendees
 - **Event Rating**: Comprehensive feedback collection (via anonymous stars and comments)
-- **Feedback Categories**: 
-  - Harmonogram dne
-  - Chrost
-  - Duchovní poradenství
-  - Svolávací znělka
-  - Infobudka
-  - Výzdoba stanu a modlitební místnosti
-  - Mercy café
-  - Ostatní
+- **Feedback Categories**: Harmonogram dne, Chrost, Duchovní poradenství, Svolávací znělka, Infobudka, Výzdoba stanu a modlitební místnosti, Mercy café, Ostatní
 
 ## Media Tab
 
@@ -109,30 +101,12 @@ Combined tab using a segmented picker interface to switch between:
 ## O Festivalu Tab ("O festivalu")
 **Always available**
 
-### Contact Information
-- Support contact (email, phone, webpage)
-
-### Event Location
-- **Address**: Smilovice 79, 739 55
-- Link to map application
-
-### Organizer Information
-- **Website**: https://ks-sch.cz/
-
-### Social Networks
-- Facebook
-- Instagram
-
-### Notifications Settings
-- **Access**: Link to detailed notification preferences (hidden if showAppData = false)
-- **Default Behavior**: Prompt users to enable all notifications on app start
-- **Granular Control**: Individual notification type toggles
-
-### Important Information
-- **Emergency Pills**: Expandable cards for critical info (medical help, camp leaving procedures)
-- Health and safety guidelines
-
-### App Information
+- Contact information (email, phone, webpage)
+- Event location with map link (Smilovice 79, 739 55)
+- Organizer information (https://ks-sch.cz/)
+- Social networks (Facebook, Instagram)
+- Notifications settings (hidden if showAppData = false)
+- Emergency pills (expandable cards for critical info - medical help, camp leaving procedures)
 - Current app version display
 
 ---
@@ -147,9 +121,8 @@ Combined tab using a segmented picker interface to switch between:
 - **Full-Screen Image** (`/image`): Image viewer with gesture support
 
 ## Interactive Features
-- **QR Code Scanner/Display** (`/qr`): Save your QR code to keep it in your devices
-- **Photo Upload** (`/upload`): Upload photos for Chrost magazine and list yours
-- **Group Leaders Directory** (`/group_leaders`): Browse your group leaders
+- **QR Code Scanner/Display** (`/qr`): Scan/save your QR code
+- **Photo Upload** (`/upload`): Upload photos for Chrost magazine
 - **Notification Settings** (`/notifications-settings`): Granular push notification preferences
 
 ## Chrost (Newsletter) Features
@@ -171,6 +144,8 @@ Combined tab using a segmented picker interface to switch between:
 - **startDate**: Configurable event start date (default: '2026-07-18')
 - **Event Over Logic**: Automatically determined as 1 week after start date
 - **Auto Tab Selection**: Schedule automatically navigates to current event day
+
+---
 
 # Feature Implementation Details
 
@@ -214,24 +189,49 @@ Combined tab using a segmented picker interface to switch between:
 - **Brightness Control**: Auto-adjusts screen brightness when displaying QR code
 - **Data Persistence**: QR data stored locally with platform-specific key-value storage
 - **Admin Reset**: Hidden admin pin can reset stored QR data
-- **Group Management**: Link to Group Leaders feature
 - **Offline Operation**: Full functionality without internet connection
 
-## Group Leaders (`/group_leaders`)
-- **Directory System**: Show your camp group leaders
-- **QR Integration**: Can auto-navigate here after successful QR scan
-- **Group Numbers**: Stores both QR data and extracted group numbers
+---
 
-## Navigation & Animation System
-- **Dynamic Routing**: Context-aware route transitions
-- **Performance Optimization**: Simplified animations on lower-end devices
-- **Transition Types**: 
-  - No animation for main route
-  - Fade transition for image routes
-  - Slide + fade for other routes
-- **Haptic Feedback**: Subtle feedback for interactions
-- **Auto-Navigation**: Smart navigation to current day in schedule
+# Data Synchronization & Firebase Fetching Patterns
 
+## App Startup Sequence
+1. **Firebase Core**: Initialize Firebase, Auth (anonymous), Remote Config, Crashlytics
+2. **SQLDelight**: Open local SQLite database for offline storage
+3. **Cleanup Check**: Optional SQLDelight data cleanup without app restart
+
+## Data Loading Patterns
+
+### On App Start
+- **Immediate**: Remote Config values (cached, fast access)
+- **Deferred**: All collection data loaded only when UI components need them
+
+### Lazy Loading by UI Component
+- **Home Tab**: News collection (loaded on first access)
+- **Schedule Tab**: Schedule sections (loaded on first access)
+- **Speakers Sub-Tab**: Speakers collection (loaded on first access)
+- **Places Sub-Tab**: Places collection (loaded on first access)
+- **Songs Tab**: Songs collection (loaded on first access)
+
+### Loading Strategy
+1. **Check Local Cache**: Query SQLDelight first (instant if data exists)
+2. **Firebase Sync**: If cache empty or needs refresh → Firestore query with 5-second timeout
+3. **Data Validation**: Filter invalid documents, convert to domain models
+4. **Batch Storage**: Store valid data in SQLDelight for offline access
+5. **UI Update**: Notify listeners → update UI state
+
+### Performance Optimizations
+- **Timeout Protection**: 5-second max for Firestore queries
+- **Selective Rebuilds**: UI observers prevent unnecessary rebuilds
+- **Async Loading**: Async queries for all SQLDelight operations to prevent UI blocking
+- **Error Recovery**: Graceful degradation - continue with cached data if sync fails
+
+### Collection-Specific Patterns
+- **News**: Auto-loads on Home tab, filters by visibility dates
+- **Schedule**: Large dataset (~200 sessions), loads all at once, cached locally
+- **Speakers**: Medium dataset (~20 speakers), includes Firebase Storage image URLs
+- **Places**: Small dataset (~10 locations), includes GPS coordinates
+- **Songs**: Medium dataset (~30 songs), text-heavy content with numbering
 
 ---
 
@@ -253,52 +253,3 @@ Combined tab using a segmented picker interface to switch between:
 - **Purpose**: Feedback collection and media access
 - **Features**: Event rating, media access, schedule review
 - **Tabs**: Home, Schedule, Rating, Media, O festivalu
-
-## Data Synchronization & Firebase Fetching Patterns
-
-### App Startup Sequence
-1. **Firebase Core**: Initialize Firebase, Auth (anonymous), Remote Config, Crashlytics
-2. **Animation Utils**: Initialize performance-aware animations based on device capabilities
-3. **SQLDelight**: Open local SQLite database for offline storage
-4. **Cleanup Check**: Optional SQLDelight data cleanup without app restart
-
-### Data Loading Patterns
-
-#### On App Start
-- **Immediate**: Remote Config values (cached, fast access)
-- **Deferred**: All collection data loaded only when UI components need them
-
-#### Lazy Loading by UI Component
-- **Home Tab**: News collection (loaded on first access)
-- **Schedule Tab**: Schedule sections (loaded on first access)
-- **Speakers Sub-Tab**: Speakers collection (loaded on first access)
-- **Places Sub-Tab**: Places collection (loaded on first access)
-- **Songs Tab**: Songs collection (loaded on first access)
-- **Group Leaders**: GroupLeaders collection (loaded when needed)
-
-#### Loading Strategy
-1. **Check Local Cache**: Query SQLDelight first (instant if data exists)
-2. **Firebase Sync**: If cache empty or needs refresh → Firestore query with 5-second timeout
-3. **Data Validation**: Filter invalid documents, convert to domain models
-4. **Batch Storage**: Store valid data in SQLDelight for offline access
-5. **UI Update**: Notify listeners → update UI state
-
-#### Data Loading Triggers
-- **Tab Navigation**: Load fresh data when switching to content tabs TODO only if the data is missing
-- **Manual Refresh**: Pull-to-refresh gestures where implemented
-
-#### Performance Optimizations
-- **Timeout Protection**: 5-second max for Firestore queries
-- **Selective Rebuilds**: UI observers prevent unnecessary rebuilds
-- **Async Loading**: Async queries for all SQLDelight operations to prevent UI blocking
-- **Error Recovery**: Graceful degradation - continue with cached data if sync fails
-
-### Collection-Specific Patterns
-- **News**: Auto-loads on Home tab, filters by visibility dates
-- **Schedule**: Large dataset (~200 sessions), loads all at once, cached locally
-- **Speakers**: Medium dataset (~20 speakers), includes Firebase Storage image URLs
-- **Places**: Small dataset (~10 locations), includes GPS coordinates
-- **Songs**: Medium dataset (~30 songs), text-heavy content with numbering
-- **Group Leaders**: Event-specific, deleted post-event, loads by group number
-
-

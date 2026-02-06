@@ -301,7 +301,6 @@ val appModule = module {
     single { SongsRepository(get(), get()) }
     single { PlacesRepository(get(), get()) }
     single { NewsRepository(get(), get()) }
-    single { GroupLeadersRepository(get(), get()) }
     single { RatingsRepository(get(), get()) }
     single { AuthService(get()) }
     single { StorageService(get()) }

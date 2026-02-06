@@ -4,17 +4,6 @@
 -- Version History:
 --   1.0.0 (schema version 1): Initial schema with 7 tables
 
--- GroupLeader table
-CREATE TABLE IF NOT EXISTS GroupLeader (
-    id INTEGER NOT NULL PRIMARY KEY,
-    uid TEXT NOT NULL,
-    name TEXT NOT NULL,
-    number INTEGER NOT NULL,
-    portrait TEXT,
-    portraitUrl TEXT,
-    congregation TEXT
-);
-
 -- Place table
 CREATE TABLE IF NOT EXISTS Place (
     uid TEXT NOT NULL PRIMARY KEY,
@@ -78,10 +67,6 @@ CREATE TABLE IF NOT EXISTS Rating (
 );
 
 -- Insert operations
-insertGroupLeader:
-INSERT OR REPLACE INTO GroupLeader(id, uid, name, number, portrait, portraitUrl, congregation)
-VALUES (?, ?, ?, ?, ?, ?, ?);
-
 insertPlace:
 INSERT OR REPLACE INTO Place(uid, name, description, priority, latitude, longitude, image, imageUrl)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?);
@@ -107,12 +92,6 @@ INSERT OR REPLACE INTO Rating(id, category, rating, comment, timestamp)
 VALUES (?, ?, ?, ?, ?);
 
 -- Select operations
-selectAllGroupLeaders:
-SELECT * FROM GroupLeader ORDER BY number;
-
-selectGroupLeadersByNumber:
-SELECT * FROM GroupLeader WHERE number = ?;
-
 selectAllPlaces:
 SELECT * FROM Place ORDER BY priority, name;
 
@@ -162,9 +141,6 @@ SELECT * FROM Rating WHERE category = ?;
 updateSectionFavorite:
 UPDATE Section SET favorite = ? WHERE uid = ?;
 
-updateGroupLeaderPortraitUrl:
-UPDATE GroupLeader SET portraitUrl = ? WHERE id = ?;
-
 updatePlaceImageUrl:
 UPDATE Place SET imageUrl = ? WHERE uid = ?;
 
@@ -172,9 +148,6 @@ updateSpeakerImageUrl:
 UPDATE Speaker SET imageUrl = ? WHERE uid = ?;
 
 -- Delete operations
-deleteAllGroupLeaders:
-DELETE FROM GroupLeader;
-
 deleteAllPlaces:
 DELETE FROM Place;
 
@@ -192,9 +165,6 @@ DELETE FROM Section;
 
 deleteAllRatings:
 DELETE FROM Rating;
-
-deleteGroupLeaderById:
-DELETE FROM GroupLeader WHERE id = ?;
 
 deletePlaceById:
 DELETE FROM Place WHERE uid = ?;
@@ -215,9 +185,6 @@ deleteRatingById:
 DELETE FROM Rating WHERE id = ?;
 
 -- Count operations
-countGroupLeaders:
-SELECT COUNT(*) FROM GroupLeader;
-
 countPlaces:
 SELECT COUNT(*) FROM Place;
 

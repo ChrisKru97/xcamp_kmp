@@ -61,7 +61,7 @@ shared/src/
 
 ### Domain Models (`cz.krutsche.xcamp.shared.domain.model/`)
 - `Section` - Schedule events with favorites
-- `Speaker`, `Song`, `Place`, `News`, `GroupLeader`, `Rating`
+- `Speaker`, `Song`, `Place`, `News`, `Rating`
 
 ## Repository Pattern
 

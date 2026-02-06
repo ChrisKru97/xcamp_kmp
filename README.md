@@ -51,7 +51,6 @@ xcamp_kmp/
   - Song (Songbook with search functionality)
   - Place (Locations with GPS coordinates)
   - News (Event announcements)
-  - GroupLeader (Camp group leaders)
   - Rating (Post-event feedback system)
 
 ### 📱 App State Management
