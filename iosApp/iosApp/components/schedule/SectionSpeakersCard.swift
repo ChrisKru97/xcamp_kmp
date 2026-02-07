@@ -22,7 +22,7 @@ struct SectionSpeakersCard: View {
                         ForEach(speakers, id: \.uid) { speaker in
                             Button {
                                 UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                                router.push(speaker.uid)
+                                router.push(speaker.uid, type: .speaker)
                             } label: {
                                 speakerChip(speaker)
                             }

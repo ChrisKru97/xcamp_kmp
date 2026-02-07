@@ -93,7 +93,7 @@ struct ScheduleView: View {
                 ForEach(sections, id: \.uid) { section in
                     Button {
                         UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                        router.push(section.base.uid)
+                        router.push(section.base.uid, type: .section)
                     } label: {
                         SectionListItem(section: section)
                             .equatable()

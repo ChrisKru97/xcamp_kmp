@@ -11,7 +11,7 @@ struct CountdownView: View {
             Text(timeRemaining)
                 .font(.title)
                 .fontWeight(.semibold)
-                .numericTransition()
+                .backport.contentTransition(.numericText)
                 .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
                     timeRemaining = countdownCalculator.getTimeRemaining()
                 }
