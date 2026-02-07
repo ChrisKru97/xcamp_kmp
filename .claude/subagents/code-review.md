@@ -336,21 +336,30 @@ data class Section(
 
 ### 11. Design Token Usage (iOS)
 
-**Check**: Use `Spacing.*` and `CornerRadius.*` instead of hardcoded values.
+**Check**: Use `Spacing.*`, `CornerRadius.*`, `Color.*`, `Shadow.*`, `Gradient.*` instead of hardcoded values.
 
 **Bad**:
 ```swift
 .padding(16)
 .clipShape(RoundedRectangle(cornerRadius: 12))
+.background(Color.blue)
+.shadow(color: Color.black.opacity(0.15), radius: 8)
 ```
 
 **Good**:
 ```swift
 .padding(Spacing.md)
 .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
+.background(Color.accent)
+.shadow(color: Shadow.medium.color, radius: Shadow.medium.radius, y: Shadow.medium.y)
+.background(Gradient.favorites)
 ```
 
-**Reference**: `iosApp/iosApp/utils/Spacing.swift`, `iosApp/iosApp/utils/CornerRadius.swift`
+**Reference**:
+- `iosApp/iosApp/utils/Spacing.swift` (includes Spacing and CornerRadius)
+- `iosApp/iosApp/utils/ColorExtension.swift` (Color extension)
+- `iosApp/iosApp/utils/Shadow.swift` (Shadow definitions)
+- `iosApp/iosApp/utils/Gradient.swift` (Gradient definitions)
 
 ---
 
@@ -497,7 +506,7 @@ Text(Strings.Tabs.HOME)
 - `GlassCard.swift` - Proper generic component with @ViewBuilder
 - `Strings.kt` - Centralized string management
 - `FirestoreService.kt` - Consistent 5-second timeout on all operations
-- `Spacing.swift` / `CornerRadius.swift` - Design token consistency
+- `Spacing.swift` / `ColorExtension.swift` / `Shadow.swift` / `Gradient.swift` - Design token consistency with split structure
 
 ---
 
@@ -544,9 +553,10 @@ suspend fun <T> getCollection(
 - Proper iOS version handling with `@available`
 
 ### Good Design Tokens
-**`Spacing.swift`**, **`CornerRadius.swift`**:
-- Single source of truth
-- Consistent naming
+**`Spacing.swift`** (includes Spacing and CornerRadius), **`ColorExtension.swift`**, **`Shadow.swift`**, **`Gradient.swift`**:
+- Split structure with one file per token category
+- Single source of truth for each category
+- Consistent naming across all token files
 - Used throughout codebase
 
 ---

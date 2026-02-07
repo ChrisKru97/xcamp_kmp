@@ -69,15 +69,21 @@ SwiftUI, iOS, Swift, preview, Xcode, glass effect
 - **Component Grouping**: Place in subdirectories (`components/home/`, `components/common/`)
 
 ### Layout & Spacing
-**Spacing struct** (`utils/Spacing.swift`):
+**Spacing struct** (`utils/Spacing.swift` - includes CornerRadius):
 - `xs: 4`, `sm: 8`, `md: 16`, `lg: 24`, `xl: 32`, `xxl: 48`
 
-**CornerRadius struct** (`utils/CornerRadius.swift`):
+**CornerRadius struct** (defined in `utils/Spacing.swift`):
 - `small: 8`, `medium: 12`, `large: 16`, `extraLarge: 24`
+
+**Additional design tokens**:
+- `utils/ColorExtension.swift` - Color extension with app colors
+- `utils/Shadow.swift` - Shadow definitions
+- `utils/Gradient.swift` - Gradient definitions
 
 Apply consistently:
 - `.padding(Spacing.md)` for outer padding
 - `spacing: Spacing.md` for VStack/HStack
+- `.clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))`
 
 ### View Body Patterns
 

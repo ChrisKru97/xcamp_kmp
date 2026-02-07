@@ -5,6 +5,8 @@ extension Color {
     static let primary = Color("primary")
     static let secondary = Color("secondary")
     static let background = Color("background")
+    static let accent = Color("designAccent")
+    static let accentSecondary = Color("designAccentSecondary")
 
     // Schedule section type colors (with dark mode support)
     struct Section {

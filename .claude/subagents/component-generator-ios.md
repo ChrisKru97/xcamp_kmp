@@ -353,7 +353,7 @@ struct SimpleBadge: View {
 **ALWAYS use design tokens from `utils/` - never hardcode values:**
 
 ```swift
-// Spacing
+// Spacing (includes CornerRadius in same file)
 .padding(Spacing.xs)           // 4
 .padding(Spacing.sm)           // 8
 .padding(Spacing.md)           // 16
@@ -363,7 +363,7 @@ struct SimpleBadge: View {
 
 .spacing(Spacing.sm)           // For VStack/HStack
 
-// CornerRadius
+// CornerRadius (defined in Spacing.swift)
 .clipShape(RoundedRectangle(cornerRadius: CornerRadius.small))       // 8
 .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))      // 12
 .clipShape(RoundedRectangle(cornerRadius: CornerRadius.large))       // 16
@@ -372,15 +372,32 @@ struct SimpleBadge: View {
 // Glass effect
 .glassEffect(.regular, in: .rect(cornerRadius: CornerRadius.medium))
 
-// Colors
+// Colors (ColorExtension.swift)
 .foregroundStyle(.primary)
 .foregroundStyle(.secondary)
 .foregroundStyle(.tertiary)
-.background(Color("background"))
-.background(Color("primary"))
+.background(Color.background)
+.background(Color.primary)
+.background(Color.accent)
+
+// Section colors
+.background(Color.Section.main)
+.background(Color.Section.gospel)
+
+// Shadows (Shadow.swift)
+.shadow(color: Shadow.subtle.color, radius: Shadow.subtle.radius, y: Shadow.subtle.y)
+.shadow(color: Shadow.medium.color, radius: Shadow.medium.radius, y: Shadow.medium.y)
+
+// Gradients (Gradient.swift)
+.background(Gradient.favorites)
+.background(Gradient.accent)
 ```
 
-**Reference**: `iosApp/iosApp/utils/Spacing.swift`, `iosApp/iosApp/utils/CornerRadius.swift`
+**Reference**:
+- `iosApp/iosApp/utils/Spacing.swift` (includes Spacing and CornerRadius structs)
+- `iosApp/iosApp/utils/ColorExtension.swift` (Color extension with app colors)
+- `iosApp/iosApp/utils/Shadow.swift` (Shadow struct)
+- `iosApp/iosApp/utils/Gradient.swift` (Gradient struct)
 
 ## String Management (CRITICAL)
 

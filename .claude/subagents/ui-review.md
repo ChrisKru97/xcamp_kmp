@@ -305,9 +305,9 @@ case .info:
 
 ## Design Token Consistency
 
-### iOS (`utils/Spacing.swift`, `utils/CornerRadius.swift`)
+### iOS (`utils/Spacing.swift`, `utils/ColorExtension.swift`, `utils/Shadow.swift`, `utils/Gradient.swift`)
 
-**Spacing**:
+**Spacing** (in `Spacing.swift`, includes CornerRadius):
 ```swift
 xs: 4,   // Tight spacing
 sm: 8,   // Small spacing
@@ -317,7 +317,7 @@ xl: 32,  // Extra large spacing
 xxl: 48  // Section spacing
 ```
 
-**CornerRadius**:
+**CornerRadius** (defined in `Spacing.swift`):
 ```swift
 small: 8,       // Small elements
 medium: 12,     // Cards, buttons
@@ -329,12 +329,16 @@ extraLarge: 24  // Sheets, modals
 ```swift
 .padding(Spacing.md)
 .clipShape(RoundedRectangle(cornerRadius: CornerRadius.medium))
+.background(Color.accent)
+.shadow(color: Shadow.medium.color, radius: Shadow.medium.radius, y: Shadow.medium.y)
+.background(Gradient.favorites)
 ```
 
 ### Android (define equivalent in `ui/theme/`)
 
 Match iOS values for cross-platform consistency:
 ```kotlin
+// ui/theme/Spacing.kt (includes CornerRadius)
 object Spacing {
     val xs = 4.dp
     val sm = 8.dp
@@ -449,9 +453,9 @@ struct GlassCard<Content: View>: View {
 ```
 
 ### Well-Designed Design Tokens
-**[`Spacing.swift`](iosApp/iosApp/utils/Spacing.swift)**, **[`CornerRadius.swift`](iosApp/iosApp/utils/CornerRadius.swift)**:
-- Single source of truth
-- Consistent naming
+**[`Spacing.swift`](iosApp/iosApp/utils/Spacing.swift)** (includes Spacing and CornerRadius), **[`ColorExtension.swift`](iosApp/iosApp/utils/ColorExtension.swift)**, **[`Shadow.swift`](iosApp/iosApp/utils/Shadow.swift)**, **[`Gradient.swift`](iosApp/iosApp/utils/Gradient.swift)**:
+- Single source of truth for each token category
+- Consistent naming across all token files
 - Used throughout codebase
 
 ### Good Component Encapsulation

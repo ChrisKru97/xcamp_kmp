@@ -442,11 +442,10 @@ private fun SimpleBadgePreview() {
 **Define design tokens in `ui/theme/`** - match iOS values for consistency:
 
 ```kotlin
-// ui/theme/DesignTokens.kt
+// ui/theme/Spacing.kt (includes CornerRadius)
 package cz.krutsche.xcamp.ui.theme
 
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 
 object Spacing {
     val xs = 4.dp
@@ -463,6 +462,13 @@ object CornerRadius {
     val large = 16.dp
     val extraLarge = 24.dp
 }
+```
+
+**Additional token files** (split structure):
+```kotlin
+// ui/theme/Color.kt - Material 3 color scheme
+// ui/theme/Shadow.kt - Shadow definitions
+// ui/theme/Gradient.kt - Gradient definitions
 ```
 
 **Usage in composables**:
@@ -635,9 +641,11 @@ composeApp/src/main/java/cz/krutsche/xcamp/
 │   │   ├── schedule/
 │   │   └── feature/
 │   └── theme/           # Design tokens, colors, typography
-│       ├── Color.kt
-│       ├── Type.kt
-│       └── DesignTokens.kt (Spacing, CornerRadius)
+│       ├── Color.kt              # Material 3 color scheme
+│       ├── Type.kt               # Typography
+│       ├── Spacing.kt            # Spacing and CornerRadius
+│       ├── Shadow.kt             # Shadow definitions
+│       └── Gradient.kt           # Gradient definitions
 └── viewmodel/           # Android-specific ViewModels
 ```
 
