@@ -9,7 +9,6 @@ struct ScheduleView: View {
     @EnvironmentObject var router: AppRouter
     @StateObject private var viewModel = ScheduleViewModel()
     @State private var showingFilter = false
-    @State private var showingDayPicker = false
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {

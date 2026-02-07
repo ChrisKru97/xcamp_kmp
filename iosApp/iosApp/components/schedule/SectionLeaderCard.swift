@@ -12,6 +12,7 @@ struct SectionLeaderCard: View {
         Group {
             if let leader = leader {
                 Button {
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     router.push(leader.uid)
                 } label: {
                     cardContent(leader.name)

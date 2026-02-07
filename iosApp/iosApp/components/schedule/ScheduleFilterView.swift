@@ -15,7 +15,7 @@ struct ScheduleFilterView: View {
                         type: type,
                         isVisible: visibleTypes.contains(type),
                         onTap: {
-                            HapticManager.shared.selectionChanged()
+                            UISelectionFeedbackGenerator().selectionChanged()
                             withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
                                 toggleType(type)
                             }
@@ -33,7 +33,7 @@ struct ScheduleFilterView: View {
                     color: .yellow,
                     isOn: favoritesOnly,
                     onTap: {
-                        HapticManager.shared.selectionChanged()
+                        UISelectionFeedbackGenerator().selectionChanged()
                         withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
                             favoritesOnly.toggle()
                         }

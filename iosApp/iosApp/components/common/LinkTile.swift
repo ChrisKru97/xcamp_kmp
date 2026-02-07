@@ -4,12 +4,10 @@ import shared
 struct LinkTile<T: LinkData>: View {
     let item: T
 
-    @State private var isPressed = false
-
     var body: some View {
         Button {
-            isPressed.toggle()
             guard !item.url.isEmpty else { return }
+            UIImpactFeedbackGenerator(style: .light).impactOccurred()
             UrlOpener.shared.openUrl(url: item.url)
         } label: {
             tileContent

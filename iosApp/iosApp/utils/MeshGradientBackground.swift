@@ -17,22 +17,37 @@ private struct MeshGradientView: View {
     @Environment(\.colorScheme) private var colorScheme
 
     var body: some View {
-        MeshGradient(
-            width: 2,
-            height: 2,
-            points: [
-                .zero,
-                [1, 0],
-                [0, 1],
-                [1, 1]
-            ],
-            colors: colors
-        )
-        .ignoresSafeArea()
+        TimelineView(.animation) { timeline in
+            let phase = timeline.date.timeIntervalSince1970
+
+            MeshGradient(
+                width: 2,
+                height: 2,
+                points: [
+                    .zero,
+                    [1, 0],
+                    [0, 1],
+                    [1, 1]
+                ],
+                colors: animatingColors(phase: phase),
+                smoothsColors: true
+            )
+            .ignoresSafeArea()
+        }
     }
 
-    private var colors: [Color] {
-        colorScheme == .dark ? darkColors : lightColors
+    private func animatingColors(phase: TimeInterval) -> [Color] {
+        let baseColors = colorScheme == .dark ? darkColors : lightColors
+
+        return baseColors.enumerated().map { index, color in
+            let phaseOffset = phase * .pi * 2 / 5
+            let indexOffset = Double(index) * .pi / 2
+            let sineValue = sin(indexOffset + phaseOffset)
+            let shift = sineValue * 0.2
+            let rawOpacity = 0.7 + shift
+            let clampedOpacity = max(0.5, min(1.0, rawOpacity))
+            return color.opacity(clampedOpacity)
+        }
     }
 
     private var lightColors: [Color] {

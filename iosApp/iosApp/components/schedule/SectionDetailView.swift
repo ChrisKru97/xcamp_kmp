@@ -38,6 +38,7 @@ struct SectionDetailView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     Task {
                         isFavorite.toggle()
                         try? await scheduleService.toggleFavorite(sectionUid: section.uid, favorite: isFavorite)

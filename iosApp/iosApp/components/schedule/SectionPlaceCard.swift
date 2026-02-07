@@ -12,6 +12,7 @@ struct SectionPlaceCard: View {
         Group {
             if let place = place {
                 Button {
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     router.push(place.uid)
                 } label: {
                     cardContent(place.name)

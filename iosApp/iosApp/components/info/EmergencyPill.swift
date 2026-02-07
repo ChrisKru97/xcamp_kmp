@@ -9,6 +9,7 @@ struct EmergencyPill: View {
 
     var body: some View {
         Button {
+            UINotificationFeedbackGenerator().notificationOccurred(.warning)
             withAnimation(.spring(duration: 0.35, bounce: 0.2)) {
                 isExpanded.toggle()
             }
