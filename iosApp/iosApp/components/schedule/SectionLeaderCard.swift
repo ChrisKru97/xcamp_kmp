@@ -28,7 +28,6 @@ struct SectionLeaderCard: View {
     }
 
     private func cardContent(_ leaderName: String) -> some View {
-        GlassCard {
             HStack {
                 labelSection
                 Spacer()
@@ -38,8 +37,8 @@ struct SectionLeaderCard: View {
                 Image(systemName: "chevron.right")
                     .font(.caption)
                     .foregroundColor(.secondary)
-            }
-        }
+            }.padding(Spacing.md)
+            .card()
     }
 
     private var labelSection: some View {

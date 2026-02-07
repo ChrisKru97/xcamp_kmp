@@ -11,21 +11,20 @@ struct SectionTimeCard: View {
     }
 
     var body: some View {
-        GlassCard {
-            VStack(alignment: .leading, spacing: Spacing.xs) {
-                HStack {
-                    Image(systemName: "clock")
-                        .foregroundColor(.secondary)
-                    Text(Strings.ScheduleDetail.shared.DETAIL_TIME)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                    Spacer()
-                }
-                Text("\(startTimeString) - \(endTimeString)")
-                    .font(.body)
-                    .foregroundColor(.primary)
+        VStack(alignment: .leading, spacing: Spacing.xs) {
+            HStack {
+                Image(systemName: "clock")
+                    .foregroundColor(.secondary)
+                Text(Strings.ScheduleDetail.shared.DETAIL_TIME)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                Spacer()
             }
-        }
+            Text("\(startTimeString) - \(endTimeString)")
+                .font(.body)
+                .foregroundColor(.primary)
+        }.padding(Spacing.md)
+        .card()
     }
 }
 
@@ -33,7 +32,6 @@ struct SectionDescriptionCard: View {
     let description: String
 
     var body: some View {
-        GlassCard {
             VStack(alignment: .leading, spacing: Spacing.sm) {
                 HStack {
                     Image(systemName: "text.alignleft")
@@ -47,8 +45,8 @@ struct SectionDescriptionCard: View {
                     .font(.body)
                     .foregroundColor(.primary)
                     .lineSpacing(4)
-            }
-        }
+            }.padding(Spacing.md)
+            .card()
     }
 }
 

@@ -20,7 +20,6 @@ struct EmergencyPill: View {
 
     @ViewBuilder
     private var pillContent: some View {
-        GlassCard(padding: Spacing.md) {
             VStack(alignment: .leading, spacing: isExpanded ? Spacing.sm : 0) {
                 HStack(spacing: Spacing.md) {
                     Image(systemName: icon)
@@ -50,7 +49,8 @@ struct EmergencyPill: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-        }
+            .padding(Spacing.md)
+            .card()
     }
 }
 

@@ -19,18 +19,18 @@ struct ImageNameCard: View, Equatable {
     }
 
     var body: some View {
-        GlassCard(padding: Spacing.sm) {
-            VStack(spacing: Spacing.sm) {
-                imageView
-                Text(name)
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.primary)
-                    .lineLimit(2)
-                    .multilineTextAlignment(.center)
-            }
-            .frame(maxWidth: .infinity)
+        VStack(spacing: Spacing.sm) {
+            imageView
+            Text(name)
+                .font(.caption)
+                .fontWeight(.medium)
+                .foregroundStyle(.primary)
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
         }
+        .frame(maxWidth: .infinity)
+        .padding(Spacing.sm)
+        .card()
     }
 
     @ViewBuilder

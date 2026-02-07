@@ -8,35 +8,18 @@ struct AppStatePicker: View {
     @State private var showRestartMessage = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: Spacing.sm) {
-            Text("Developer Tools")
-                .font(.caption)
-                .foregroundStyle(.secondary)
-
-            GlassCard(padding: Spacing.sm, elevation: .low) {
-                VStack(spacing: Spacing.sm) {
-                    Picker("App State", selection: $localState) {
-                        Text("Limited").tag(AppState.limited as AppState?)
-                        Text("Pre Event").tag(AppState.preEvent as AppState?)
-                        Text("Active Event").tag(AppState.activeEvent as AppState?)
-                        Text("Post Event").tag(AppState.postEvent as AppState?)
-                        Text("Auto").tag(nil as AppState?)
-                    }
-                    .pickerStyle(.menu)
-                    .onChange(of: localState) { newValue in
-                        appViewModel.appConfigService.setAppStateOverride(state: newValue)
-                        withAnimation(.easeIn(duration: 0.2)) {
-                            showRestartMessage = true
-                        }
-                    }
-
-                    if showRestartMessage {
-                        Text("Restart the app")
-                            .font(.caption)
-                            .foregroundColor(.red)
-                            .transition(.opacity)
-                    }
-                }
+        Picker("App State", selection: $localState) {
+            Text("Limited").tag(AppState.limited as AppState?)
+            Text("Pre Event").tag(AppState.preEvent as AppState?)
+            Text("Active Event").tag(AppState.activeEvent as AppState?)
+            Text("Post Event").tag(AppState.postEvent as AppState?)
+            Text("Auto").tag(nil as AppState?)
+        }
+        .pickerStyle(.menu)
+        .onChange(of: localState) { newValue in
+            appViewModel.appConfigService.setAppStateOverride(state: newValue)
+            withAnimation(.easeIn(duration: 0.2)) {
+                showRestartMessage = true
             }
         }
         .onAppear {

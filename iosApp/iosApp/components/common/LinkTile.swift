@@ -19,7 +19,6 @@ struct LinkTile<T: LinkData>: View {
 
     @ViewBuilder
     private var tileContent: some View {
-        GlassCard(padding: Spacing.sm) {
             VStack(spacing: Spacing.sm) {
                 Image(systemName: item.icon)
                     .font(.system(size: 24, weight: .medium))
@@ -34,7 +33,8 @@ struct LinkTile<T: LinkData>: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, Spacing.md)
-        }
+        .padding(.horizontal, Spacing.sm)
+        .card()
     }
 }
 
