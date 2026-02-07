@@ -13,6 +13,7 @@ const val EventLength = 8
 class AppConfigService(
     private val remoteConfigService: RemoteConfigService
 ) {
+
     suspend fun initialize(): Result<Unit> {
         return remoteConfigService.initialize()
     }
@@ -49,7 +50,11 @@ class AppConfigService(
     /**
      * Determines current app state based on event dates and showAppData flag
      */
-    fun getAppState(): AppState {
+    fun getAppState(): AppState = AppPreferences.getAppStateOverride() ?: getAppStateComputed()
+
+    fun getAppStateOverride(): AppState? = AppPreferences.getAppStateOverride()
+
+    private fun getAppStateComputed(): AppState {
         val showAppData = remoteConfigService.shouldShowAppData()
 
         return when {
@@ -58,6 +63,10 @@ class AppConfigService(
             isEventActive() -> AppState.ACTIVE_EVENT
             else -> AppState.PRE_EVENT
         }
+    }
+
+    fun setAppStateOverride(state: AppState?) {
+        AppPreferences.setAppStateOverride(state)
     }
 
     fun shouldShowCountdown(): Boolean {

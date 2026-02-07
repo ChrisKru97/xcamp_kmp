@@ -64,7 +64,7 @@ struct EmergencyPill: View {
         EmergencyPill(
             icon: "door.left.hand.open",
             title: "Leaving Camp",
-            description: "In case of leaving camp please report this to information desk and your group leader in advance."
+            description: "In case of leaving camp please report this to information desk in advance."
         )
     }
     .padding()

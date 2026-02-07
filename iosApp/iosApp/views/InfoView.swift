@@ -9,6 +9,9 @@ struct InfoView: View {
             VStack(spacing: Spacing.lg) {
                 emergencySection
                 contactSection
+
+                // TODO comment out for release
+                debugSection
             }
             .padding(.horizontal, Spacing.md)
             .padding(.top, Spacing.md)
@@ -44,6 +47,10 @@ struct InfoView: View {
 
     private var contactSection: some View {
         ContactGrid(links: infoLinks)
+    }
+
+    private var debugSection: some View {
+        AppStatePicker()
     }
 
     private var infoLinks: [InfoLink] {
