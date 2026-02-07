@@ -9,7 +9,6 @@ struct SectionListItem: View, Equatable {
     }
 
     var body: some View {
-        GlassCard {
             HStack(spacing: Spacing.md) {
                 VStack(alignment: .leading, spacing: Spacing.xs) {
                     Text(formatTime(section.startTime.epochMillis))
@@ -31,7 +30,8 @@ struct SectionListItem: View, Equatable {
                     .font(.caption)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-        }
+        .padding(Spacing.md)
+        .card()
     }
 
     private func formatTime(_ millis: Int64) -> String {

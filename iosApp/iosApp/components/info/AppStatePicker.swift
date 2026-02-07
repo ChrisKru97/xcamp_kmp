@@ -1,7 +1,6 @@
 import SwiftUI
 import shared
 
-#if targetEnvironment(simulator)
 struct AppStatePicker: View {
     @EnvironmentObject var appViewModel: AppViewModel
     @State private var localState: AppState?
@@ -35,4 +34,3 @@ struct AppStatePicker: View {
         .background(Color.background)
         .preferredColorScheme(.dark)
 }
-#endif

@@ -11,9 +11,7 @@ enum ScheduleState {
 class ScheduleViewModel: ObservableObject {
     @Published private(set) var state: ScheduleState = .loading
     @Published private(set) var selectedDayIndex: Int = 0
-    @Published var visibleTypes: Set<SectionType> = Set([
-        .main, .internal, .gospel, .food
-    ])
+    @Published var visibleTypes: Set<SectionType> = Set(SectionType.entries)
     @Published var favoritesOnly: Bool = false
     @Published private(set) var lastError: Error?
 

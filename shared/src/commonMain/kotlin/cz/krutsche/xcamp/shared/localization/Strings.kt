@@ -73,10 +73,7 @@ object Strings {
         const val LOADING = "Načítám program..."
         const val ERROR_TITLE = "Nepodařilo se načíst program"
         const val RETRY = "Zkusit znovu"
-        const val FILTER_TITLE = "Filtrovat"
-        const val FILTER_ALL = "Všechny typy"
-        const val FAVORITES = "Oblíbené"
-        const val SHOW_ALL = "Zobrazit vše"
+        const val FAVORITES = "Zobrazit pouze oblíbené"
 
         object SectionType {
             const val SECTIONTYPE_MAIN = "Hlavní"
@@ -86,7 +83,6 @@ object Strings {
             const val SECTIONTYPE_OTHER = "Ostatní"
         }
 
-        const val HIDE_ALL = "Skrýt vše"
         const val DONE = "Hotovo"
 
         object Days {
