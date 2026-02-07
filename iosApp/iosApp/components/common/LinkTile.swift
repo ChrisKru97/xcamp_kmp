@@ -17,21 +17,20 @@ struct LinkTile<T: LinkData>: View {
 
     @ViewBuilder
     private var tileContent: some View {
-            VStack(spacing: Spacing.sm) {
-                Image(systemName: item.icon)
-                    .font(.system(size: 24, weight: .medium))
-                    .foregroundStyle(.primary.opacity(0.8))
+        VStack(spacing: Spacing.sm) {
+            Image(systemName: item.icon)
+                .font(.system(size: 24, weight: .medium))
+                .foregroundStyle(.primary.opacity(0.8))
 
-                Text(item.title)
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.primary.opacity(0.8))
-                    .lineLimit(2)
-                    .multilineTextAlignment(.center)
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, Spacing.md)
-        .padding(.horizontal, Spacing.sm)
+            Text(item.title)
+                .font(.caption)
+                .fontWeight(.medium)
+                .foregroundStyle(.primary.opacity(0.8))
+                .lineLimit(2)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 80)
         .card()
     }
 }
@@ -40,7 +39,7 @@ struct ScaleButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
-            .animation(.spring(duration: 0.2), value: configuration.isPressed)
+            .animation(.springBounce(duration: 0.2, bounce: 0.2), value: configuration.isPressed)
     }
 }
 

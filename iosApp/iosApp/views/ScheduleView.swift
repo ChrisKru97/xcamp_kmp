@@ -22,9 +22,15 @@ struct ScheduleView: View {
             }
 
             if case .loaded = viewModel.state {
-                filterFab
-                    .padding(.trailing, Spacing.md)
-                    .padding(.bottom, Spacing.md)
+                ScheduleFilterFab(
+                    visibleTypes: viewModel.visibleTypes,
+                    favoritesOnly: viewModel.favoritesOnly
+                ) {
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    showingFilter = true
+                }
+                .padding(.trailing, Spacing.lg)
+                .padding(.bottom, Spacing.lg)
             }
         }
         .navigationTitle(dayTitle)
@@ -49,6 +55,16 @@ struct ScheduleView: View {
                     }
                 } label: {
                     Image(systemName: "calendar")
+                        .font(.system(size: 18))
+                        .foregroundStyle(.primary)
+                        .frame(width: 48, height: 48)
+                        .contentShape(Circle())
+                        .backport.glassEffect(
+                            .regular,
+                            in: Circle(),
+                            fallbackBackground: .thinMaterial
+                        )
+                        .fabShadow()
                 }
             }
         }
@@ -59,36 +75,16 @@ struct ScheduleView: View {
             await viewModel.loadSections(service: appViewModel.scheduleService)
         }
         .sheet(isPresented: $showingFilter) {
-            ScheduleFilterView(
-                visibleTypes: $viewModel.visibleTypes,
-                favoritesOnly: $viewModel.favoritesOnly
-            )
+            filterSheetContent
         }
     }
 
-    private var filterFab: some View {
-        Button(action: { showingFilter = true }) {
-            SFSymbolCompat.systemImage(.filterButton)
-                .font(.title2)
-                .foregroundColor(.primary)
-                .frame(width: 44, height: 44)
-                .background {
-                    glassBackground
-                }
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .shadow(color: .black.opacity(0.15), radius: 8, x: 0, y: 2)
-                .backport.glassEffect(BackportGlass.regular, in: RoundedRectangle(cornerRadius: 12))
-        }
-        .buttonStyle(ScaleButtonStyle())
-    }
-
-    @ViewBuilder
-    private var glassBackground: some View {
-        if #available(iOS 26.0, *) {
-            Color.clear
-        } else {
-            Rectangle().fill(.thinMaterial)
-        }
+    private var filterSheetContent: some View {
+        ScheduleFilterView(
+            visibleTypes: $viewModel.visibleTypes,
+            favoritesOnly: $viewModel.favoritesOnly
+        )
+        .backport.presentationDetents([.medium, .large])
     }
 
     private func scheduleContent(_ sections: [ScheduleSection]) -> some View {
@@ -96,6 +92,7 @@ struct ScheduleView: View {
             LazyVStack(spacing: Spacing.md) {
                 ForEach(sections, id: \.uid) { section in
                     Button {
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
                         router.push(section.base.uid)
                     } label: {
                         SectionListItem(section: section)

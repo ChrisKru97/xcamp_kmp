@@ -41,16 +41,29 @@ struct SectionDetailView: View {
                     UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     Task {
                         isFavorite.toggle()
-                        try? await scheduleService.toggleFavorite(sectionUid: section.uid, favorite: isFavorite)
-                        onFavoriteToggled()
+                        do {
+                            try await scheduleService.toggleFavorite(sectionUid: section.uid, favorite: isFavorite)
+                            if isFavorite {
+                                UINotificationFeedbackGenerator().notificationOccurred(.success)
+                            }
+                            onFavoriteToggled()
+                        } catch {
+                            UINotificationFeedbackGenerator().notificationOccurred(.error)
+                            isFavorite.toggle()
+                        }
                     }
                 }) {
-                    Image(systemName: isFavorite ? "star.fill" : "star")
-                        .foregroundColor(isFavorite ? .yellow : .secondary)
+                    favoriteIcon
                 }
-                .accessibilityLabel(isFavorite ? "Remove from favorites" : "Add to favorites")
             }
         }
+    }
+
+    @ViewBuilder
+    private var favoriteIcon: some View {
+        Image(systemName: isFavorite ? "star.fill" : "star")
+            .foregroundColor(isFavorite ? .yellow : .secondary)
+            .animation(.spring(response: 2, dampingFraction: 0.75), value: isFavorite)
     }
 
     private func contentSection(_ section: shared.Section) -> some View {
