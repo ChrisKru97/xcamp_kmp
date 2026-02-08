@@ -2,12 +2,16 @@ package cz.krutsche.xcamp.shared.data.config
 
 import android.content.Context
 import android.content.SharedPreferences
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 actual object AppPreferences {
     private lateinit var context: Context
     private val prefs: SharedPreferences by lazy {
         context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
     }
+
+    private val json = Json { ignoreUnknownKeys = true }
 
     fun init(context: Context) {
         this.context = context
@@ -29,5 +33,13 @@ actual object AppPreferences {
             }
             apply()
         }
+    }
+
+    actual fun getNotificationPreferences(): NotificationPreferences {
+        return NotificationPreferences() // TODO
+    }
+
+    actual fun setNotificationPreferences(preferences: NotificationPreferences) {
+        // TODO
     }
 }
