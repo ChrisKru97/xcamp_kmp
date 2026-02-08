@@ -36,7 +36,7 @@ public extension View {
 public enum BackDeployedContentTransition {
     case identity
     case opacity
-    case numericText
+    case numericText(value: Double)
 }
 
 @MainActor
@@ -50,8 +50,8 @@ public extension Backport where Content: View {
                 content.contentTransition(.identity)
             case .opacity:
                 content.contentTransition(.opacity)
-            case .numericText:
-                content.contentTransition(.numericText())
+            case .numericText(let value):
+                content.contentTransition(.numericText(value: value))
             }
         } else {
             content

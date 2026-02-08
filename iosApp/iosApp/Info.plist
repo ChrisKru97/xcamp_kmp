@@ -53,5 +53,11 @@
 	</array>
 	<key>NSUserNotificationsUsageDescription</key>
 	<string>Oznámení Vám pomohou nezmeškat důležité informace a začátky akcí v programu.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>comgooglemaps</string>
+		<string>waze</string>
+		<string>szn-mapy</string>
+	</array>
 </dict>
 </plist>

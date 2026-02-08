@@ -23,4 +23,16 @@ extension View {
             self.shadow(color: .black.opacity(0.2), radius: 8, x: 0, y: 4)
         }
     }
+
+    @ViewBuilder
+    func circularFab(
+        glassEffect: BackportGlass = .regular,
+        fallbackBackground: AnyShapeStyle = AnyShapeStyle(.thinMaterial)
+    ) -> some View {
+        self
+            .frame(width: 48, height: 48)
+            .contentShape(Circle())
+            .backport.glassEffect(glassEffect, in: Circle(), fallbackBackground: fallbackBackground)
+            .fabShadow()
+    }
 }

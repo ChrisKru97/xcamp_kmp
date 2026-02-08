@@ -211,21 +211,31 @@ Device information and FCM tokens for push notifications.
 ```json
 {
   "id": "USER_AUTH_UID",
-  "brand": "samsung",
-  "manufacturer": "samsung", 
-  "model": "SM-N975F",
-  "product": "d2seea",
-  "board": "exynos9825",
-  "system": "SP1A.210812.016.N975FXXS9HWHA",
-  "serialNumber": "unknown",
   "token": "FCM_TOKEN_STRING",
-  "createdAt": "2024-07-10T22:58:51.869Z",
-  "name": "localhost",    // Optional - iOS devices
-  "vendor": "UUID"        // Optional - iOS devices
+  "type": "ANDROID" | "IOS",
+  "model": "iPhone 14 Pro" | "Samsung SM-G991B",
+  "version": "17.5" | "13.0",
+  "appVersion": "1.0.0",
+  "buildNumber": "42",
+  "locale": "cs_CZ",
+  "screenSize": "393x852",
+  "createdAt": "2026-02-08T10:00:00.000Z"
 }
 ```
 
-**Document ID:** User Firebase Auth UID  
+**Field Descriptions:**
+- `id`: User's Firebase Authentication UID (document ID)
+- `token`: Firebase Cloud Messaging token for push notifications
+- `type`: Platform type - "ANDROID" or "IOS"
+- `model`: Device model name (e.g., "iPhone 14 Pro", "Samsung SM-G991B")
+- `version`: Operating system version
+- `appVersion`: App version from bundle info
+- `buildNumber`: Build number from bundle info
+- `locale`: Device locale string (e.g., "cs_CZ")
+- `screenSize`: Screen dimensions in pixels (e.g., "393x852")
+- `createdAt`: ISO 8601 timestamp of user registration
+
+**Document ID:** User Firebase Auth UID
 **Usage:** Push notification delivery, device analytics, user management
 
 ### Deleted Collections (Event-Specific)

@@ -3,11 +3,13 @@ import shared
 
 struct InfoView: View {
     @EnvironmentObject var appViewModel: AppViewModel
+    @EnvironmentObject var router: AppRouter
 
     var body: some View {
         ScrollView {
             VStack(spacing: Spacing.lg) {
                 emergencySection
+                notificationsSection
                 contactSection
 
                 // TODO comment out for release
@@ -43,6 +45,37 @@ struct InfoView: View {
                 )
             }
         }
+    }
+
+    private var notificationsSection: some View {
+        Button {
+            router.push("notification-settings", type: .notificationSettings)
+        } label: {
+            HStack(spacing: Spacing.md) {
+                Image(systemName: "bell.fill")
+                    .font(.title3)
+                    .foregroundStyle(Color.accent)
+
+                VStack(alignment: .leading, spacing: Spacing.xs) {
+                    Text(Strings.Notifications.shared.TITLE)
+                        .font(.body)
+                        .foregroundStyle(.primary)
+
+                    Text(Strings.Notifications.shared.NEWS_ENABLED)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundStyle(.tertiary)
+            }
+            .padding()
+            .card()
+        }
+        .scaleButton()
     }
 
     private var contactSection: some View {

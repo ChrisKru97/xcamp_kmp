@@ -7,12 +7,11 @@ struct LinkTile<T: LinkData>: View {
     var body: some View {
         Button {
             guard !item.url.isEmpty else { return }
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
             UrlOpener.shared.openUrl(url: item.url)
         } label: {
             tileContent
         }
-        .buttonStyle(ScaleButtonStyle())
+        .scaleButton()
     }
 
     @ViewBuilder
@@ -32,14 +31,6 @@ struct LinkTile<T: LinkData>: View {
         .frame(maxWidth: .infinity)
         .frame(height: 80)
         .card()
-    }
-}
-
-struct ScaleButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 0.97 : 1.0)
-            .animation(.spring(response: 0.1, dampingFraction: 0.8), value: configuration.isPressed)
     }
 }
 

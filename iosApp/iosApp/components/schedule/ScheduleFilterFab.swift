@@ -12,15 +12,11 @@ struct ScheduleFilterFab: View {
                 .font(.system(size: 18))
                 .foregroundColor(buttonForegroundColor)
         }
-        .buttonStyle(.plain)
-        .frame(width: 48, height: 48)
-        .contentShape(Circle())
-        .backport.glassEffect(
-            glassEffectForState,
-            in: Circle(),
+        .scaleButton(scale: 0.90)
+        .circularFab(
+            glassEffect: glassEffectForState,
             fallbackBackground: fallbackBackgroundForState
         )
-        .fabShadow()
     }
 
     @ViewBuilder

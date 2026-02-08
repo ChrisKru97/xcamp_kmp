@@ -38,7 +38,6 @@ struct SectionDetailView: View {
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {
-                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     Task {
                         isFavorite.toggle()
                         do {
@@ -55,6 +54,7 @@ struct SectionDetailView: View {
                 }) {
                     favoriteIcon
                 }
+                .scaleButton()
             }
         }
     }

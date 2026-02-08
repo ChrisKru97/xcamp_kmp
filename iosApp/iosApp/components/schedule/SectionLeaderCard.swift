@@ -12,11 +12,11 @@ struct SectionLeaderCard: View {
         Group {
             if let leader = leader {
                 Button {
-                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     router.push(leader.uid, type: .speaker)
                 } label: {
                     cardContent(leader.name)
                 }
+                .scaleButton()
             } else {
                 ProgressView()
                     .frame(maxWidth: .infinity)

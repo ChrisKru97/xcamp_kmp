@@ -30,7 +30,7 @@ struct ScheduleView: View {
                     showingFilter = true
                 }
                 .padding(.trailing, Spacing.lg)
-                .padding(.bottom, Spacing.lg)
+                .padding(.bottom, Spacing.md)
             }
         }
         .navigationTitle(dayTitle)

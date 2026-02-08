@@ -21,11 +21,11 @@ struct SectionSpeakersCard: View {
                     HStack(spacing: Spacing.sm) {
                         ForEach(speakers, id: \.uid) { speaker in
                             Button {
-                                UIImpactFeedbackGenerator(style: .light).impactOccurred()
                                 router.push(speaker.uid, type: .speaker)
                             } label: {
                                 speakerChip(speaker)
                             }
+                            .scaleButton()
                         }
                     }
                     .padding(.horizontal, Spacing.sm)

@@ -6,6 +6,7 @@ enum DestinationType: String {
     case section
     case speaker
     case place
+    case notificationSettings
 }
 
 struct NavigationDestination: Hashable {
