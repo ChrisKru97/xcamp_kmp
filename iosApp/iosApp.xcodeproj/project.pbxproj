@@ -16,7 +16,9 @@
 		0CE234882E8FAF8600A03730 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 0CE234872E8FAF8600A03730 /* FirebaseFirestore */; };
 		0CE2348C2E8FAF8600A03730 /* FirebaseRemoteConfig in Frameworks */ = {isa = PBXBuildFile; productRef = 0CE2348B2E8FAF8600A03730 /* FirebaseRemoteConfig */; };
 		0CE2348E2E8FB3BC00A03730 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 0CE2348D2E8FB3BC00A03730 /* FirebaseStorage */; };
-		0CE234922E9FA8B000A03730 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 0CE234912E9FA8B000A03730 /* Kingfisher */; };
+		0CE234922E9FA8B000A03730 /* FirebaseCrashlytics in Frameworks */ = {isa = PBXBuildFile; productRef = 0CE234952E9FA8B000A03730 /* FirebaseCrashlytics */; };
+		0CE234962E9FA8B100A03730 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 0CE234972E9FA8B100A03730 /* FirebaseAnalytics */; };
+		0CE234932E9FA8B000A03730 /* Kingfisher in Frameworks */ = {isa = PBXBuildFile; productRef = 0CE234912E9FA8B000A03730 /* Kingfisher */; };
 		0CE234A02E8FC3C500A03730 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 0CE2349F2E8FC3C500A03730 /* GoogleService-Info.plist */; };
 		0CE520812E8D92AF0099DFDA /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0CE520802E8D92AF0099DFDA /* Assets.xcassets */; };
 		3CE7422D93CE126D290BB43C /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3CE7461E6515C38937174954 /* AppViewModel.swift */; };
@@ -63,10 +65,12 @@
 				0CBA50DE2F33879B009FAADD /* NavigationBackport in Frameworks */,
 				0CE2348C2E8FAF8600A03730 /* FirebaseRemoteConfig in Frameworks */,
 				0CE2348E2E8FB3BC00A03730 /* FirebaseStorage in Frameworks */,
+				0CE234922E9FA8B000A03730 /* FirebaseCrashlytics in Frameworks */,
+				0CE234962E9FA8B100A03730 /* FirebaseAnalytics in Frameworks */,
 				0C6E82882F3384D900A6CD23 /* SwiftUIBackports in Frameworks */,
 				0CE234862E8FAF8600A03730 /* FirebaseCore in Frameworks */,
 				0CE234842E8FAF8600A03730 /* FirebaseAuth in Frameworks */,
-				0CE234922E9FA8B000A03730 /* Kingfisher in Frameworks */,
+				0CE234932E9FA8B000A03730 /* Kingfisher in Frameworks */,
 			);
 		};
 /* End PBXFrameworksBuildPhase section */
@@ -117,6 +121,7 @@
 				7555FF77242A565900829871 /* Sources */,
 				7555FF78242A565900829871 /* Frameworks */,
 				7555FF79242A565900829871 /* Resources */,
+				0CE234942E9FA8B000A03730 /* Crashlytics dSYM Upload */,
 			);
 			buildRules = (
 			);
@@ -207,6 +212,12 @@
 				"",
 				"",
 			);
+		};
+		0CE234942E9FA8B000A03730 /* Crashlytics dSYM Upload */ = {
+			isa = PBXShellScriptBuildPhase;
+			name = "Crashlytics dSYM Upload";
+			shellPath = /bin/sh;
+			shellScript = "\"${BUILD_DIR%Build/*}/SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/run\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -493,6 +504,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 0CE234822E8FAF8600A03730 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		0CE234952E9FA8B000A03730 /* FirebaseCrashlytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0CE234822E8FAF8600A03730 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseCrashlytics;
+		};
+		0CE234972E9FA8B100A03730 /* FirebaseAnalytics */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 0CE234822E8FAF8600A03730 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
+			productName = FirebaseAnalytics;
 		};
 		0CE234912E9FA8B000A03730 /* Kingfisher */ = {
 			isa = XCSwiftPackageProductDependency;

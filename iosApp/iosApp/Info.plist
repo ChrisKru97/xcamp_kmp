@@ -51,5 +51,7 @@
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationPortraitUpsideDown</string>
 	</array>
+	<key>NSUserNotificationsUsageDescription</key>
+	<string>Oznámení Vám pomohou nezmeškat důležité informace a začátky akcí v programu.</string>
 </dict>
 </plist>

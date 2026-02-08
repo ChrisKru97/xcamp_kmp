@@ -1,5 +1,9 @@
 import SwiftUI
+import shared
 import Firebase
+import FirebaseAuth
+import FirebaseCrashlytics
+import FirebaseAnalytics
 import Kingfisher
 
 @main
@@ -9,6 +13,8 @@ struct XcampApp: App {
 
     init() {
         FirebaseApp.configure()
+        configureCrashlytics()
+        configureAnalytics()
         configureKingfisherCache()
     }
 
@@ -20,6 +26,41 @@ struct XcampApp: App {
                 .onAppear {
                     appViewModel.initializeApp()
                 }
+        }
+    }
+
+    private func configureCrashlytics() {
+        let crashlytics = Crashlytics.crashlytics()
+        crashlytics.setCrashlyticsCollectionEnabled(true)
+
+        let platform = Platform()
+
+        crashlytics.setCustomValue(platform.appVersion, forKey: "app_version")
+        crashlytics.setCustomValue(platform.buildNumber, forKey: "build_number")
+        crashlytics.setCustomValue(platform.buildType, forKey: "build_type")
+        crashlytics.setCustomValue(platform.version, forKey: "os_version")
+        crashlytics.setCustomValue(platform.model, forKey: "device_model")
+        crashlytics.setCustomValue(platform.name, forKey: "device_name")
+        crashlytics.setCustomValue(platform.locale, forKey: "locale")
+        crashlytics.setCustomValue(platform.screenSize, forKey: "screen_size")
+        crashlytics.setCustomValue(platform.systemName, forKey: "system_name")
+
+        if let userID = Auth.auth().currentUser?.uid {
+            crashlytics.setUserID(userID)
+        }
+    }
+
+    private func configureAnalytics() {
+        Analytics.setAnalyticsCollectionEnabled(true)
+
+        let platform = Platform()
+
+        Analytics.setUserProperty(platform.appVersion, forName: "app_version")
+        Analytics.setUserProperty(platform.buildType, forName: "build_type")
+        Analytics.setUserProperty(platform.locale, forName: "locale")
+
+        if let userID = Auth.auth().currentUser?.uid {
+            Analytics.setUserID(userID)
         }
     }
 
