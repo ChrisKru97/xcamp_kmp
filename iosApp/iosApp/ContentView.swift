@@ -17,6 +17,8 @@ struct ContentView: View {
                 openAppStore()
             }
             Button(Strings.ForceUpdate.shared.MAYBE_LATER, role: .cancel) {
+                let forceUpdateVersion = appViewModel.remoteConfigService.getForceUpdateVersion()
+                AppPreferences.setDismissedForceUpdateVersion(version: forceUpdateVersion)
                 appViewModel.showForceUpdateWarning = true
             }
         } message: {

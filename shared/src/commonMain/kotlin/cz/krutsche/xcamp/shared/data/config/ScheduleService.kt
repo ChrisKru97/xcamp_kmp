@@ -7,8 +7,6 @@ import cz.krutsche.xcamp.shared.domain.model.ExpandedSection
 import cz.krutsche.xcamp.shared.domain.model.Section
 import cz.krutsche.xcamp.shared.domain.model.SectionType
 
-private const val DEFAULT_START_DATE = "2026-07-18"
-
 /**
  * Service for managing Section (schedule) entities.
  *

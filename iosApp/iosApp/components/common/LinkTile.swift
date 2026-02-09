@@ -11,7 +11,7 @@ struct LinkTile<T: LinkData>: View {
         } label: {
             tileContent
         }
-        .glassButton()
+        .scaleButton()
     }
 
     @ViewBuilder

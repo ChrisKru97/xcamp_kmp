@@ -1,6 +1,7 @@
 @file:OptIn(kotlin.time.ExperimentalTime::class)
 package cz.krutsche.xcamp.shared.data.repository
 
+import cz.krutsche.xcamp.shared.data.config.DEFAULT_START_DATE
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.domain.model.ExpandedSection
@@ -13,8 +14,6 @@ import kotlinx.serialization.json.Json
 import cz.krutsche.xcamp.shared.db.XcampDatabaseQueries
 import cz.krutsche.xcamp.shared.db.Section as DbSection
 import kotlin.time.Duration.Companion.seconds
-
-private const val DEFAULT_START_DATE = "2026-07-18"
 
 private fun DbSection.toDomain(json: Json): Section = Section(
     uid = uid,

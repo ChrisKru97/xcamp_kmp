@@ -40,7 +40,6 @@ struct CountdownView: View {
                 AnimatedNumberText(value: seconds)
             }
             .font(.title)
-            .modifier(FontWeightSemiboldModifier())
             .onReceive(Timer.publish(every: 1, on: .main, in: .common).autoconnect()) { _ in
                 updateCountdown()
             }
@@ -56,16 +55,6 @@ struct CountdownView: View {
         Text(String(format: "%02d", value))
             .backport.contentTransition(.numericText(value: Double(value)))
             .monospacedDigit()
-    }
-}
-
-private struct FontWeightSemiboldModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        if #available(iOS 16.0, *) {
-            content.fontWeight(.semibold)
-        } else {
-            content
-        }
     }
 }
 

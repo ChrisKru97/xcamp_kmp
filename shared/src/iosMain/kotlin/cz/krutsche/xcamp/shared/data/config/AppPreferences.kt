@@ -7,6 +7,7 @@ import platform.Foundation.NSUserDefaults
 actual object AppPreferences {
     private const val KEY_APP_STATE_OVERRIDE = "appStateOverride"
     private const val KEY_NOTIFICATION_PREFERENCES = "notificationPreferences"
+    private const val KEY_DISMISSED_FORCE_UPDATE_VERSION = "dismissedForceUpdateVersion"
 
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -38,5 +39,17 @@ actual object AppPreferences {
     actual fun setNotificationPreferences(preferences: NotificationPreferences) {
         val encoded = json.encodeToString(preferences)
         NSUserDefaults.standardUserDefaults.setObject(encoded, KEY_NOTIFICATION_PREFERENCES)
+    }
+
+    actual fun getDismissedForceUpdateVersion(): String? {
+        return NSUserDefaults.standardUserDefaults.stringForKey(KEY_DISMISSED_FORCE_UPDATE_VERSION)
+    }
+
+    actual fun setDismissedForceUpdateVersion(version: String?) {
+        if (version == null) {
+            NSUserDefaults.standardUserDefaults.removeObjectForKey(KEY_DISMISSED_FORCE_UPDATE_VERSION)
+        } else {
+            NSUserDefaults.standardUserDefaults.setObject(version, KEY_DISMISSED_FORCE_UPDATE_VERSION)
+        }
     }
 }

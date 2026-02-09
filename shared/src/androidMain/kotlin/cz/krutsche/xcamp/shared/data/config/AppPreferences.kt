@@ -42,4 +42,21 @@ actual object AppPreferences {
     actual fun setNotificationPreferences(preferences: NotificationPreferences) {
         // TODO
     }
+
+    actual fun getDismissedForceUpdateVersion(): String? {
+        if (!::context.isInitialized) return null
+        return prefs.getString("dismissedForceUpdateVersion", null)
+    }
+
+    actual fun setDismissedForceUpdateVersion(version: String?) {
+        if (!::context.isInitialized) return
+        prefs.edit().apply {
+            if (version == null) {
+                remove("dismissedForceUpdateVersion")
+            } else {
+                putString("dismissedForceUpdateVersion", version)
+            }
+            apply()
+        }
+    }
 }

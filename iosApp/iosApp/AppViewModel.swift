@@ -5,6 +5,8 @@ import shared
 class AppViewModel: ObservableObject {
     @Published var appState: AppState = .limited
     @Published var isLoading: Bool = true
+    @Published var showForceUpdateAlert: Bool = false
+    @Published var showForceUpdateWarning: Bool = false
 
     // Cached services - lazy initialization without nil-checks on each access
     // Note: remoteConfigService must be declared before services that depend on it
@@ -33,12 +35,7 @@ class AppViewModel: ObservableObject {
             do {
                 try await appInitializer.initialize()
                 
-                let forceUpdateVersion = remoteConfigService.getForceUpdateVersion()
-                if VersionUtilsKt.needsForceUpdate(currentVersion: platform.appVersion, requiredVersion: forceUpdateVersion) {
-                    await MainActor.run {
-                        showForceUpdateAlert = true
-                    }
-                }
+                await checkForceUpdate(currentVersion: platform.appVersion)
 
                 await MainActor.run {
                     var calculatedState = appConfigService.getAppState()
@@ -57,6 +54,23 @@ class AppViewModel: ObservableObject {
                 }
             }
         }
+    }
+
+    func checkForceUpdate(currentVersion: String) async {
+        let forceUpdateVersion = remoteConfigService.getForceUpdateVersion()
+        let dismissedVersion = AppPreferences.getDismissedForceUpdateVersion()
+        if VersionUtilsKt.needsForceUpdate(currentVersion: currentVersion, requiredVersion: forceUpdateVersion),
+           dismissedVersion != forceUpdateVersion {
+            await MainActor.run {
+                showForceUpdateAlert = true
+            }
+        }
+    }
+
+    func checkForceUpdateOnForeground() async {
+        let platform = Platform()
+        _ = try? await remoteConfigService.fetchAndActivate()
+        await checkForceUpdate(currentVersion: platform.appVersion)
     }
 
     /// Syncs all data (places, speakers, schedule) in parallel using async-let

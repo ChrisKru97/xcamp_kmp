@@ -6,4 +6,7 @@ expect object AppPreferences {
 
     fun getNotificationPreferences(): NotificationPreferences
     fun setNotificationPreferences(preferences: NotificationPreferences)
+
+    fun getDismissedForceUpdateVersion(): String?
+    fun setDismissedForceUpdateVersion(version: String?)
 }

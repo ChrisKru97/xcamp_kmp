@@ -9,6 +9,7 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 const val EventLength = 8
+const val DEFAULT_START_DATE = "2026-07-18"
 
 class AppConfigService(
     private val remoteConfigService: RemoteConfigService

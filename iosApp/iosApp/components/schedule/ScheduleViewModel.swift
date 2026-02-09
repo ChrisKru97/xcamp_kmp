@@ -56,7 +56,7 @@ class ScheduleViewModel: ObservableObject {
     func loadSections(service: ScheduleService) async {
         state = .loading
         do {
-            let startDate = remoteConfigService?.getStartDate() ?? "2026-07-18"
+            let startDate = remoteConfigService?.getStartDate() ?? SharedAppConfigServiceKt.DEFAULT_START_DATE
             let sections = try await service.getAllExpandedSections(startDate: startDate)
             state = .loaded(sections)
 
@@ -111,7 +111,7 @@ class ScheduleViewModel: ObservableObject {
     func loadDay(service: ScheduleService, dayIndex: Int) async {
         guard dayIndex >= 0 && dayIndex < eventDays.count else { return }
         let dayNumber = eventDays[dayIndex]
-        let startDate = remoteConfigService?.getStartDate() ?? "2026-07-18"
+        let startDate = remoteConfigService?.getStartDate() ?? SharedAppConfigServiceKt.DEFAULT_START_DATE
 
         do {
             let sections = try await service.getExpandedSections(dayNumber: Int32(dayNumber), startDate: startDate)
