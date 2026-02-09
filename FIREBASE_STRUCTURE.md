@@ -314,6 +314,17 @@ Event announcements, updates, and real-time communications.
 
 ---
 
+## Firebase Remote Config
+
+### Parameters
+
+| Parameter | Type | Default Value | Format | Description |
+|-----------|------|---------------|--------|-------------|
+| `showAppData` | Boolean | `true` | - | Feature flag to show full app data |
+| `startDate` | String | `"2026-07-18"` | `YYYY-MM-DD` | Event start date (ISO 8601 date only) |
+
+---
+
 ## Firebase Storage
 
 ### Current Status

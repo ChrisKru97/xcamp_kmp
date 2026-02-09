@@ -18,19 +18,13 @@ class ScheduleViewModel: ObservableObject {
     private var remoteConfigService: RemoteConfigService?
     private var userHasSelectedDay: Bool = false
 
-    private var eventDays: [Int] {
-        guard let remoteConfigService,
-              let startDate = parseStartDate(remoteConfigService.getStartDate()) else {
-            return [18, 19, 20, 21, 22, 23, 24, 25]
-        }
-
-        let calendar = Calendar.current
-        let startDay = calendar.component(.day, from: startDate)
-        return (0..<8).map { startDay + $0 }
-    }
-
     func setRemoteConfigService(_ service: RemoteConfigService) {
         self.remoteConfigService = service
+    }
+
+    private var eventDays: [Int] {
+        guard let remoteConfigService else { return [] }
+        return Array(AppConfigService(remoteConfigService: remoteConfigService).getEventDays())
     }
 
     func clearError() {
@@ -152,12 +146,5 @@ class ScheduleViewModel: ObservableObject {
                 }
             }
         }
-    }
-
-    private func parseStartDate(_ dateString: String) -> Date? {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        return formatter.date(from: dateString)
     }
 }

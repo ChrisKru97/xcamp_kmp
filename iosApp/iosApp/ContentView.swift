@@ -5,10 +5,35 @@ struct ContentView: View {
     @EnvironmentObject var appViewModel: AppViewModel
 
     var body: some View {
-        if appViewModel.isLoading {
-            SplashView()
-        } else {
-            NavigationContainer()
+        Group {
+            if appViewModel.isLoading {
+                SplashView()
+            } else {
+                NavigationContainer()
+            }
+        }
+        .alert(Strings.ForceUpdate.shared.TITLE, isPresented: $appViewModel.showForceUpdateAlert) {
+            Button(Strings.ForceUpdate.shared.UPDATE_NOW) {
+                openAppStore()
+            }
+            Button(Strings.ForceUpdate.shared.MAYBE_LATER, role: .cancel) {
+                appViewModel.showForceUpdateWarning = true
+            }
+        } message: {
+            Text(Strings.ForceUpdate.shared.MESSAGE)
+        }
+        .alert(Strings.ForceUpdate.shared.WARNING_TITLE, isPresented: $appViewModel.showForceUpdateWarning) {
+            Button(Strings.ForceUpdate.shared.WARNING_OK) {
+                // User acknowledges warning, continues using app
+            }
+        } message: {
+            Text(Strings.ForceUpdate.shared.WARNING_MESSAGE)
+        }
+    }
+
+    private func openAppStore() {
+        if let url = URL(string: "https://apps.apple.com/cz/app/xcamp/id6448851641") {
+            UIApplication.shared.open(url)
         }
     }
 }

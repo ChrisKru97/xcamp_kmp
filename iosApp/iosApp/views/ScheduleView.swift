@@ -163,20 +163,7 @@ struct ScheduleView: View {
     }
 
     private var eventDays: [Int] {
-        let dateString = appViewModel.remoteConfigService.getStartDate()
-        guard let date = parseStartDate(dateString) else {
-            return [18, 19, 20, 21, 22, 23, 24, 25]
-        }
-        let calendar = Calendar.current
-        let startDay = calendar.component(.day, from: date)
-        return (0..<8).map { startDay + $0 }
-    }
-
-    private func parseStartDate(_ dateString: String) -> Date? {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        formatter.timeZone = TimeZone(secondsFromGMT: 0)
-        return formatter.date(from: dateString)
+        Array(appViewModel.appConfigService.getEventDays())
     }
 }
 

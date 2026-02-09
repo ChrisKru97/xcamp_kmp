@@ -11,25 +11,19 @@ actual class Platform {
     actual val name: String = UIDevice.currentDevice.name
     actual val systemName: String = UIDevice.currentDevice.systemName
 
-    actual val appVersion: String
-    actual val buildNumber: String
-    actual val buildType: String
-    actual val locale: String
-    actual val screenSize: String
+    @OptIn(ExperimentalForeignApi::class)
+    actual val appVersion: String = (NSBundle.mainBundle.objectForInfoDictionaryKey("CFBundleShortVersionString") as? String) ?: "1.0.0"
 
-    init {
-        val bundle = NSBundle.mainBundle
-        appVersion = (bundle.objectForInfoDictionaryKey("CFBundleShortVersionString") as? String) ?: "unknown"
-        buildNumber = (bundle.objectForInfoDictionaryKey("CFBundleVersion") as? String) ?: "0"
+    @OptIn(ExperimentalForeignApi::class)
+    actual val buildNumber: String = (NSBundle.mainBundle.objectForInfoDictionaryKey("CFBundleVersion") as? String) ?: "1"
 
-        val isSimulator = UIDevice.currentDevice.name.contains("Simulator", ignoreCase = true)
-        buildType = if (isSimulator) "debug" else "release"
-        locale = NSLocale.currentLocale.localeIdentifier
-        screenSize = run {
-            val bounds = UIScreen.mainScreen.bounds
-            bounds.useContents {
-                "${size.width.toInt()} x ${size.height.toInt()}"
-            }
-        }
+    actual val buildType: String = if (UIDevice.currentDevice.name.contains("Simulator", ignoreCase = true)) "debug" else "release"
+
+    // TODO: Implement proper locale retrieval
+    actual val locale: String = "en_US"
+
+    @OptIn(ExperimentalForeignApi::class)
+    actual val screenSize: String = UIScreen.mainScreen.bounds.useContents {
+        "${size.width.toInt()} x ${size.height.toInt()}"
     }
 }

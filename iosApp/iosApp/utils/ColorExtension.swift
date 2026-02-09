@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 extension Color {
     // App-wide colors
@@ -7,6 +8,8 @@ extension Color {
     static let background = Color("background")
     static let accent = Color("designAccent")
     static let accentSecondary = Color("designAccentSecondary")
+
+    static let text = Color(UIColor.label)
 
     // Schedule section type colors (with dark mode support)
     struct Section {

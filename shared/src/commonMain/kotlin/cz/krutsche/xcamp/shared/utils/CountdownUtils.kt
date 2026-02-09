@@ -7,6 +7,7 @@ import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 import cz.krutsche.xcamp.shared.localization.Strings
 
+// TODO get rid of or simplify and move to androidApp
 class CountdownCalculator private constructor(
     private val targetInstant: Instant
 ) {
@@ -59,5 +60,13 @@ class CountdownCalculator private constructor(
 object CountdownUtils {
     fun createCountdownCalculator(dateString: String): CountdownCalculator {
         return CountdownCalculator.getInstance(dateString)
+    }
+}
+
+fun getDaysPluralization(days: Int): String {
+    return when (days) {
+        1 -> Strings.Countdown.DAY
+        in 2..4 -> Strings.Countdown.DAYS_FEW
+        else -> Strings.Countdown.DAYS
     }
 }

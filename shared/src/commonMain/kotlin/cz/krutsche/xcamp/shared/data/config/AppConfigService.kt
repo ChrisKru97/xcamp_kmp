@@ -96,6 +96,11 @@ class AppConfigService(
         val startDate = remoteConfigService.getStartDate()
         return startDate.take(4)
     }
+
+    fun getEventDays(): List<Int> {
+        val startDay = remoteConfigService.getStartDate().split("-")[2].toInt()
+        return List(EventLength) { startDay + it }
+    }
 }
 
 enum class AppState {

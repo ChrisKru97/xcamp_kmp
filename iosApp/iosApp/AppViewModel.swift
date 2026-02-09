@@ -32,6 +32,13 @@ class AppViewModel: ObservableObject {
         Task {
             do {
                 try await appInitializer.initialize()
+                
+                let forceUpdateVersion = remoteConfigService.getForceUpdateVersion()
+                if VersionUtilsKt.needsForceUpdate(currentVersion: platform.appVersion, requiredVersion: forceUpdateVersion) {
+                    await MainActor.run {
+                        showForceUpdateAlert = true
+                    }
+                }
 
                 await MainActor.run {
                     var calculatedState = appConfigService.getAppState()

@@ -73,9 +73,8 @@ struct InfoView: View {
                     .foregroundStyle(.tertiary)
             }
             .padding()
-            .card()
         }
-        .scaleButton()
+        .glassButton()
     }
 
     private var contactSection: some View {

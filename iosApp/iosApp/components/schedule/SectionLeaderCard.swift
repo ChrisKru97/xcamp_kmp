@@ -39,7 +39,6 @@ struct SectionLeaderCard: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
             }.padding(Spacing.md)
-            .card()
     }
 
     private var labelSection: some View {
@@ -51,4 +50,12 @@ struct SectionLeaderCard: View {
                 .foregroundColor(.secondary)
         }
     }
+}
+
+#Preview {
+    SectionLeaderCard(
+        leaderUid: "test-leader-id",
+        speakersService: SpeakersService()
+    )
+    .environmentObject(AppRouter())
 }

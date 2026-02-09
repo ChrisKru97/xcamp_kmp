@@ -11,7 +11,7 @@ struct LinkTile<T: LinkData>: View {
         } label: {
             tileContent
         }
-        .scaleButton()
+        .glassButton()
     }
 
     @ViewBuilder
@@ -30,7 +30,6 @@ struct LinkTile<T: LinkData>: View {
         }
         .frame(maxWidth: .infinity)
         .frame(height: 80)
-        .card()
     }
 }
 

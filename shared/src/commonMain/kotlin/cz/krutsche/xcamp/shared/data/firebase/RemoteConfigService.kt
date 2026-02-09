@@ -65,4 +65,8 @@ class RemoteConfigService {
     fun getYoutubeLink(): String {
         return getString("youtubePlaylist").ifEmpty { "https://www.youtube.com/watch?v=AOFRsBUgjjU&list=PLVFssG93u7cbUrrT8_ocPN055g3EpsUbf" }
     }
+
+    fun getForceUpdateVersion(): String {
+        return getString("force_update_version").ifEmpty { "0.0.0" }
+    }
 }
