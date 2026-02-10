@@ -6,12 +6,21 @@ import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.domain.model.FirestoreSpeaker
 import cz.krutsche.xcamp.shared.domain.model.Speaker
 import cz.krutsche.xcamp.shared.domain.model.toDbSpeaker
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withTimeout
+import kotlin.time.Duration.Companion.seconds
 
 class SpeakersRepository(
     databaseManager: DatabaseManager,
     firestoreService: FirestoreService,
     private val storageService: StorageService
 ) : BaseRepository<Speaker>(databaseManager, firestoreService) {
+
+    private val syncMutex = Mutex()
 
     override val collectionName = "speakers"
 
@@ -41,24 +50,51 @@ class SpeakersRepository(
         }
     }
 
-    suspend fun syncFromFirestore(): Result<Unit> {
-        return syncFromFirestoreWithIds(
+    suspend fun syncFromFirestore(): Result<Unit> = syncMutex.withLock {
+        syncFromFirestoreWithIds(
             deserializer = FirestoreSpeaker.serializer(),
             injectId = { documentId, firestoreSpeaker ->
                 Speaker.fromFirestoreData(documentId, firestoreSpeaker)
             },
             insertItems = { speakers ->
-                val speakersWithUrls = speakers.map { speaker ->
-                    if (speaker.image != null) {
-                        val urlResult = storageService.getDownloadUrl(speaker.image)
-                        speaker.copy(imageUrl = urlResult.getOrNull())
-                    } else {
-                        speaker
+                val speakersWithUrls = withTimeout(30.seconds) {
+                    coroutineScope {
+                        speakers.map { speaker ->
+                            async {
+                                if (speaker.image != null) {
+                                    val urlResult = storageService.getDownloadUrl(speaker.image)
+                                    speaker.copy(imageUrl = urlResult.getOrNull())
+                                } else {
+                                    speaker
+                                }
+                            }
+                        }.awaitAll()
                     }
                 }
-                insertSpeakers(speakersWithUrls)
+                withDatabase {
+                    queries.transaction {
+                        queries.deleteAllSpeakers()
+                        speakersWithUrls.forEach { speaker ->
+                            val dbSpeaker = speaker.toDbSpeaker()
+                            queries.insertSpeaker(
+                                uid = dbSpeaker.uid,
+                                name = dbSpeaker.name,
+                                description = dbSpeaker.description,
+                                priority = dbSpeaker.priority,
+                                image = dbSpeaker.image,
+                                imageUrl = dbSpeaker.imageUrl
+                            )
+                        }
+                    }
+                }
             },
-            clearItems = { withDatabase { queries.deleteAllSpeakers() } }
+            validateItems = { speakers ->
+                if (speakers.isEmpty()) {
+                    Result.failure(SyncError.ValidationError("No speakers received from Firestore"))
+                } else {
+                    Result.success(Unit)
+                }
+            }
         )
     }
 

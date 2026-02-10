@@ -16,7 +16,7 @@ struct SectionLeaderCard: View {
                 } label: {
                     cardContent(leader.name)
                 }
-                .scaleButton()
+                .glassButton()
             } else {
                 ProgressView()
                     .frame(maxWidth: .infinity)
@@ -55,7 +55,7 @@ struct SectionLeaderCard: View {
 #Preview {
     SectionLeaderCard(
         leaderUid: "test-leader-id",
-        speakersService: SpeakersService()
+        speakersService: ServiceFactory.shared.getSpeakersService()
     )
     .environmentObject(AppRouter())
 }

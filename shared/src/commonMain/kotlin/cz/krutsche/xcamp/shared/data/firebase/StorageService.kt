@@ -1,5 +1,6 @@
 package cz.krutsche.xcamp.shared.data.firebase
 
+import cz.krutsche.xcamp.shared.data.repository.getCurrentTimeMillis
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.storage.FirebaseStorage
 import dev.gitlive.firebase.storage.storage
@@ -8,6 +9,9 @@ import kotlin.time.Duration.Companion.seconds
 
 class StorageService {
     private val storage: FirebaseStorage = Firebase.storage
+
+    private val urlCache = mutableMapOf<String, Pair<String, Long>>()
+    private val CACHE_DURATION = 24 * 60 * 60 * 1000L
 
     suspend fun uploadFile(
         path: String,
@@ -27,15 +31,27 @@ class StorageService {
         }
     }
 
-    suspend fun getDownloadUrl(path: String): Result<String> {
+    suspend fun getDownloadUrl(path: String, forceRefresh: Boolean = false): Result<String> {
+        val cached = urlCache[path]
+        val currentTime = getCurrentTimeMillis()
+
+        if (!forceRefresh && cached != null && (currentTime - cached.second) < CACHE_DURATION) {
+            return Result.success(cached.first)
+        }
+
         return try {
             withTimeout(5.seconds) {
                 val storageRef = storage.reference.child(path)
                 val downloadUrl = storageRef.getDownloadUrl()
+                urlCache[path] = downloadUrl to currentTime
                 Result.success(downloadUrl)
             }
         } catch (e: Exception) {
-            Result.failure(e)
+            if (cached != null) {
+                Result.success(cached.first)
+            } else {
+                Result.failure(e)
+            }
         }
     }
 
@@ -44,6 +60,7 @@ class StorageService {
             withTimeout(5.seconds) {
                 val storageRef = storage.reference.child(path)
                 storageRef.delete()
+                urlCache.remove(path)
                 Result.success(Unit)
             }
         } catch (e: Exception) {
@@ -62,5 +79,9 @@ class StorageService {
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    fun clearCache() {
+        urlCache.clear()
     }
 }

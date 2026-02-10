@@ -26,6 +26,11 @@ struct XcampApp: App {
                 .onAppear {
                     appViewModel.initializeApp()
                 }
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+                    Task {
+                        await appViewModel.checkForceUpdateOnForeground()
+                    }
+                }
         }
     }
 

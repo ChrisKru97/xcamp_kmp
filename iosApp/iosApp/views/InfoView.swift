@@ -74,7 +74,7 @@ struct InfoView: View {
             }
             .padding()
         }
-        .scaleButton()
+        .glassButton()
     }
 
     private var contactSection: some View {

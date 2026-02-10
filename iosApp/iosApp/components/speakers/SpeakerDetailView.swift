@@ -3,7 +3,6 @@ import shared
 
 struct SpeakerDetailView: View {
     let speakerUid: String
-    @Environment(\.speakersService) private var speakersService
     @State private var speaker: Speaker?
 
     var body: some View {
@@ -15,7 +14,7 @@ struct SpeakerDetailView: View {
             }
         }
         .task {
-            speaker = try? await speakersService.getSpeakerById(uid: speakerUid)
+            speaker = try? await ServiceFactory.shared.getSpeakersService().getSpeakerById(uid: speakerUid)
         }
     }
 }
@@ -24,18 +23,15 @@ struct SpeakerDetailView: View {
 
 #Preview("Speaker Detail View - With Description") {
     SpeakerDetailView(speakerUid: "test1")
-        .environment(\.speakersService, SpeakersService())
         .preferredColorScheme(.dark)
 }
 
 #Preview("Speaker Detail View - Long Biography") {
     SpeakerDetailView(speakerUid: "test2")
-        .environment(\.speakersService, SpeakersService())
         .preferredColorScheme(.light)
 }
 
 #Preview("Speaker Detail View - Without Description") {
     SpeakerDetailView(speakerUid: "test3")
-        .environment(\.speakersService, SpeakersService())
         .preferredColorScheme(.dark)
 }

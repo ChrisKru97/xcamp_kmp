@@ -18,7 +18,7 @@ struct SpeakersContentView: View {
             }
         }
         .task {
-            await viewModel.loadSpeakers(service: appViewModel.speakersService)
+            await viewModel.loadSpeakers()
         }
     }
 
@@ -35,7 +35,6 @@ struct SpeakersContentView: View {
                         router.push(speaker.uid, type: .speaker)
                     } label: {
                         SpeakerListItem(speaker: speaker)
-                            .equatable()
                     }
                 }
             }
@@ -44,7 +43,7 @@ struct SpeakersContentView: View {
             .padding(.bottom, Spacing.xxl)
         }
         .refreshable {
-            await viewModel.refreshSpeakers(service: appViewModel.speakersService)
+            await viewModel.refreshSpeakers()
         }
     }
 
@@ -67,7 +66,7 @@ struct SpeakersContentView: View {
                 .font(.headline)
             Button(Strings.Speakers.shared.RETRY) {
                 Task {
-                    await viewModel.loadSpeakers(service: appViewModel.speakersService)
+                    await viewModel.loadSpeakers()
                 }
             }
             .buttonStyle(.bordered)

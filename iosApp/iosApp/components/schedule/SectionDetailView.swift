@@ -5,10 +5,6 @@ struct SectionDetailView: View {
     let sectionUid: String
     let onFavoriteToggled: () -> Void
 
-    @Environment(\.scheduleService) private var scheduleService
-    @Environment(\.placesService) private var placesService
-    @Environment(\.speakersService) private var speakersService
-
     @State private var section: shared.Section?
     @State private var isFavorite: Bool = false
 
@@ -21,7 +17,7 @@ struct SectionDetailView: View {
             }
         }
         .task {
-            section = try? await scheduleService.getSectionById(uid: sectionUid)
+            section = try? await ServiceFactory.shared.getScheduleService().getSectionById(uid: sectionUid)
             if let section = section {
                 isFavorite = section.favorite
             }
@@ -41,7 +37,7 @@ struct SectionDetailView: View {
                     Task {
                         isFavorite.toggle()
                         do {
-                            try await scheduleService.toggleFavorite(sectionUid: section.uid, favorite: isFavorite)
+                            try await ServiceFactory.shared.getScheduleService().toggleFavorite(sectionUid: section.uid, favorite: isFavorite)
                             if isFavorite {
                                 UINotificationFeedbackGenerator().notificationOccurred(.success)
                             }
@@ -54,7 +50,7 @@ struct SectionDetailView: View {
                 }) {
                     favoriteIcon
                 }
-                .scaleButton()
+                .glassButton()
             }
         }
     }
@@ -75,17 +71,17 @@ struct SectionDetailView: View {
                 .padding(.horizontal, Spacing.md)
 
             if let placeUid = section.place {
-                SectionPlaceCard(placeUid: placeUid, placesService: placesService)
+                SectionPlaceCard(placeUid: placeUid, placesService: ServiceFactory.shared.getPlacesService())
                     .padding(.horizontal, Spacing.md)
             }
 
             if let speakerUids = section.speakers, !speakerUids.isEmpty {
-                SectionSpeakersCard(speakerUids: speakerUids, speakersService: speakersService)
+                SectionSpeakersCard(speakerUids: speakerUids, speakersService: ServiceFactory.shared.getSpeakersService())
                     .padding(.horizontal, Spacing.md)
             }
 
             if let leaderUid = section.leader {
-                SectionLeaderCard(leaderUid: leaderUid, speakersService: speakersService)
+                SectionLeaderCard(leaderUid: leaderUid, speakersService: ServiceFactory.shared.getSpeakersService())
                     .padding(.horizontal, Spacing.md)
             }
 

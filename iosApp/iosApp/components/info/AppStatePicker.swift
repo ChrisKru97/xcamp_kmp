@@ -24,6 +24,7 @@ struct AppStatePicker: View {
         .onAppear {
             localState = appViewModel.appConfigService.getAppStateOverride()
         }
+        .card()
     }
 }
 

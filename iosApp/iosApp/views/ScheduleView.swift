@@ -42,7 +42,7 @@ struct ScheduleView: View {
                         Button {
                             viewModel.selectDay(index: index)
                             Task {
-                                await viewModel.loadDay(service: appViewModel.scheduleService, dayIndex: index)
+                                await viewModel.loadDay(dayIndex: index)
                             }
                         } label: {
                             HStack {
@@ -68,11 +68,8 @@ struct ScheduleView: View {
                 }
             }
         }
-        .onAppear {
-            viewModel.setRemoteConfigService(appViewModel.remoteConfigService)
-        }
         .task {
-            await viewModel.loadSections(service: appViewModel.scheduleService)
+            await viewModel.loadSections()
         }
         .sheet(isPresented: $showingFilter) {
             filterSheetContent
@@ -96,7 +93,6 @@ struct ScheduleView: View {
                         router.push(section.base.uid, type: .section)
                     } label: {
                         SectionListItem(section: section)
-                            .equatable()
                     }
                 }
             }
@@ -105,7 +101,7 @@ struct ScheduleView: View {
             .padding(.bottom, Spacing.xxl)
         }
         .refreshable {
-            await viewModel.refreshSections(service: appViewModel.scheduleService)
+            await viewModel.refreshSections()
         }
     }
 
@@ -145,7 +141,7 @@ struct ScheduleView: View {
                 .multilineTextAlignment(.center)
             Button(Strings.Schedule.shared.RETRY) {
                 Task {
-                    await viewModel.loadSections(service: appViewModel.scheduleService)
+                    await viewModel.loadSections()
                 }
             }
             .buttonStyle(.bordered)
@@ -164,6 +160,7 @@ struct ScheduleView: View {
 
     private var eventDays: [Int] {
         Array(appViewModel.appConfigService.getEventDays())
+            .map { $0.intValue }
     }
 }
 

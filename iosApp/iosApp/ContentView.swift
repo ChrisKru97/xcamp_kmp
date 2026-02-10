@@ -18,7 +18,7 @@ struct ContentView: View {
             }
             Button(Strings.ForceUpdate.shared.MAYBE_LATER, role: .cancel) {
                 let forceUpdateVersion = appViewModel.remoteConfigService.getForceUpdateVersion()
-                AppPreferences.setDismissedForceUpdateVersion(version: forceUpdateVersion)
+                AppPreferences.shared.setDismissedForceUpdateVersion(version: forceUpdateVersion)
                 appViewModel.showForceUpdateWarning = true
             }
         } message: {

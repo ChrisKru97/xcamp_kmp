@@ -25,7 +25,7 @@ struct SectionSpeakersCard: View {
                             } label: {
                                 speakerChip(speaker)
                             }
-                            .scaleButton()
+                            .glassButton()
                         }
                     }
                     .padding(.horizontal, Spacing.sm)
@@ -81,4 +81,12 @@ struct SectionSpeakersCard: View {
                 .foregroundColor(.secondary)
         }
     }
+}
+
+#Preview {
+    SectionSpeakersCard(
+        speakerUids: ["test-speaker-1", "test-speaker-2"],
+        speakersService: ServiceFactory.shared.getSpeakersService()
+    )
+    .environmentObject(AppRouter())
 }

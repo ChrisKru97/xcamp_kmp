@@ -219,7 +219,7 @@ Device information and FCM tokens for push notifications.
   "buildNumber": "42",
   "locale": "cs_CZ",
   "screenSize": "393x852",
-  "createdAt": "2026-02-08T10:00:00.000Z"
+  "createdAt": 1739006400000
 }
 ```
 
@@ -233,7 +233,7 @@ Device information and FCM tokens for push notifications.
 - `buildNumber`: Build number from bundle info
 - `locale`: Device locale string (e.g., "cs_CZ")
 - `screenSize`: Screen dimensions in pixels (e.g., "393x852")
-- `createdAt`: ISO 8601 timestamp of user registration
+- `createdAt`: Epoch milliseconds timestamp of user registration (Long)
 
 **Document ID:** User Firebase Auth UID
 **Usage:** Push notification delivery, device analytics, user management

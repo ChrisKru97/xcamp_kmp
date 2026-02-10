@@ -1,8 +1,4 @@
--- Xcamp Database Schema Version 1.0.0
--- SQLDelight version: 1
---
--- Version History:
---   1.0.0 (schema version 1): Initial schema with 7 tables
+-- Xcamp Database Schema 1.0.0
 
 -- Place table
 CREATE TABLE IF NOT EXISTS Place (
@@ -64,6 +60,13 @@ CREATE TABLE IF NOT EXISTS Rating (
     rating INTEGER, -- 1-5 stars, null if not rated
     comment TEXT,
     timestamp INTEGER NOT NULL -- Store as timestamp
+);
+
+-- Sync metadata table for tracking last sync times and versions
+CREATE TABLE IF NOT EXISTS SyncMetadata (
+    entity TEXT NOT NULL PRIMARY KEY,
+    lastSyncTime INTEGER NOT NULL,
+    version INTEGER NOT NULL DEFAULT 1
 );
 
 -- Insert operations
@@ -188,6 +191,14 @@ DELETE FROM Rating WHERE id = ?;
 countPlaces:
 SELECT COUNT(*) FROM Place;
 
+-- Sync metadata operations
+insertSyncMetadata:
+INSERT OR REPLACE INTO SyncMetadata(entity, lastSyncTime, version)
+VALUES (?, ?, ?);
+
+getSyncMetadata:
+SELECT * FROM SyncMetadata WHERE entity = ?;
+
 countSongs:
 SELECT COUNT(*) FROM Song;
 
@@ -209,3 +220,9 @@ CREATE INDEX IF NOT EXISTS idx_song_name ON Song(name);
 CREATE INDEX IF NOT EXISTS idx_section_type ON Section(type);
 
 CREATE INDEX IF NOT EXISTS idx_section_favorite ON Section(favorite);
+
+CREATE INDEX IF NOT EXISTS idx_speaker_priority_name ON Speaker(priority, name);
+
+CREATE INDEX IF NOT EXISTS idx_news_time ON News(time DESC);
+
+CREATE INDEX IF NOT EXISTS idx_song_text ON Song(text);

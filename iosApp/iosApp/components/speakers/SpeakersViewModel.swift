@@ -12,15 +12,18 @@ enum SpeakersState {
 class SpeakersViewModel: ObservableObject {
     @Published private(set) var state: SpeakersState = .loading
     @Published private(set) var lastError: Error?
+    @Published private(set) var isRefreshing = false
+
+    var speakersService: SpeakersService { ServiceFactory.shared.getSpeakersService() }
 
     func clearError() {
         lastError = nil
     }
 
-    func loadSpeakers(service: SpeakersService) async {
+    func loadSpeakers() async {
         state = .loading
         do {
-            let speakers = try await service.getAllSpeakers()
+            let speakers = try await speakersService.getAllSpeakers()
             state = .loaded(speakers)
             lastError = nil
         } catch {
@@ -29,11 +32,17 @@ class SpeakersViewModel: ObservableObject {
         }
     }
 
-    func refreshSpeakers(service: SpeakersService) async {
+    func refreshSpeakers() async {
+        guard !isRefreshing else { return }
+        isRefreshing = true
+        defer {
+            isRefreshing = false
+        }
+
         KingfisherManager.shared.cache.clearMemoryCache()
         do {
-            _ = try await service.refreshSpeakers()
-            await loadSpeakers(service: service)
+            _ = try await speakersService.refreshSpeakers()
+            await loadSpeakers()
         } catch {
             lastError = error
         }
