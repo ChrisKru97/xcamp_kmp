@@ -31,20 +31,4 @@ abstract class RepositoryService<R : Any> {
      * Delegates to the repository's syncFromFirestore method.
      */
     protected abstract suspend fun syncFromFirestore(): Result<Unit>
-
-    /**
-     * Generic refresh pattern: sync from Firestore and return all items.
-     * Subclasses can override this if they need custom behavior.
-     */
-    protected open suspend fun refresh(): Result<Unit> {
-        return try {
-            val syncResult = syncFromFirestore()
-            syncResult.fold(
-                onSuccess = { Result.success(Unit) },
-                onFailure = { Result.failure(it) }
-            )
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
-    }
 }

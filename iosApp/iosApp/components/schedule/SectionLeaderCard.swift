@@ -3,7 +3,8 @@ import shared
 
 struct SectionLeaderCard: View {
     let leaderUid: String
-    let speakersService: SpeakersService
+
+    var speakersService: SpeakersService { ServiceFactory.shared.getSpeakersService() }
 
     @EnvironmentObject var router: AppRouter
     @State private var leader: Speaker?
@@ -24,7 +25,9 @@ struct SectionLeaderCard: View {
             }
         }
         .task {
-            leader = try? await speakersService.getSpeakerById(uid: leaderUid)
+            let result = try? await speakersService.getSpeakerById(uid: leaderUid)
+            guard !Task.isCancelled else { return }
+            leader = result
         }
     }
 
@@ -53,9 +56,6 @@ struct SectionLeaderCard: View {
 }
 
 #Preview {
-    SectionLeaderCard(
-        leaderUid: "test-leader-id",
-        speakersService: ServiceFactory.shared.getSpeakersService()
-    )
-    .environmentObject(AppRouter())
+    SectionLeaderCard(leaderUid: "test-leader-id")
+        .environmentObject(AppRouter())
 }

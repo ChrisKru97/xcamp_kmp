@@ -1,11 +1,13 @@
 -- Xcamp Database Schema 1.0.0
+-- Note: CHECK constraints apply to new installations only.
+-- Existing databases would need migration to enforce these constraints.
 
 -- Place table
 CREATE TABLE IF NOT EXISTS Place (
-    uid TEXT NOT NULL PRIMARY KEY,
-    name TEXT NOT NULL,
+    uid TEXT NOT NULL PRIMARY KEY CHECK (length(uid) > 0),
+    name TEXT NOT NULL CHECK (length(name) > 0),
     description TEXT,
-    priority INTEGER NOT NULL,
+    priority INTEGER NOT NULL CHECK (priority >= 0),
     latitude REAL,
     longitude REAL,
     image TEXT,
@@ -14,17 +16,17 @@ CREATE TABLE IF NOT EXISTS Place (
 
 -- Song table
 CREATE TABLE IF NOT EXISTS Song (
-    number INTEGER NOT NULL PRIMARY KEY,
-    name TEXT NOT NULL,
-    text TEXT NOT NULL
+    number INTEGER NOT NULL PRIMARY KEY CHECK (number > 0),
+    name TEXT NOT NULL CHECK (length(name) > 0),
+    text TEXT NOT NULL CHECK (length(text) > 0)
 );
 
 -- Speaker table
 CREATE TABLE IF NOT EXISTS Speaker (
-    uid TEXT NOT NULL PRIMARY KEY,
-    name TEXT NOT NULL,
+    uid TEXT NOT NULL PRIMARY KEY CHECK (length(uid) > 0),
+    name TEXT NOT NULL CHECK (length(name) > 0),
     description TEXT,
-    priority INTEGER NOT NULL,
+    priority INTEGER NOT NULL CHECK (priority >= 0),
     image TEXT,
     imageUrl TEXT
 );
@@ -32,41 +34,41 @@ CREATE TABLE IF NOT EXISTS Speaker (
 -- News table
 CREATE TABLE IF NOT EXISTS News (
     id INTEGER NOT NULL PRIMARY KEY,
-    uid TEXT NOT NULL,
-    title TEXT NOT NULL,
-    text TEXT NOT NULL,
-    time INTEGER NOT NULL -- Store as timestamp
+    uid TEXT NOT NULL CHECK (length(uid) > 0),
+    title TEXT NOT NULL CHECK (length(title) > 0),
+    text TEXT NOT NULL CHECK (length(text) > 0),
+    time INTEGER NOT NULL CHECK (time > 0)
 );
 
 -- Section table (Schedule)
 CREATE TABLE IF NOT EXISTS Section (
-    uid TEXT NOT NULL PRIMARY KEY,
-    name TEXT NOT NULL,
+    uid TEXT NOT NULL PRIMARY KEY CHECK (length(uid) > 0),
+    name TEXT NOT NULL CHECK (length(name) > 0),
     description TEXT,
-    days TEXT NOT NULL,
-    startTime TEXT NOT NULL,
-    endTime TEXT NOT NULL,
+    days TEXT NOT NULL CHECK (length(days) > 0),
+    startTime TEXT NOT NULL CHECK (length(startTime) > 0),
+    endTime TEXT NOT NULL CHECK (length(endTime) > 0),
     place TEXT,
     speakers TEXT,
     leader TEXT,
-    type TEXT NOT NULL,
-    favorite INTEGER NOT NULL DEFAULT 0
+    type TEXT NOT NULL CHECK (length(type) > 0),
+    favorite INTEGER NOT NULL DEFAULT 0 CHECK (favorite IN (0, 1))
 );
 
--- Rating table TODO do we need it?
+-- Rating table
 CREATE TABLE IF NOT EXISTS Rating (
     id INTEGER NOT NULL PRIMARY KEY,
-    category TEXT NOT NULL,
-    rating INTEGER, -- 1-5 stars, null if not rated
+    category TEXT NOT NULL CHECK (length(category) > 0),
+    rating INTEGER CHECK (rating IS NULL OR (rating >= 1 AND rating <= 5)),
     comment TEXT,
-    timestamp INTEGER NOT NULL -- Store as timestamp
+    timestamp INTEGER NOT NULL CHECK (timestamp > 0)
 );
 
 -- Sync metadata table for tracking last sync times and versions
 CREATE TABLE IF NOT EXISTS SyncMetadata (
-    entity TEXT NOT NULL PRIMARY KEY,
-    lastSyncTime INTEGER NOT NULL,
-    version INTEGER NOT NULL DEFAULT 1
+    entity TEXT NOT NULL PRIMARY KEY CHECK (length(entity) > 0),
+    lastSyncTime INTEGER NOT NULL CHECK (lastSyncTime >= 0),
+    version INTEGER NOT NULL DEFAULT 1 CHECK (version >= 1)
 );
 
 -- Insert operations
@@ -222,6 +224,8 @@ CREATE INDEX IF NOT EXISTS idx_section_type ON Section(type);
 CREATE INDEX IF NOT EXISTS idx_section_favorite ON Section(favorite);
 
 CREATE INDEX IF NOT EXISTS idx_speaker_priority_name ON Speaker(priority, name);
+
+CREATE INDEX IF NOT EXISTS idx_place_priority_name ON Place(priority, name);
 
 CREATE INDEX IF NOT EXISTS idx_news_time ON News(time DESC);
 

@@ -3,6 +3,7 @@ package cz.krutsche.xcamp.shared.data.repository
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.domain.model.Song
+import kotlinx.coroutines.sync.Mutex
 
 class SongsRepository(
     databaseManager: DatabaseManager,
@@ -10,6 +11,7 @@ class SongsRepository(
 ) : BaseRepository<Song>(databaseManager, firestoreService) {
 
     override val collectionName = "songs"
+    override val syncMutex = Mutex()
 
     suspend fun getAllSongs(): List<Song> = withDatabase {
         queries.selectAllSongs().executeAsList().map(::mapToSong)
@@ -26,6 +28,7 @@ class SongsRepository(
 
     suspend fun insertSongs(songs: List<Song>) = withDatabase {
         queries.transaction {
+            queries.deleteAllSongs()
             songs.forEach { song ->
                 queries.insertSong(
                     number = song.number,
@@ -36,12 +39,11 @@ class SongsRepository(
         }
     }
 
-    suspend fun syncFromFirestore(): Result<Unit> =
-        syncFromFirestore(
-            Song.serializer(),
-            ::insertSongs,
-            clearItems = { withDatabase { queries.deleteAllSongs() } }
-        )
+    suspend fun syncFromFirestore(): Result<Unit> = syncFromFirestoreLocked(
+        deserializer = Song.serializer(),
+        injectId = null,
+        insertItems = ::insertSongs
+    )
 
     private fun mapToSong(dbSong: cz.krutsche.xcamp.shared.db.Song): Song =
         cz.krutsche.xcamp.shared.domain.model.Song(

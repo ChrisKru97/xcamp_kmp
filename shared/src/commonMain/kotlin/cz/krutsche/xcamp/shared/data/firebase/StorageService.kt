@@ -1,10 +1,11 @@
+@file:OptIn(kotlin.time.ExperimentalTime::class)
 package cz.krutsche.xcamp.shared.data.firebase
 
-import cz.krutsche.xcamp.shared.data.repository.getCurrentTimeMillis
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.storage.FirebaseStorage
 import dev.gitlive.firebase.storage.storage
 import kotlinx.coroutines.withTimeout
+import kotlin.time.Clock.System.now
 import kotlin.time.Duration.Companion.seconds
 
 class StorageService {
@@ -33,7 +34,7 @@ class StorageService {
 
     suspend fun getDownloadUrl(path: String, forceRefresh: Boolean = false): Result<String> {
         val cached = urlCache[path]
-        val currentTime = getCurrentTimeMillis()
+        val currentTime = now().toEpochMilliseconds()
 
         if (!forceRefresh && cached != null && (currentTime - cached.second) < CACHE_DURATION) {
             return Result.success(cached.first)

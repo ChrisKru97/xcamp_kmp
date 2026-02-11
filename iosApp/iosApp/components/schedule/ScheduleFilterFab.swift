@@ -2,8 +2,7 @@ import SwiftUI
 import shared
 
 struct ScheduleFilterFab: View {
-    let visibleTypes: Set<SectionType>
-    let favoritesOnly: Bool
+    let filterState: ScheduleFilterState
     var action: () -> Void = {}
 
     var body: some View {
@@ -25,14 +24,14 @@ struct ScheduleFilterFab: View {
     }
 
     private var iconName: String {
-        if filterState == .inactive {
+        if fabState == .inactive {
             return "line.3.horizontal.decrease.circle"
         }
         return "line.3.horizontal.decrease.circle.fill"
     }
 
     private var buttonForegroundColor: Color {
-        switch filterState {
+        switch fabState {
         case .inactive:
             return .primary
         case .active, .favorites:
@@ -40,24 +39,24 @@ struct ScheduleFilterFab: View {
         }
     }
 
-    private enum FilterState {
+    private enum FabState {
         case inactive
         case active
         case favorites
     }
 
-    private var filterState: FilterState {
-        if favoritesOnly {
+    private var fabState: FabState {
+        if filterState.favoritesOnly {
             return .favorites
         }
-        if visibleTypes.count != SectionType.entries.count {
+        if filterState.visibleTypes.count != SectionType.entries.count {
             return .active
         }
         return .inactive
     }
 
     private var glassEffectForState: BackportGlass {
-        switch filterState {
+        switch fabState {
         case .inactive:
             return .regular
         case .active:
@@ -68,7 +67,7 @@ struct ScheduleFilterFab: View {
     }
 
     private var fallbackBackgroundForState: AnyShapeStyle {
-        switch filterState {
+        switch fabState {
         case .inactive:
             return AnyShapeStyle(.thinMaterial)
         case .active:
@@ -83,8 +82,10 @@ struct ScheduleFilterFab: View {
 
 #Preview("Filter FAB - Inactive") {
     ScheduleFilterFab(
-        visibleTypes: Set([.main, .internal, .gospel, .food]),
-        favoritesOnly: false
+        filterState: ScheduleFilterState(
+            visibleTypes: Set([.main, .internal, .gospel, .food]),
+            favoritesOnly: false
+        )
     )
     .padding()
     .background(Color.background)
@@ -93,8 +94,10 @@ struct ScheduleFilterFab: View {
 
 #Preview("Filter FAB - Active") {
     ScheduleFilterFab(
-        visibleTypes: Set([.main, .internal]),
-        favoritesOnly: false
+        filterState: ScheduleFilterState(
+            visibleTypes: Set([.main, .internal]),
+            favoritesOnly: false
+        )
     )
     .padding()
     .background(Color.background)
@@ -103,8 +106,10 @@ struct ScheduleFilterFab: View {
 
 #Preview("Filter FAB - Favorites") {
     ScheduleFilterFab(
-        visibleTypes: Set([.main, .internal, .gospel, .food]),
-        favoritesOnly: true
+        filterState: ScheduleFilterState(
+            visibleTypes: Set([.main, .internal, .gospel, .food]),
+            favoritesOnly: true
+        )
     )
     .padding()
     .background(Color.background)

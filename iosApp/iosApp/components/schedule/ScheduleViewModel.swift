@@ -11,20 +11,20 @@ enum ScheduleState {
 class ScheduleViewModel: ObservableObject {
     @Published private(set) var state: ScheduleState = .loading
     @Published private(set) var selectedDayIndex: Int = 0
-    @Published var visibleTypes: Set<SectionType> = Set(SectionType.entries)
-    @Published var favoritesOnly: Bool = false
+    @Published var filterState: ScheduleFilterState = ScheduleFilterState(
+        visibleTypes: Set(SectionType.entries),
+        favoritesOnly: false
+    )
     @Published private(set) var lastError: Error?
 
-    private var remoteConfigService: RemoteConfigService?
+    var scheduleService: ScheduleService { ServiceFactory.shared.getScheduleService() }
+    var remoteConfigService: RemoteConfigService { ServiceFactory.shared.getRemoteConfigService() }
+    var notificationService: NotificationService { ServiceFactory.shared.getNotificationService() }
     private var userHasSelectedDay: Bool = false
 
-    func setRemoteConfigService(_ service: RemoteConfigService) {
-        self.remoteConfigService = service
-    }
-
     private var eventDays: [Int] {
-        guard let remoteConfigService else { return [] }
-        return Array(AppConfigService(remoteConfigService: remoteConfigService).getEventDays())
+        Array(AppConfigService(remoteConfigService: remoteConfigService).getEventDays())
+            .map { $0.intValue }
     }
 
     func clearError() {
@@ -36,71 +36,68 @@ class ScheduleViewModel: ObservableObject {
             return []
         }
 
-        return sections.filter { section in
-            guard section.day == Int32(eventDays[selectedDayIndex]) else {
-                return false
-            }
-
-            guard visibleTypes.contains(section.type) else {
-                return false
-            }
-
-            if favoritesOnly && !section.favorite {
-                return false
-            }
-
-            return true
-        }
+        return ScheduleFilter.shared.filterSections(
+            sections: sections,
+            selectedDay: Int32(eventDays[selectedDayIndex]),
+            filterState: filterState
+        )
     }
 
-    func loadSections(service: ScheduleService) async {
+    func loadSections() async {
         state = .loading
         do {
-            let startDate = remoteConfigService?.getStartDate() ?? SharedAppConfigServiceKt.DEFAULT_START_DATE
-            let sections = try await service.getAllExpandedSections(startDate: startDate)
+            let startDate = remoteConfigService.getStartDate()
+            let sections = try await scheduleService.getAllExpandedSections(startDate: startDate)
+            guard !Task.isCancelled else { return }
             state = .loaded(sections)
 
-            // Auto-select current day only if user hasn't manually selected one
             if !userHasSelectedDay {
                 selectCurrentDay(sections: sections)
             }
         } catch {
+            guard !Task.isCancelled else { return }
             state = .error(error.localizedDescription)
         }
     }
 
-    func refreshSections(service: ScheduleService) async {
+    func refreshSections() async {
         do {
-            _ = try await service.refreshSections()
-            // On success, reload the sections from local cache
-            await loadSections(service: service)
+            _ = try await scheduleService.refreshSections()
+            await loadSections()
             lastError = nil
         } catch {
-            // If refresh fails, keep showing existing data but track the error
+            guard !Task.isCancelled else { return }
             lastError = error
         }
     }
 
-    func toggleFavorite(section: shared.ExpandedSection, service: ScheduleService) async {
+    func toggleFavorite(section: shared.ExpandedSection) async {
         do {
-            try await service.toggleFavorite(sectionUid: section.uid, favorite: !section.favorite)
-            await loadSections(service: service)
+            try await scheduleService.toggleFavorite(sectionUid: section.uid, favorite: !section.favorite)
+            guard !Task.isCancelled else { return }
+            await loadSections()
+            await refreshNotificationsIfNeeded()
             lastError = nil
         } catch {
+            guard !Task.isCancelled else { return }
             lastError = error
         }
     }
 
-    func toggleTypeFilter(_ type: SectionType) {
-        if visibleTypes.contains(type) {
-            visibleTypes.remove(type)
-        } else {
-            visibleTypes.insert(type)
-        }
+    func toggleFavorite(sectionUid: String, favorite: Bool) async throws {
+        try await scheduleService.toggleFavorite(sectionUid: sectionUid, favorite: favorite)
+        await refreshNotificationsIfNeeded()
     }
 
-    func toggleFavoritesOnly() {
-        favoritesOnly.toggle()
+    private func refreshNotificationsIfNeeded() async {
+        let preferences = notificationService.getPreferences()
+        guard preferences.scheduleMode == .favorites else { return }
+
+        do {
+            try await notificationService.refreshScheduleNotifications()
+        } catch {
+            print("Failed to refresh notifications: \(error.localizedDescription)")
+        }
     }
 
     func selectDay(index: Int) {
@@ -108,15 +105,17 @@ class ScheduleViewModel: ObservableObject {
         userHasSelectedDay = true
     }
 
-    func loadDay(service: ScheduleService, dayIndex: Int) async {
+    func loadDay(dayIndex: Int) async {
         guard dayIndex >= 0 && dayIndex < eventDays.count else { return }
         let dayNumber = eventDays[dayIndex]
-        let startDate = remoteConfigService?.getStartDate() ?? SharedAppConfigServiceKt.DEFAULT_START_DATE
+        let startDate = remoteConfigService.getStartDate()
 
         do {
-            let sections = try await service.getExpandedSections(dayNumber: Int32(dayNumber), startDate: startDate)
+            let sections = try await scheduleService.getExpandedSections(dayNumber: Int32(dayNumber), startDate: startDate)
+            guard !Task.isCancelled else { return }
             state = .loaded(sections)
         } catch {
+            guard !Task.isCancelled else { return }
             state = .error(error.localizedDescription)
         }
     }
@@ -125,11 +124,9 @@ class ScheduleViewModel: ObservableObject {
         let now = Date()
         let currentMillis = Int64(now.timeIntervalSince1970 * 1000)
 
-        // Find first section that is currently happening
         for section in sections {
             if section.startTime.epochMillis <= currentMillis &&
                section.endTime.epochMillis >= currentMillis {
-                // Find day index from section's day number
                 if let dayIndex = eventDays.firstIndex(of: Int(section.day)) {
                     selectedDayIndex = dayIndex
                     return
@@ -137,7 +134,6 @@ class ScheduleViewModel: ObservableObject {
             }
         }
 
-        // If no current section, find the next upcoming one
         for section in sections {
             if section.startTime.epochMillis > currentMillis {
                 if let dayIndex = eventDays.firstIndex(of: Int(section.day)) {

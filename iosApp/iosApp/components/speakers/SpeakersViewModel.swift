@@ -16,17 +16,15 @@ class SpeakersViewModel: ObservableObject {
 
     var speakersService: SpeakersService { ServiceFactory.shared.getSpeakersService() }
 
-    func clearError() {
-        lastError = nil
-    }
-
     func loadSpeakers() async {
         state = .loading
         do {
             let speakers = try await speakersService.getAllSpeakers()
+            guard !Task.isCancelled else { return }
             state = .loaded(speakers)
             lastError = nil
         } catch {
+            guard !Task.isCancelled else { return }
             state = .error
             lastError = error
         }
@@ -34,6 +32,7 @@ class SpeakersViewModel: ObservableObject {
 
     func refreshSpeakers() async {
         guard !isRefreshing else { return }
+
         isRefreshing = true
         defer {
             isRefreshing = false
@@ -44,6 +43,7 @@ class SpeakersViewModel: ObservableObject {
             _ = try await speakersService.refreshSpeakers()
             await loadSpeakers()
         } catch {
+            guard !Task.isCancelled else { return }
             lastError = error
         }
     }

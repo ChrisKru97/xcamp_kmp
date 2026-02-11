@@ -2,8 +2,7 @@ import SwiftUI
 import shared
 
 struct ScheduleFilterView: View {
-    @Binding var visibleTypes: Set<SectionType>
-    @Binding var favoritesOnly: Bool
+    @Binding var filterState: ScheduleFilterState
 
     private let allTypes: [SectionType] = SectionType.entries
 
@@ -13,11 +12,11 @@ struct ScheduleFilterView: View {
                 ForEach(Array(allTypes.enumerated()), id: \.element) { index, type in
                     FilterTypeCard(
                         type: type,
-                        isVisible: visibleTypes.contains(type),
+                        isVisible: filterState.visibleTypes.contains(type),
                         onTap: {
                             UISelectionFeedbackGenerator().selectionChanged()
                             withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                                toggleType(type)
+                                filterState = filterState.toggleType(type: type)
                             }
                         }
                     )
@@ -31,11 +30,11 @@ struct ScheduleFilterView: View {
                     title: Strings.Schedule.shared.FAVORITES,
                     icon: "star.fill",
                     color: .yellow,
-                    isOn: favoritesOnly,
+                    isOn: filterState.favoritesOnly,
                     onTap: {
                         UISelectionFeedbackGenerator().selectionChanged()
                         withAnimation(.spring(response: 0.4, dampingFraction: 0.6)) {
-                            favoritesOnly.toggle()
+                            filterState = filterState.toggleFavoritesOnly()
                         }
                     }
                 )
@@ -46,16 +45,6 @@ struct ScheduleFilterView: View {
             }
             .padding(Spacing.md)
         }
-    }
-
-    private func toggleType(_ type: SectionType) {
-        var newTypes = visibleTypes
-        if newTypes.contains(type) {
-            newTypes.remove(type)
-        } else {
-            newTypes.insert(type)
-        }
-        visibleTypes = newTypes
     }
 }
 
@@ -160,24 +149,30 @@ struct FilterCard<LeadingContent: View>: View {
 
 #Preview("Filter View") {
     ScheduleFilterView(
-        visibleTypes: .constant(Set([.main, .internal])),
-        favoritesOnly: .constant(false)
+        filterState: .constant(ScheduleFilterState(
+            visibleTypes: Set([.main, .internal]),
+            favoritesOnly: false
+        ))
     )
     .preferredColorScheme(.dark)
 }
 
 #Preview("Filter View - All Selected") {
     ScheduleFilterView(
-        visibleTypes: .constant(Set([.main, .internal, .gospel, .food])),
-        favoritesOnly: .constant(false)
+        filterState: .constant(ScheduleFilterState(
+            visibleTypes: Set([.main, .internal, .gospel, .food]),
+            favoritesOnly: false
+        ))
     )
     .preferredColorScheme(.dark)
 }
 
 #Preview("Filter View - With Favorites") {
     ScheduleFilterView(
-        visibleTypes: .constant(Set([.main])),
-        favoritesOnly: .constant(true)
+        filterState: .constant(ScheduleFilterState(
+            visibleTypes: Set([.main]),
+            favoritesOnly: true
+        ))
     )
     .preferredColorScheme(.dark)
 }

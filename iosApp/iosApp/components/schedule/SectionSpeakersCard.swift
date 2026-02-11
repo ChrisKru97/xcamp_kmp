@@ -3,7 +3,8 @@ import shared
 
 struct SectionSpeakersCard: View {
     let speakerUids: [String]
-    let speakersService: SpeakersService
+
+    var speakersService: SpeakersService { ServiceFactory.shared.getSpeakersService() }
 
     @EnvironmentObject var router: AppRouter
     @State private var speakers: [Speaker] = []
@@ -41,10 +42,12 @@ struct SectionSpeakersCard: View {
     private func loadSpeakers() async {
         var loaded: [Speaker] = []
         for uid in speakerUids {
+            guard !Task.isCancelled else { return }
             if let speaker = try? await speakersService.getSpeakerById(uid: uid) {
                 loaded.append(speaker)
             }
         }
+        guard !Task.isCancelled else { return }
         speakers = loaded
     }
 
@@ -84,9 +87,6 @@ struct SectionSpeakersCard: View {
 }
 
 #Preview {
-    SectionSpeakersCard(
-        speakerUids: ["test-speaker-1", "test-speaker-2"],
-        speakersService: ServiceFactory.shared.getSpeakersService()
-    )
-    .environmentObject(AppRouter())
+    SectionSpeakersCard(speakerUids: ["test-speaker-1", "test-speaker-2"])
+        .environmentObject(AppRouter())
 }

@@ -14,7 +14,9 @@ struct SpeakerDetailView: View {
             }
         }
         .task {
-            speaker = try? await ServiceFactory.shared.getSpeakersService().getSpeakerById(uid: speakerUid)
+            let result = try? await ServiceFactory.shared.getSpeakersService().getSpeakerById(uid: speakerUid)
+            guard !Task.isCancelled else { return }
+            speaker = result
         }
     }
 }

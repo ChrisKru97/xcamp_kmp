@@ -9,6 +9,7 @@ import cz.krutsche.xcamp.shared.domain.model.FirestoreSection
 import cz.krutsche.xcamp.shared.domain.model.Section
 import cz.krutsche.xcamp.shared.domain.model.SectionType
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import cz.krutsche.xcamp.shared.db.XcampDatabaseQueries
@@ -54,6 +55,7 @@ class ScheduleRepository(
 ) : BaseRepository<Section>(databaseManager, firestoreService) {
 
     override val collectionName = "schedule"
+    override val syncMutex = Mutex()
 
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -66,12 +68,6 @@ class ScheduleRepository(
     suspend fun getSectionById(uid: String): Section? {
         return withDatabase {
             queries.selectSectionById(uid).executeAsOneOrNull()?.let { it.toDomain(json) }
-        }
-    }
-
-    suspend fun getSectionsByType(type: SectionType): List<Section> {
-        return withDatabase {
-            queries.selectSectionsByType(type.name).executeAsList().map { it.toDomain(json) }
         }
     }
 
@@ -125,38 +121,28 @@ class ScheduleRepository(
         }
     }
 
-    suspend fun syncFromFirestore(): Result<Unit> {
-        return syncFromFirestoreWithIds(
-            deserializer = FirestoreSection.serializer(),
-            injectId = { documentId, firestoreSection ->
-                Section.fromFirestoreData(documentId, firestoreSection)
-            },
-            insertItems = { sections -> insertSections(sections) },
-            clearItems = {
-                val favoriteUids = withDatabase {
-                    val uids = queries.selectFavoriteSections()
+    suspend fun syncFromFirestore(): Result<Unit> = syncFromFirestoreLocked(
+        deserializer = FirestoreSection.serializer(),
+        injectId = { documentId, firestoreSection ->
+            Section.fromFirestoreData(documentId, firestoreSection)
+        },
+        insertItems = { sections ->
+            withDatabase {
+                queries.transaction {
+                    val favoriteUids = queries.selectFavoriteSections()
                         .executeAsList()
                         .map { it.uid }
                         .toSet()
+
                     queries.deleteAllSections()
-                    uids
-                }
-                if (favoriteUids.isNotEmpty()) {
-                    withDatabase {
-                        queries.transaction {
-                            favoriteUids.forEach { uid ->
-                                queries.updateSectionFavorite(1, uid)
-                            }
-                        }
+                    sections.forEach { section ->
+                        section.toDbInsert(queries, json)
+                    }
+                    favoriteUids.forEach { uid ->
+                        queries.updateSectionFavorite(1, uid)
                     }
                 }
             }
-        )
-    }
-
-    suspend fun clearAllSections() {
-        withDatabase {
-            queries.deleteAllSections()
         }
-    }
+    )
 }

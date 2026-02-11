@@ -23,8 +23,7 @@ struct ScheduleView: View {
 
             if case .loaded = viewModel.state {
                 ScheduleFilterFab(
-                    visibleTypes: viewModel.visibleTypes,
-                    favoritesOnly: viewModel.favoritesOnly
+                    filterState: viewModel.filterState
                 ) {
                     UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     showingFilter = true
@@ -78,8 +77,7 @@ struct ScheduleView: View {
 
     private var filterSheetContent: some View {
         ScheduleFilterView(
-            visibleTypes: $viewModel.visibleTypes,
-            favoritesOnly: $viewModel.favoritesOnly
+            filterState: $viewModel.filterState
         )
         .backport.presentationDetents([.medium, .large])
     }
