@@ -3,6 +3,7 @@ package cz.krutsche.xcamp.shared.data.repository
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
 import cz.krutsche.xcamp.shared.data.firebase.StorageService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
+import cz.krutsche.xcamp.shared.data.local.EntityType
 import cz.krutsche.xcamp.shared.domain.model.FirestoreSpeaker
 import cz.krutsche.xcamp.shared.domain.model.Speaker
 import cz.krutsche.xcamp.shared.domain.model.toDbSpeaker
@@ -19,9 +20,8 @@ class SpeakersRepository(
     private val storageService: StorageService
 ) : BaseRepository<Speaker>(databaseManager, firestoreService) {
 
+    override val entityType = EntityType.SPEAKERS
     override val syncMutex = Mutex()
-
-    override val collectionName = "speakers"
 
     suspend fun getAllSpeakers(): List<Speaker> {
         return withDatabase {

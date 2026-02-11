@@ -25,15 +25,27 @@ class DatabaseManager(driverFactory: DatabaseDriverFactory) {
         }
     }
 
-    suspend fun getLastSyncTime(entity: String): Long? = withContext(Dispatchers.Default) {
-        try {
-            queries.getSyncMetadata(entity).executeAsOneOrNull()?.lastSyncTime
+    suspend fun hasCachedData(entity: EntityType): Boolean {
+        return when (entity) {
+            EntityType.PLACES -> queries.countPlaces().executeAsOne() > 0
+            EntityType.SPEAKERS -> queries.countSpeakers().executeAsOne() > 0
+            EntityType.SECTIONS -> queries.countSections().executeAsOne() > 0
+            EntityType.SONGS -> queries.countSongs().executeAsOne() > 0
+            EntityType.NEWS -> queries.countNews().executeAsOne() > 0
+            EntityType.RATINGS -> queries.countRatings().executeAsOne() > 0
+            EntityType.USERS -> false
+        }
+    }
+
+    suspend fun getLastSyncTime(entity: EntityType): Long? {
+        return try {
+            queries.getSyncMetadata(entity.collectionName).executeAsOneOrNull()?.lastSyncTime
         } catch (e: Exception) {
             null
         }
     }
 
-    suspend fun updateSyncMetadata(entity: String, syncTime: Long, version: Long = 1L) = withContext(Dispatchers.Default) {
-        queries.insertSyncMetadata(entity, syncTime, version)
+    suspend fun updateSyncMetadata(entity: EntityType, syncTime: Long, version: Long = 1L) {
+        queries.insertSyncMetadata(entity.collectionName, syncTime, version)
     }
 }

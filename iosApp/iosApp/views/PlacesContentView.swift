@@ -16,10 +16,12 @@ struct PlacesContentView: View {
     var body: some View {
         Group {
             switch viewModel.state {
-            case .loading:
+            case .initial, .loading:
                 loadingView
-            case .loaded(let places):
-                placesList(places)
+            case .loaded(let places, let isStale):
+                placesList(places, isStale: isStale)
+            case .refreshing(let places):
+                placesList(places, isStale: false)
             case .error:
                 errorView
             }
@@ -31,15 +33,19 @@ struct PlacesContentView: View {
             )
         }
         .task {
-            await viewModel.loadPlaces(service: appViewModel.placesService)
+            await viewModel.loadPlaces()
         }
     }
 
-    private func placesList(_ places: [Place]) -> some View {
+    private func placesList(_ places: [Place], isStale: Bool) -> some View {
         ScrollView {
             VStack(spacing: Spacing.lg) {
                 ArealHeroSection(imageURL: viewModel.arealImageURL) {
                     showFullscreen = true
+                }
+
+                if isStale {
+                    staleDataIndicator
                 }
 
                 LazyVGrid(columns: columns, spacing: Spacing.md) {
@@ -48,7 +54,6 @@ struct PlacesContentView: View {
                             router.push(place.uid, type: .place)
                         } label: {
                             PlaceListItem(place: place)
-                                .equatable()
                         }
                     }
                 }
@@ -58,8 +63,22 @@ struct PlacesContentView: View {
             .padding(.bottom, Spacing.xxl)
         }
         .refreshable {
-            await viewModel.refreshPlaces(service: appViewModel.placesService)
+            await viewModel.refreshPlaces()
         }
+    }
+
+    private var staleDataIndicator: some View {
+        HStack(spacing: Spacing.xs) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.caption)
+                .foregroundColor(.orange)
+            Text(Strings.Places.shared.ERROR_TITLE)
+                .font(.caption)
+                .foregroundColor(.orange)
+        }
+        .padding(Spacing.sm)
+        .background(Color.orange.opacity(0.1))
+        .cornerRadius(Spacing.sm)
     }
 
     private var loadingView: some View {
@@ -81,7 +100,7 @@ struct PlacesContentView: View {
                 .font(.headline)
             Button(Strings.Places.shared.RETRY) {
                 Task {
-                    await viewModel.loadPlaces(service: appViewModel.placesService)
+                    await viewModel.loadPlaces()
                 }
             }
             .buttonStyle(.bordered)

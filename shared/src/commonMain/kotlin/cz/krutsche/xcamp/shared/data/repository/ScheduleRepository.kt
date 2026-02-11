@@ -4,6 +4,7 @@ package cz.krutsche.xcamp.shared.data.repository
 import cz.krutsche.xcamp.shared.data.config.DEFAULT_START_DATE
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
+import cz.krutsche.xcamp.shared.data.local.EntityType
 import cz.krutsche.xcamp.shared.domain.model.ExpandedSection
 import cz.krutsche.xcamp.shared.domain.model.FirestoreSection
 import cz.krutsche.xcamp.shared.domain.model.Section
@@ -54,7 +55,7 @@ class ScheduleRepository(
     firestoreService: FirestoreService
 ) : BaseRepository<Section>(databaseManager, firestoreService) {
 
-    override val collectionName = "schedule"
+    override val entityType = EntityType.SECTIONS
     override val syncMutex = Mutex()
 
     private val json = Json { ignoreUnknownKeys = true }
