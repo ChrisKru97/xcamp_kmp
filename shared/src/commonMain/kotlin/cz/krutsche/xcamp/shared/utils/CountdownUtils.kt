@@ -1,9 +1,6 @@
-@file:OptIn(ExperimentalTime::class)
-
 package cz.krutsche.xcamp.shared.utils
 
 import kotlin.time.Clock.System.now
-import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 import cz.krutsche.xcamp.shared.localization.Strings
 

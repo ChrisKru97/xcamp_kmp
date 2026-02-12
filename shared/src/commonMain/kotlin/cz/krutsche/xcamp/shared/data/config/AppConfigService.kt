@@ -1,11 +1,8 @@
-@file:OptIn(ExperimentalTime::class)
-
 package cz.krutsche.xcamp.shared.data.config
 
 import cz.krutsche.xcamp.shared.data.firebase.RemoteConfigService
 import kotlin.time.Clock.System.now
 import kotlin.time.Duration.Companion.days
-import kotlin.time.ExperimentalTime
 import kotlin.time.Instant
 
 const val EventLength = 8
@@ -76,7 +73,7 @@ class AppConfigService(
     }
 
     /**
-     * Get the available bottom navigation tabs based on current app state
+     * Get available bottom navigation tabs based on current app state
      */
     fun getAvailableTabs(): List<AppTab> {
         val state = getAppState()

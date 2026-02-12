@@ -69,22 +69,7 @@ class SpeakersRepository(
                     }.awaitAll()
                 }
             }
-            withDatabase {
-                queries.transaction {
-                    queries.deleteAllSpeakers()
-                    speakersWithUrls.forEach { speaker ->
-                        val dbSpeaker = speaker.toDbSpeaker()
-                        queries.insertSpeaker(
-                            uid = dbSpeaker.uid,
-                            name = dbSpeaker.name,
-                            description = dbSpeaker.description,
-                            priority = dbSpeaker.priority,
-                            image = dbSpeaker.image,
-                            imageUrl = dbSpeaker.imageUrl
-                        )
-                    }
-                }
-            }
+            insertSpeakers(speakersWithUrls)
         },
         validateItems = { speakers ->
             if (speakers.isEmpty()) {

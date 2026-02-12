@@ -9,4 +9,7 @@ expect object AppPreferences {
 
     fun getDismissedForceUpdateVersion(): String?
     fun setDismissedForceUpdateVersion(version: String?)
+
+    fun getRemoteConfigCache(): RemoteConfigCache?
+    fun setRemoteConfigCache(cache: RemoteConfigCache?)
 }

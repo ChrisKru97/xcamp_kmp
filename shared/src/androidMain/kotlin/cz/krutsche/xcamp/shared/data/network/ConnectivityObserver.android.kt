@@ -10,12 +10,18 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.conflate
+import kotlinx.coroutines.flow.flowOf
+
+private lateinit var connectivityContext: Context
+
+fun initConnectivityObserver(context: Context) {
+    connectivityContext = context
+}
 
 class ConnectivityObserverAndroid(
     private val context: Context
 ) : ConnectivityObserver {
-    // TODO Implement - return empty for now
-    override val connectivityStatus: Flow<ConnectivityStatus> = null
+    override val connectivityStatus: Flow<ConnectivityStatus> = flowOf(ConnectivityStatus.ONLINE)
 
     override suspend fun getCurrentStatus(): ConnectivityStatus {
         return ConnectivityStatus.ONLINE
@@ -24,6 +30,6 @@ class ConnectivityObserverAndroid(
 
 actual fun createConnectivityObserver(): ConnectivityObserver {
     return ConnectivityObserverAndroid(
-        context = getApplicationContext()
+        context = connectivityContext
     )
 }

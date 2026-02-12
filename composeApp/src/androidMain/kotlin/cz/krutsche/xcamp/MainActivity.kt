@@ -10,11 +10,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cz.krutsche.xcamp.shared.localization.Strings
+import cz.krutsche.xcamp.shared.utils.UrlOpener
+import cz.krutsche.xcamp.shared.utils.MapOpener
 
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        UrlOpener.init(this)
+        MapOpener.init(this)
 
         setContent {
             MaterialTheme {

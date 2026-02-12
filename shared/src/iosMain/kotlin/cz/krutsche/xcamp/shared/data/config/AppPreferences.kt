@@ -8,6 +8,7 @@ actual object AppPreferences {
     private const val KEY_APP_STATE_OVERRIDE = "appStateOverride"
     private const val KEY_NOTIFICATION_PREFERENCES = "notificationPreferences"
     private const val KEY_DISMISSED_FORCE_UPDATE_VERSION = "dismissedForceUpdateVersion"
+    private const val KEY_REMOTE_CONFIG_CACHE = "remoteConfigCache"
 
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -50,6 +51,27 @@ actual object AppPreferences {
             NSUserDefaults.standardUserDefaults.removeObjectForKey(KEY_DISMISSED_FORCE_UPDATE_VERSION)
         } else {
             NSUserDefaults.standardUserDefaults.setObject(version, KEY_DISMISSED_FORCE_UPDATE_VERSION)
+        }
+    }
+
+    actual fun getRemoteConfigCache(): RemoteConfigCache? {
+        val value = NSUserDefaults.standardUserDefaults.stringForKey(KEY_REMOTE_CONFIG_CACHE)
+        return value?.let {
+            try {
+                json.decodeFromString<RemoteConfigCache>(it)
+            } catch (e: Exception) {
+                NSUserDefaults.standardUserDefaults.removeObjectForKey(KEY_REMOTE_CONFIG_CACHE)
+                null
+            }
+        }
+    }
+
+    actual fun setRemoteConfigCache(cache: RemoteConfigCache?) {
+        if (cache == null) {
+            NSUserDefaults.standardUserDefaults.removeObjectForKey(KEY_REMOTE_CONFIG_CACHE)
+        } else {
+            val encoded = json.encodeToString(cache)
+            NSUserDefaults.standardUserDefaults.setObject(encoded, KEY_REMOTE_CONFIG_CACHE)
         }
     }
 }

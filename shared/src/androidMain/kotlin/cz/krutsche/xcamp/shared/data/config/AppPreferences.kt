@@ -36,11 +36,22 @@ actual object AppPreferences {
     }
 
     actual fun getNotificationPreferences(): NotificationPreferences {
-        return NotificationPreferences() // TODO
+        if (!::context.isInitialized) return NotificationPreferences()
+        val value = prefs.getString("notificationPreferences", null)
+        return value?.let {
+            try {
+                json.decodeFromString<NotificationPreferences>(it)
+            } catch (e: Exception) {
+                prefs.edit().remove("notificationPreferences").apply()
+                NotificationPreferences()
+            }
+        } ?: NotificationPreferences()
     }
 
     actual fun setNotificationPreferences(preferences: NotificationPreferences) {
-        // TODO
+        if (!::context.isInitialized) return
+        val encoded = json.encodeToString(preferences)
+        prefs.edit().putString("notificationPreferences", encoded).apply()
     }
 
     actual fun getDismissedForceUpdateVersion(): String? {
@@ -55,6 +66,31 @@ actual object AppPreferences {
                 remove("dismissedForceUpdateVersion")
             } else {
                 putString("dismissedForceUpdateVersion", version)
+            }
+            apply()
+        }
+    }
+
+    actual fun getRemoteConfigCache(): RemoteConfigCache? {
+        if (!::context.isInitialized) return null
+        val value = prefs.getString("remoteConfigCache", null)
+        return value?.let {
+            try {
+                json.decodeFromString<RemoteConfigCache>(it)
+            } catch (e: Exception) {
+                prefs.edit().remove("remoteConfigCache").apply()
+                null
+            }
+        }
+    }
+
+    actual fun setRemoteConfigCache(cache: RemoteConfigCache?) {
+        if (!::context.isInitialized) return
+        prefs.edit().apply {
+            if (cache == null) {
+                remove("remoteConfigCache")
+            } else {
+                putString("remoteConfigCache", json.encodeToString(cache))
             }
             apply()
         }

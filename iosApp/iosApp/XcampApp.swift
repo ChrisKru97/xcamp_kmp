@@ -8,15 +8,9 @@ import Kingfisher
 
 @main
 struct XcampApp: App {
+    @UIApplicationDelegateAdaptor(NotificationDelegate.self) var notificationDelegate
     @StateObject private var appViewModel = AppViewModel()
     @StateObject private var router = AppRouter()
-
-    init() {
-        FirebaseApp.configure()
-        configureCrashlytics()
-        configureAnalytics()
-        configureKingfisherCache()
-    }
 
     var body: some Scene {
         WindowGroup {
@@ -24,7 +18,9 @@ struct XcampApp: App {
                 .environmentObject(appViewModel)
                 .environmentObject(router)
                 .onAppear {
-                    appViewModel.initializeApp()
+                    configureFirebase()
+                    configureKingfisherCache()
+                    appViewModel.initialize(notificationDelegate: notificationDelegate)
                 }
                 .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
                     Task {
@@ -32,6 +28,12 @@ struct XcampApp: App {
                     }
                 }
         }
+    }
+
+    private func configureFirebase() {
+        FirebaseApp.configure()
+        configureCrashlytics()
+        configureAnalytics()
     }
 
     private func configureCrashlytics() {
