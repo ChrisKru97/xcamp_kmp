@@ -16,14 +16,16 @@ struct PlacesContentView: View {
     var body: some View {
         Group {
             switch viewModel.state {
-            case .initial, .loading:
-                loadingView
+            case .loading:
+                LoadingView()
             case .loaded(let places, let isStale):
                 placesList(places, isStale: isStale)
             case .refreshing(let places):
                 placesList(places, isStale: false)
-            case .error:
-                errorView
+            case .error(let error):
+                ErrorView {
+                    await viewModel.loadPlaces()
+                }
             }
         }
         .sheet(isPresented: $showFullscreen) {
@@ -45,7 +47,7 @@ struct PlacesContentView: View {
                 }
 
                 if isStale {
-                    staleDataIndicator
+                    StaleDataBanner()
                 }
 
                 LazyVGrid(columns: columns, spacing: Spacing.md) {
@@ -64,46 +66,6 @@ struct PlacesContentView: View {
         }
         .refreshable {
             await viewModel.refreshPlaces()
-        }
-    }
-
-    private var staleDataIndicator: some View {
-        HStack(spacing: Spacing.xs) {
-            Image(systemName: "exclamationmark.triangle.fill")
-                .font(.caption)
-                .foregroundColor(.orange)
-            Text(Strings.Places.shared.ERROR_TITLE)
-                .font(.caption)
-                .foregroundColor(.orange)
-        }
-        .padding(Spacing.sm)
-        .background(Color.orange.opacity(0.1))
-        .cornerRadius(Spacing.sm)
-    }
-
-    private var loadingView: some View {
-        VStack(spacing: Spacing.lg) {
-            ProgressView()
-            Text(Strings.Places.shared.LOADING)
-                .font(.body)
-                .foregroundColor(.secondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-
-    private var errorView: some View {
-        VStack(spacing: Spacing.lg) {
-            Image(systemName: "exclamationmark.triangle")
-                .font(.system(size: 50))
-                .foregroundColor(.red)
-            Text(Strings.Places.shared.ERROR_TITLE)
-                .font(.headline)
-            Button(Strings.Places.shared.RETRY) {
-                Task {
-                    await viewModel.loadPlaces()
-                }
-            }
-            .buttonStyle(.bordered)
         }
     }
 }

@@ -5,23 +5,52 @@ struct SectionDetailView: View {
     let sectionUid: String
     @EnvironmentObject var scheduleViewModel: ScheduleViewModel
 
-    @State private var section: shared.Section?
+    @State private var state: ContentState<shared.Section> = .loading
     @State private var isFavorite: Bool = false
 
     var body: some View {
         Group {
-            if let section {
+            switch state {
+            case .loading:
+                LoadingView()
+            case .loaded(let section, _):
                 sectionContentView(section)
-            } else {
-                ProgressView()
+            case .refreshing(let section):
+                sectionContentView(section)
+            case .error:
+                ErrorView {
+                    await loadSection()
+                }
             }
         }
         .task {
-            let result = try? await ServiceFactory.shared.getScheduleService().getSectionById(uid: sectionUid)
+            await loadSection()
+        }
+    }
+
+    private func loadSection() async {
+        do {
+            let result = try await ServiceFactory.shared.getScheduleService().getSectionById(uid: sectionUid)
             guard !Task.isCancelled else { return }
-            section = result
-            if let section = section {
-                isFavorite = section.favorite
+            if let section = result as? shared.Section {
+                await MainActor.run {
+                    guard !Task.isCancelled else { return }
+                    state = .loaded(section)
+                    isFavorite = section.favorite
+                }
+            } else {
+                await MainActor.run {
+                    guard !Task.isCancelled else { return }
+                    state = .error(NSError(domain: "SectionDetailView", code: 404, userInfo: [
+                        NSLocalizedDescriptionKey: Strings.Schedule.shared.NOT_FOUND
+                    ]))
+                }
+            }
+        } catch {
+            guard !Task.isCancelled else { return }
+            await MainActor.run {
+                guard !Task.isCancelled else { return }
+                state = .error(error)
             }
         }
     }
@@ -60,7 +89,7 @@ struct SectionDetailView: View {
     private var favoriteIcon: some View {
         Image(systemName: isFavorite ? "star.fill" : "star")
             .foregroundColor(isFavorite ? .yellow : .secondary)
-            .animation(.spring(response: 2, dampingFraction: 0.75), value: isFavorite)
+            .animation(.spring(response: 0.3, dampingFraction: 0.75), value: isFavorite)
     }
 
     private func contentSection(_ section: shared.Section) -> some View {

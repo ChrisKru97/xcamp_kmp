@@ -1,7 +1,9 @@
 package cz.krutsche.xcamp.shared.data.config
 
+import cz.krutsche.xcamp.shared.data.DEFAULT_STALENESS_MS
 import cz.krutsche.xcamp.shared.data.ServiceFactory
 import cz.krutsche.xcamp.shared.data.repository.PlacesRepository
+import cz.krutsche.xcamp.shared.data.repository.SyncError
 import cz.krutsche.xcamp.shared.domain.model.Place
 
 /**
@@ -39,10 +41,15 @@ class PlacesService : RepositoryService<PlacesRepository>() {
      * Retrieves a specific place by its uid.
      *
      * @param uid The uid of the place (Firebase document ID)
-     * @return The place if found, null otherwise
+     * @return Result.Success with the place if found, Result.Failure if not found or on error
      */
-    suspend fun getPlaceById(uid: String): Place? {
-        return repository.getPlaceById(uid)
+    suspend fun getPlaceById(uid: String): Result<Place> {
+        val place = repository.getPlaceById(uid)
+        return if (place != null) {
+            Result.success(place)
+        } else {
+            Result.failure(SyncError.EmptyCacheError)
+        }
     }
 
     /**
@@ -62,18 +69,62 @@ class PlacesService : RepositoryService<PlacesRepository>() {
      * @return Result.Success containing the list of places, or Result.Failure on error
      */
     suspend fun refreshPlaces(): Result<List<Place>> {
-        return try {
-            val syncResult = syncFromFirestore()
-            syncResult.fold(
-                onSuccess = { Result.success(getAllPlaces()) },
-                onFailure = { Result.failure(it) }
-            )
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+        val syncResult = syncFromFirestore()
+        return syncResult.fold(
+            onSuccess = { Result.success(getAllPlaces()) },
+            onFailure = { Result.failure(it) }
+        )
     }
 
-    suspend fun getArealImageURL(): String? {
+    /**
+     * Refreshes places from Firestore with fallback to cached data.
+     *
+     * Attempts to sync from Firestore but always returns local data if available.
+     * This ensures the app remains functional even when offline.
+     *
+     * @return Result.Success containing the list of places (synced or cached), or Result.Failure if no cached data exists
+     */
+    suspend fun refreshPlacesWithFallback(): Result<List<Place>> {
+        val syncResult = syncFromFirestore()
+        val places = getAllPlaces()
+
+        return syncResult.fold(
+            onSuccess = { Result.success(places) },
+            onFailure = { error ->
+                if (places.isNotEmpty()) {
+                    Result.success(places)
+                } else {
+                    Result.failure(error)
+                }
+            }
+        )
+    }
+
+    /**
+     * Checks if the places data is stale (older than maxAgeMs).
+     *
+     * @param maxAgeMs Maximum age in milliseconds (default: 24 hours)
+     * @return true if data is stale or doesn't exist, false otherwise
+     */
+    suspend fun isDataStale(maxAgeMs: Long = DEFAULT_STALENESS_MS): Boolean {
+        return repository.isDataStale(maxAgeMs)
+    }
+
+    /**
+     * Checks if there is cached places data available.
+     *
+     * @return true if cached data exists, false otherwise
+     */
+    suspend fun hasCachedData(): Boolean {
+        return repository.hasCachedData()
+    }
+
+    /**
+     * Gets the areal (map) image URL with proper error handling.
+     *
+     * @return Result.Success with the URL, or Result.Failure on error
+     */
+    suspend fun getArealImageURL(): Result<String> {
         return repository.getArealImageURL()
     }
 }

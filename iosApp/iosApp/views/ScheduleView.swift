@@ -10,18 +10,31 @@ struct ScheduleView: View {
     @StateObject private var viewModel = ScheduleViewModel()
     @State private var showingFilter = false
 
+    private var hasContentLoaded: Bool {
+        switch viewModel.state {
+        case .loaded, .refreshing:
+            return true
+        default:
+            return false
+        }
+    }
+
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
             switch viewModel.state {
             case .loading:
-                loadingView
-            case .loaded:
-                scheduleContent(viewModel.filteredSections)
-            case .error(let message):
-                errorView(message)
+                LoadingView()
+            case .loaded(let sections, let isStale):
+                scheduleContent(sections, isStale: isStale)
+            case .refreshing(let sections):
+                scheduleContent(sections, isStale: false)
+            case .error(let error):
+                ErrorView {
+                    await viewModel.loadSections()
+                }
             }
 
-            if case .loaded = viewModel.state {
+            if hasContentLoaded {
                 ScheduleFilterFab(
                     filterState: viewModel.filterState
                 ) {
@@ -82,9 +95,13 @@ struct ScheduleView: View {
         .backport.presentationDetents([.medium, .large])
     }
 
-    private func scheduleContent(_ sections: [ScheduleSection]) -> some View {
+    private func scheduleContent(_ sections: [ScheduleSection], isStale: Bool) -> some View {
         ScrollView {
             LazyVStack(spacing: Spacing.md) {
+                if isStale {
+                    StaleDataBanner()
+                }
+
                 ForEach(sections, id: \.uid) { section in
                     Button {
                         UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -114,37 +131,6 @@ struct ScheduleView: View {
             Strings.ScheduleDays.shared.DAYS_FRIDAY,
             Strings.ScheduleDays.shared.DAYS_SATURDAY
         ]
-    }
-
-    private var loadingView: some View {
-        VStack(spacing: Spacing.lg) {
-            ProgressView()
-            Text(Strings.Schedule.shared.LOADING)
-                .font(.body)
-                .foregroundColor(.secondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-
-    private func errorView(_ message: String) -> some View {
-        VStack(spacing: Spacing.lg) {
-            Image(systemName: "exclamationmark.triangle")
-                .font(.system(size: 50))
-                .foregroundColor(.red)
-            Text(Strings.Schedule.shared.ERROR_TITLE)
-                .font(.headline)
-            Text(message)
-                .font(.body)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-            Button(Strings.Schedule.shared.RETRY) {
-                Task {
-                    await viewModel.loadSections()
-                }
-            }
-            .buttonStyle(.bordered)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private var dayTitle: String {

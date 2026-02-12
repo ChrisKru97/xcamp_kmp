@@ -1,6 +1,8 @@
 @file:OptIn(kotlin.time.ExperimentalTime::class)
 package cz.krutsche.xcamp.shared.data.firebase
 
+import cz.krutsche.xcamp.shared.data.DEFAULT_STALENESS_MS
+import cz.krutsche.xcamp.shared.data.DEFAULT_TIMEOUT
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.storage.FirebaseStorage
 import dev.gitlive.firebase.storage.storage
@@ -12,7 +14,6 @@ class StorageService {
     private val storage: FirebaseStorage = Firebase.storage
 
     private val urlCache = mutableMapOf<String, Pair<String, Long>>()
-    private val CACHE_DURATION = 24 * 60 * 60 * 1000L
 
     suspend fun uploadFile(
         path: String,
@@ -36,12 +37,12 @@ class StorageService {
         val cached = urlCache[path]
         val currentTime = now().toEpochMilliseconds()
 
-        if (!forceRefresh && cached != null && (currentTime - cached.second) < CACHE_DURATION) {
+        if (!forceRefresh && cached != null && (currentTime - cached.second) < DEFAULT_STALENESS_MS) {
             return Result.success(cached.first)
         }
 
         return try {
-            withTimeout(5.seconds) {
+            withTimeout(DEFAULT_TIMEOUT) {
                 val storageRef = storage.reference.child(path)
                 val downloadUrl = storageRef.getDownloadUrl()
                 urlCache[path] = downloadUrl to currentTime
@@ -58,7 +59,7 @@ class StorageService {
 
     suspend fun deleteFile(path: String): Result<Unit> {
         return try {
-            withTimeout(5.seconds) {
+            withTimeout(DEFAULT_TIMEOUT) {
                 val storageRef = storage.reference.child(path)
                 storageRef.delete()
                 urlCache.remove(path)

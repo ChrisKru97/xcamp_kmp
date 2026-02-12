@@ -3,12 +3,14 @@ import shared
 
 struct PlaceDetailView: View {
     let placeUid: String
-    @Environment(\.placesService) private var placesService
-    @State private var place: Place?
+    @State private var state: ContentState<Place> = .loading
 
     var body: some View {
         Group {
-            if let place {
+            switch state {
+            case .loading:
+                LoadingView()
+            case .loaded(let place, _):
                 EntityDetailView(
                     entity: place,
                     config: .place
@@ -18,12 +20,24 @@ struct PlaceDetailView: View {
                         mapsButton(place)
                     }
                 }
-            } else {
-                ProgressView()
+            case .refreshing(let place):
+                EntityDetailView(
+                    entity: place,
+                    config: .place
+                )
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        mapsButton(place)
+                    }
+                }
+            case .error:
+                ErrorView {
+                    await loadPlace()
+                }
             }
         }
         .task {
-            place = try? await placesService.getPlaceById(uid: placeUid)
+            await loadPlace()
         }
     }
 
@@ -32,7 +46,7 @@ struct PlaceDetailView: View {
         if place.latitude != nil && place.longitude != nil {
             Button {
                 if let lat = place.latitude, let lon = place.longitude {
-                    openMaps(latitude: lat.doubleValue, longitude: lon.doubleValue, name: place.name)
+                    MapOpener.shared.openMap(latitude: lat.doubleValue, longitude: lon.doubleValue, name: place.name)
                 }
             } label: {
                 Image(systemName: "map.fill")
@@ -40,11 +54,30 @@ struct PlaceDetailView: View {
         }
     }
 
-    private func openMaps(latitude: Double, longitude: Double, name: String) {
-        let region = "ll=\(latitude),\(longitude)"
-        guard let encodedName = name.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) else { return }
-        guard let url = URL(string: "http://maps.apple.com/?\(region)&q=\(encodedName)") else { return }
-        UIApplication.shared.open(url)
+    private func loadPlace() async {
+        do {
+            let result = try await ServiceFactory.shared.getPlacesService().getPlaceById(uid: placeUid)
+            guard !Task.isCancelled else { return }
+            if let place = result as? Place {
+                await MainActor.run {
+                    guard !Task.isCancelled else { return }
+                    state = .loaded(place)
+                }
+            } else {
+                await MainActor.run {
+                    guard !Task.isCancelled else { return }
+                    state = .error(NSError(domain: "PlaceDetailView", code: 404, userInfo: [
+                        NSLocalizedDescriptionKey: Strings.Places.shared.PLACE_NOT_FOUND
+                    ]))
+                }
+            }
+        } catch {
+            guard !Task.isCancelled else { return }
+            await MainActor.run {
+                guard !Task.isCancelled else { return }
+                state = .error(error)
+            }
+        }
     }
 }
 
@@ -52,18 +85,15 @@ struct PlaceDetailView: View {
 
 #Preview("Place Detail View - With Description") {
     PlaceDetailView(placeUid: "test")
-        .environment(\.placesService, PlacesService())
         .preferredColorScheme(.dark)
 }
 
 #Preview("Place Detail View - Without Description") {
     PlaceDetailView(placeUid: "test2")
-        .environment(\.placesService, PlacesService())
         .preferredColorScheme(.light)
 }
 
 #Preview("Place Detail View - Without Location") {
     PlaceDetailView(placeUid: "test3")
-        .environment(\.placesService, PlacesService())
         .preferredColorScheme(.dark)
 }

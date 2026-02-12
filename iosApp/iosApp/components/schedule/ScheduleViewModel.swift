@@ -1,15 +1,9 @@
 import SwiftUI
 import shared
 
-enum ScheduleState {
-    case loading
-    case loaded([shared.ExpandedSection])
-    case error(String)
-}
-
 @MainActor
 class ScheduleViewModel: ObservableObject {
-    @Published private(set) var state: ScheduleState = .loading
+    @Published private(set) var state: ContentState<[shared.ExpandedSection]> = .loading
     @Published private(set) var selectedDayIndex: Int = 0
     @Published var filterState: ScheduleFilterState = ScheduleFilterState(
         visibleTypes: Set(SectionType.entries),
@@ -32,9 +26,17 @@ class ScheduleViewModel: ObservableObject {
     }
 
     var filteredSections: [shared.ExpandedSection] {
-        guard case .loaded(let sections) = state else {
+        let sectionsToFilter: [shared.ExpandedSection]?
+        switch state {
+        case .loaded(let s, _):
+            sectionsToFilter = s
+        case .refreshing(let s):
+            sectionsToFilter = s
+        default:
             return []
         }
+
+        guard let sections = sectionsToFilter else { return [] }
 
         return ScheduleFilter.shared.filterSections(
             sections: sections,
@@ -56,7 +58,7 @@ class ScheduleViewModel: ObservableObject {
             }
         } catch {
             guard !Task.isCancelled else { return }
-            state = .error(error.localizedDescription)
+            state = .error(error)
         }
     }
 
@@ -116,7 +118,7 @@ class ScheduleViewModel: ObservableObject {
             state = .loaded(sections)
         } catch {
             guard !Task.isCancelled else { return }
-            state = .error(error.localizedDescription)
+            state = .error(error)
         }
     }
 

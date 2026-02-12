@@ -48,16 +48,6 @@ class ScheduleService : RepositoryService<ScheduleRepository>() {
     }
 
     /**
-     * Retrieves sections filtered by type.
-     *
-     * @param type The section type to filter by (main, internal, gospel, food)
-     * @return List of sections matching the specified type
-     */
-    suspend fun getSectionsByType(type: SectionType): List<Section> {
-        return repository.getSectionsByType(type)
-    }
-
-    /**
      * Retrieves all favorited sections.
      *
      * @return List of sections marked as favorites
@@ -117,6 +107,30 @@ class ScheduleService : RepositoryService<ScheduleRepository>() {
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    /**
+     * Refreshes sections from Firestore with fallback to cached data.
+     *
+     * Attempts to sync from Firestore but always returns local data if available.
+     * This ensures the app remains functional even when offline.
+     *
+     * @return Result.Success containing the list of sections (synced or cached), or Result.Failure if no cached data exists
+     */
+    suspend fun refreshSectionsWithFallback(): Result<List<Section>> {
+        val syncResult = syncFromFirestore()
+        val sections = getAllSections()
+
+        return syncResult.fold(
+            onSuccess = { Result.success(sections) },
+            onFailure = { error ->
+                if (sections.isNotEmpty()) {
+                    Result.success(sections)
+                } else {
+                    Result.failure(error)
+                }
+            }
+        )
     }
 
     /**

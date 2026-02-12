@@ -1,18 +1,24 @@
+@file:OptIn(kotlin.time.ExperimentalTime::class)
 package cz.krutsche.xcamp.shared.data.repository
 
+import cz.krutsche.xcamp.shared.data.DEFAULT_STALENESS_MS
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
+import cz.krutsche.xcamp.shared.data.local.EntityType
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.DeserializationStrategy
+import kotlin.time.Clock.System.now
 
 abstract class BaseRepository<T : Any>(
     protected val databaseManager: DatabaseManager,
     protected val firestoreService: FirestoreService
 ) {
     protected val queries = databaseManager.queries
-
-    abstract val collectionName: String
+    abstract val entityType: EntityType
+    protected abstract val syncMutex: Mutex
 
     protected suspend fun <R> withDatabase(block: suspend () -> R): R {
         return withContext(Dispatchers.Default) {
@@ -20,61 +26,64 @@ abstract class BaseRepository<T : Any>(
         }
     }
 
-    /**
-     * Sync from Firestore with document ID injection.
-     * Use this for collections where documents don't have an explicit 'id' field.
-     * The documentId parameter allows injecting the Firestore document ID into the domain model.
-     *
-     * @param F The Firestore data type (without id field)
-     * @param deserializer Deserialization strategy for the Firestore data
-     * @param injectId Function to inject document ID into domain model
-     * @param insertItems Function to insert the converted items into database
-     */
-    protected suspend fun <F : Any> syncFromFirestoreWithIds(
+    internal suspend fun hasCachedData(): Boolean {
+        return databaseManager.hasCachedData(entityType)
+    }
+
+    protected suspend fun getLastSyncTime(): Long? {
+        return databaseManager.getLastSyncTime(entityType)
+    }
+
+    protected suspend fun updateSyncMetadata(syncTime: Long, version: Long = 1L) {
+        databaseManager.updateSyncMetadata(entityType, syncTime, version)
+    }
+
+    internal suspend fun isDataStale(maxAgeMs: Long = DEFAULT_STALENESS_MS): Boolean {
+        val lastSync = getLastSyncTime() ?: return true
+        val currentTime = now().toEpochMilliseconds()
+        return (currentTime - lastSync) > maxAgeMs
+    }
+
+    private suspend fun <F : Any> syncFromFirestore(
         deserializer: DeserializationStrategy<F>,
-        injectId: (documentId: String, item: F) -> T,
+        injectId: ((documentId: String, item: F) -> T)? = null,
         insertItems: suspend (List<T>) -> Unit,
-        clearItems: (suspend () -> Unit)? = null
+        validateItems: (suspend (List<T>) -> Result<Unit>)? = null
     ): Result<Unit> {
         return try {
-            val result = firestoreService.getCollectionWithIds(collectionName, deserializer)
+            val result = firestoreService.getCollectionWithIds(entityType.collectionName, deserializer)
             result.fold(
                 onSuccess = { itemsWithIds ->
                     val items = itemsWithIds.map { (documentId, item) ->
-                        injectId(documentId, item)
+                        injectId?.invoke(documentId, item) ?: item as T
                     }
-                    clearItems?.invoke()
+
+                    validateItems?.invoke(items)?.fold(
+                        onSuccess = { },
+                        onFailure = { error -> return Result.failure(error) }
+                    )
+
                     insertItems(items)
+
+                    val currentTime = now().toEpochMilliseconds()
+                    updateSyncMetadata(currentTime)
                     Result.success(Unit)
                 },
                 onFailure = { error ->
-                    Result.failure(error)
+                    Result.failure(SyncError.NetworkError(error))
                 }
             )
         } catch (e: Exception) {
-            Result.failure(e)
+            Result.failure(SyncError.NetworkError(e))
         }
     }
 
-    suspend fun syncFromFirestore(
-        deserializer: DeserializationStrategy<T>,
+    protected suspend fun <F : Any> syncFromFirestoreLocked(
+        deserializer: DeserializationStrategy<F>,
+        injectId: ((documentId: String, item: F) -> T)? = null,
         insertItems: suspend (List<T>) -> Unit,
-        clearItems: (suspend () -> Unit)? = null
-    ): Result<Unit> {
-        return try {
-            val result = firestoreService.getCollection(collectionName, deserializer)
-            result.fold(
-                onSuccess = { items ->
-                    clearItems?.invoke()
-                    insertItems(items)
-                    Result.success(Unit)
-                },
-                onFailure = { error ->
-                    Result.failure(error)
-                }
-            )
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+        validateItems: (suspend (List<T>) -> Result<Unit>)? = null
+    ): Result<Unit> = syncMutex.withLock {
+        syncFromFirestore(deserializer, injectId, insertItems, validateItems)
     }
 }

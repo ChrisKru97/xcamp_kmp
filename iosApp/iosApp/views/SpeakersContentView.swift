@@ -10,11 +10,15 @@ struct SpeakersContentView: View {
         Group {
             switch viewModel.state {
             case .loading:
-                loadingView
-            case .loaded(let speakers):
+                LoadingView()
+            case .loaded(let speakers, _):
                 speakersList(speakers)
-            case .error:
-                errorView
+            case .refreshing(let speakers):
+                speakersList(speakers)
+            case .error(let error):
+                ErrorView {
+                    await viewModel.loadSpeakers()
+                }
             }
         }
         .task {
@@ -44,32 +48,6 @@ struct SpeakersContentView: View {
         }
         .refreshable {
             await viewModel.refreshSpeakers()
-        }
-    }
-
-    private var loadingView: some View {
-        VStack(spacing: Spacing.lg) {
-            ProgressView()
-            Text(Strings.Speakers.shared.LOADING)
-                .font(.body)
-                .foregroundColor(.secondary)
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-    }
-
-    private var errorView: some View {
-        VStack(spacing: Spacing.lg) {
-            Image(systemName: "exclamationmark.triangle")
-                .font(.system(size: 50))
-                .foregroundColor(.red)
-            Text(Strings.Speakers.shared.ERROR_TITLE)
-                .font(.headline)
-            Button(Strings.Speakers.shared.RETRY) {
-                Task {
-                    await viewModel.loadSpeakers()
-                }
-            }
-            .buttonStyle(.bordered)
         }
     }
 }

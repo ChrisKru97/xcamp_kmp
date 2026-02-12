@@ -2,17 +2,10 @@ import SwiftUI
 import shared
 import Kingfisher
 
-enum SpeakersState {
-    case loading
-    case loaded([Speaker])
-    case error
-}
-
 @MainActor
 class SpeakersViewModel: ObservableObject {
-    @Published private(set) var state: SpeakersState = .loading
+    @Published private(set) var state: ContentState<[Speaker]> = .loading
     @Published private(set) var lastError: Error?
-    @Published private(set) var isRefreshing = false
 
     var speakersService: SpeakersService { ServiceFactory.shared.getSpeakersService() }
 
@@ -25,17 +18,17 @@ class SpeakersViewModel: ObservableObject {
             lastError = nil
         } catch {
             guard !Task.isCancelled else { return }
-            state = .error
+            state = .error(error)
             lastError = error
         }
     }
 
     func refreshSpeakers() async {
-        guard !isRefreshing else { return }
-
-        isRefreshing = true
-        defer {
-            isRefreshing = false
+        switch state {
+        case .loaded(let speakers, _):
+            state = .refreshing(speakers)
+        default:
+            state = .loading
         }
 
         KingfisherManager.shared.cache.clearMemoryCache()

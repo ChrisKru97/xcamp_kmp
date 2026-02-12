@@ -3,10 +3,17 @@ package cz.krutsche.xcamp.shared.data.repository
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
 import cz.krutsche.xcamp.shared.data.firebase.StorageService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
+import cz.krutsche.xcamp.shared.data.local.EntityType
 import cz.krutsche.xcamp.shared.consts.StoragePaths
 import cz.krutsche.xcamp.shared.domain.model.FirestorePlace
 import cz.krutsche.xcamp.shared.domain.model.Place
 import cz.krutsche.xcamp.shared.domain.model.toDbPlace
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.withTimeout
+import kotlin.time.Duration.Companion.seconds
 
 class PlacesRepository(
     databaseManager: DatabaseManager,
@@ -14,7 +21,8 @@ class PlacesRepository(
     private val storageService: StorageService
 ) : BaseRepository<Place>(databaseManager, firestoreService) {
 
-    override val collectionName = "places"
+    override val entityType = EntityType.PLACES
+    override val syncMutex = Mutex()
 
     suspend fun getAllPlaces(): List<Place> {
         return withDatabase {
@@ -28,6 +36,7 @@ class PlacesRepository(
 
     suspend fun insertPlaces(places: List<Place>) = withDatabase {
         queries.transaction {
+            queries.deleteAllPlaces()
             places.forEach { place ->
                 val dbPlace = place.toDbPlace()
                 queries.insertPlace(
@@ -44,26 +53,36 @@ class PlacesRepository(
         }
     }
 
-    suspend fun syncFromFirestore(): Result<Unit> {
-        return syncFromFirestoreWithIds(
-            deserializer = FirestorePlace.serializer(),
-            injectId = { documentId, firestorePlace ->
-                Place.fromFirestoreData(documentId, firestorePlace)
-            },
-            insertItems = { places ->
-                val placesWithUrls = places.map { place ->
-                    if (place.image != null) {
-                        val urlResult = storageService.getDownloadUrl(place.image)
-                        place.copy(imageUrl = urlResult.getOrNull())
-                    } else {
-                        place
-                    }
+    suspend fun syncFromFirestore(): Result<Unit> = syncFromFirestoreLocked(
+        deserializer = FirestorePlace.serializer(),
+        injectId = { documentId, firestorePlace ->
+            Place.fromFirestoreData(documentId, firestorePlace)
+        },
+        insertItems = { places ->
+            val placesWithUrls = withTimeout(30.seconds) {
+                coroutineScope {
+                    places.map { place ->
+                        async {
+                            if (place.image != null) {
+                                val urlResult = storageService.getDownloadUrl(place.image)
+                                place.copy(imageUrl = urlResult.getOrNull())
+                            } else {
+                                place
+                            }
+                        }
+                    }.awaitAll()
                 }
-                insertPlaces(placesWithUrls)
-            },
-            clearItems = { withDatabase { queries.deleteAllPlaces() } }
-        )
-    }
+            }
+            insertPlaces(placesWithUrls)
+        },
+        validateItems = { places ->
+            if (places.isEmpty()) {
+                Result.failure(SyncError.ValidationError("No places received from Firestore"))
+            } else {
+                Result.success(Unit)
+            }
+        }
+    )
 
     private fun mapToPlace(dbPlace: cz.krutsche.xcamp.shared.db.Place): Place {
         return cz.krutsche.xcamp.shared.domain.model.Place(
@@ -78,8 +97,7 @@ class PlacesRepository(
         )
     }
 
-    suspend fun getArealImageURL(): String? {
+    suspend fun getArealImageURL(): Result<String> {
         return storageService.getDownloadUrl(StoragePaths.AREAL_MAP)
-            .getOrNull()
     }
 }
