@@ -8,47 +8,54 @@ class AppViewModel: ObservableObject {
     @Published var showForceUpdateAlert: Bool = false
     @Published var showForceUpdateWarning: Bool = false
 
-    // Cached services - lazy initialization without nil-checks on each access
-    // Note: remoteConfigService must be declared before services that depend on it
-    lazy var remoteConfigService = RemoteConfigService()
-    lazy var appConfigService: AppConfigService = AppConfigService(remoteConfigService: remoteConfigService)
-    lazy var linksService: LinksService = LinksService(remoteConfigService: remoteConfigService)
-    lazy var placesService = PlacesService()
-    lazy var speakersService = SpeakersService()
-    lazy var scheduleService = ScheduleService()
+    private let initializationCanceller = TaskCanceller()
+    private let foregroundCanceller = TaskCanceller()
 
-    #if targetEnvironment(simulator)
-    var isSimulator: Bool { true }
-    #else
-    var isSimulator: Bool { false }
-    #endif
+    // ServiceFactory-backed services - singletons managed by shared module
+    var remoteConfigService: RemoteConfigService { ServiceFactory.shared.getRemoteConfigService() }
+    var appConfigService: AppConfigService { ServiceFactory.shared.getAppConfigService() }
+    var linksService: LinksService { ServiceFactory.shared.getLinksService() }
+    var placesService: PlacesService { ServiceFactory.shared.getPlacesService() }
+    var speakersService: SpeakersService { ServiceFactory.shared.getSpeakersService() }
+    var scheduleService: ScheduleService { ServiceFactory.shared.getScheduleService() }
+    var notificationService: NotificationService { ServiceFactory.shared.getNotificationService() }
 
-    func initializeApp() {
-        let authService = AuthService()
+    deinit {
+        initializationCanceller.cancel()
+        foregroundCanceller.cancel()
+    }
 
-        let appInitializer = AppInitializer(
-            appConfigService: appConfigService,
-            authService: authService
-        )
+    func initialize(notificationDelegate: NotificationDelegate) {
+        notificationDelegate.registerForRemoteNotifications()
 
-        Task {
+        initializationCanceller.run { [self] in
+            let platform = Platform()
+
+            let appInitializer = AppInitializer(
+                appConfigService: appConfigService,
+                platform: platform
+            )
+
             do {
                 try await appInitializer.initialize()
-                
+                try await notificationService.initialize()
+
+                guard !Task.isCancelled else { return }
+
                 await checkForceUpdate(currentVersion: platform.appVersion)
 
                 await MainActor.run {
-                    var calculatedState = appConfigService.getAppState()
-                    // Override to ACTIVE_EVENT when running in simulator for development
-                    if isSimulator {
-                        calculatedState = .activeEvent
-                    }
-                    self.appState = calculatedState
+                    self.appState = appConfigService.getAppState()
                     self.isLoading = false
                 }
-                // Lazy load places, speakers, and schedule in parallel after Remote Config loads
+                guard !Task.isCancelled else { return }
+
                 await syncAllDataInBackground()
+
+                await refreshScheduleNotificationsIfNeeded()
+                await refreshPrayerNotificationIfNeeded()
             } catch {
+                guard !Task.isCancelled else { return }
                 await MainActor.run {
                     isLoading = false
                 }
@@ -58,7 +65,7 @@ class AppViewModel: ObservableObject {
 
     func checkForceUpdate(currentVersion: String) async {
         let forceUpdateVersion = remoteConfigService.getForceUpdateVersion()
-        let dismissedVersion = AppPreferences.getDismissedForceUpdateVersion()
+        let dismissedVersion = AppPreferences.shared.getDismissedForceUpdateVersion()
         if VersionUtilsKt.needsForceUpdate(currentVersion: currentVersion, requiredVersion: forceUpdateVersion),
            dismissedVersion != forceUpdateVersion {
             await MainActor.run {
@@ -68,33 +75,66 @@ class AppViewModel: ObservableObject {
     }
 
     func checkForceUpdateOnForeground() async {
-        let platform = Platform()
-        _ = try? await remoteConfigService.fetchAndActivate()
-        await checkForceUpdate(currentVersion: platform.appVersion)
+        foregroundCanceller.run { [self] in
+            let platform = Platform()
+            _ = try? await remoteConfigService.fetchAndActivate()
+            guard !Task.isCancelled else { return }
+            await checkForceUpdate(currentVersion: platform.appVersion)
+        }
     }
 
-    /// Syncs all data (places, speakers, schedule) in parallel using async-let
-    /// This is more efficient than launching separate tasks as async-let provides
-    /// structured concurrency with proper cancellation and error handling
     private func syncAllDataInBackground() async {
-        // Run all sync tasks in parallel
         async let places = syncPlaces()
         async let speakers = syncSpeakers()
         async let schedule = syncSchedule()
 
-        // Wait for all tasks to complete
         await (places, speakers, schedule)
     }
 
     private func syncPlaces() async {
-        try? await placesService.refreshPlaces()
+        do {
+            let _ = try await placesService.refreshPlacesWithFallback()
+        } catch {
+            print("Places sync failed: \(error.localizedDescription)")
+        }
     }
 
     private func syncSpeakers() async {
-        try? await speakersService.refreshSpeakers()
+        do {
+            let _ = try await speakersService.refreshSpeakersWithFallback()
+        } catch {
+            print("Speakers sync failed: \(error.localizedDescription)")
+        }
     }
 
     private func syncSchedule() async {
-        try? await scheduleService.refreshSections()
+        do {
+            let _ = try await scheduleService.refreshSectionsWithFallback()
+        } catch {
+            print("Schedule sync failed: \(error.localizedDescription)")
+        }
+    }
+
+    private func refreshScheduleNotificationsIfNeeded() async {
+        guard appState == .activeEvent else { return }
+
+        do {
+            try await notificationService.refreshScheduleNotifications()
+        } catch {
+            print("Failed to refresh notifications: \(error.localizedDescription)")
+        }
+    }
+
+    private func refreshPrayerNotificationIfNeeded() async {
+        let preferences = notificationService.getPreferences()
+        guard preferences.prayerDayEnabled else { return }
+
+        guard appState == .limited || appState == .preEvent else {
+            try? await notificationService.cancelPrayerNotification()
+            return
+        }
+
+        let startDate = remoteConfigService.getStartDate()
+        try? await notificationService.schedulePrayerNotifications(startDate: startDate)
     }
 }
