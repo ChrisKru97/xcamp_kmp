@@ -76,6 +76,8 @@ Combined tab using a segmented picker interface to switch between:
 ## Rating Tab ("Hodnocení")
 **Available only after the event ends (if showAppData = true)**
 
+> **Important**: Rating is an **online-only feature**. It requires network connectivity and does NOT persist data locally. The feature should be hidden or disabled when offline.
+
 - **Post-Event Feedback**: Rating and evaluation system for attendees
 - **Event Rating**: Comprehensive feedback collection (via anonymous stars and comments)
 - **Feedback Categories**: Harmonogram dne, Chrost, Duchovní poradenství, Svolávací znělka, Infobudka, Výzdoba stanu a modlitební místnosti, Mercy café, Ostatní

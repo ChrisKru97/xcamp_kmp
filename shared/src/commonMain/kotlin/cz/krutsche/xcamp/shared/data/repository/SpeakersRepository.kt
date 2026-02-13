@@ -1,6 +1,7 @@
 package cz.krutsche.xcamp.shared.data.repository
 
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
+import cz.krutsche.xcamp.shared.localization.Strings
 import cz.krutsche.xcamp.shared.data.firebase.StorageService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.data.local.EntityType
@@ -73,7 +74,7 @@ class SpeakersRepository(
         },
         validateItems = { speakers ->
             if (speakers.isEmpty()) {
-                Result.failure(SyncError.ValidationError("No speakers received from Firestore"))
+                Result.failure(ValidationError)
             } else {
                 Result.success(Unit)
             }

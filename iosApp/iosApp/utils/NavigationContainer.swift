@@ -22,10 +22,10 @@ struct NavigationContainer: View {
         .onAppear {
             configureTabBarAppearance()
         }
-        .onChange(of: colorScheme) {
+        .onChange(of: colorScheme) { _ in
             configureTabBarAppearance()
         }
-        .onChange(of: router.selectedTab) {
+        .onChange(of: router.selectedTab) { _ in
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
         }
         .onReceive(NotificationCenter.default.publisher(for: .navigateToSection)) { notification in

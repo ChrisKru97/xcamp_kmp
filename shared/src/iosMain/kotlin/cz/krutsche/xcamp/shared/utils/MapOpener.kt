@@ -9,22 +9,18 @@ actual object MapOpener {
             NSCharacterSet.URLQueryAllowedCharacterSet
         ) ?: ""
 
-        // Try Apple Maps (native, always available)
         if (tryOpenUrl("http://maps.apple.com/?daddr=$latitude,$longitude&q=$encodedName")) {
             return
         }
 
-        // Try Google Maps app
         if (tryOpenUrl("comgooglemaps://?q=$latitude,$longitude")) {
             return
         }
 
-        // Try Waze
         if (tryOpenUrl("waze://?ll=$latitude,$longitude&navigate=yes")) {
             return
         }
 
-        // Fallback to Google Maps web
         tryOpenUrl("https://maps.google.com/?q=$latitude,$longitude")
     }
 

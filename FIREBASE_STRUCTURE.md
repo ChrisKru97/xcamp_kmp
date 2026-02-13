@@ -141,6 +141,8 @@ Camp location data with GPS coordinates and descriptions.
 #### 7. `rating` Collection
 Numeric ratings for events, sessions, or content.
 
+> **Important**: This collection is **online-only**. The app does NOT cache ratings locally or use SQLDelight sync for this feature.
+
 **Document Structure:**
 ```json
 {
@@ -152,8 +154,9 @@ Numeric ratings for events, sessions, or content.
 }
 ```
 
-**Document ID:** User Firebase Auth UID  
+**Document ID:** User Firebase Auth UID
 **Usage:** Event feedback system, analytics, quality tracking
+**Access Pattern:** Direct Firestore queries only, no local caching
 
 #### 8. `songs` Collection
 Song lyrics database with numbering system.
@@ -207,6 +210,8 @@ Textual feedback for specific events or sessions.
 #### 11. `users` Collection
 Device information and FCM tokens for push notifications.
 
+> **Important**: This collection is **write-only from the app perspective**. The app writes user data (registration, FCM tokens) but does NOT fetch or query user documents. Used for registration and analytics purposes only.
+
 **Document Structure:**
 ```json
 {
@@ -237,6 +242,7 @@ Device information and FCM tokens for push notifications.
 
 **Document ID:** User Firebase Auth UID
 **Usage:** Push notification delivery, device analytics, user management
+**Access Pattern:** Write-only (registration, FCM token updates) - no read queries by app
 
 ### Deleted Collections (Event-Specific)
 

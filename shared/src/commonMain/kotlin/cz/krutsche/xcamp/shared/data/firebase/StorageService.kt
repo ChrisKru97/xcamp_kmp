@@ -22,10 +22,6 @@ class StorageService {
     ): Result<String> {
         return try {
             withTimeout(30.seconds) {
-                // TODO: Fix proper platform-specific ByteArray to Data conversion
-                // val storageRef = storage.reference.child(path)
-                // storageRef.putData(data.toPlatformData())
-                // val downloadUrl = storageRef.getDownloadUrl()
                 Result.failure(Exception("Storage upload not yet implemented"))
             }
         } catch (e: Exception) {

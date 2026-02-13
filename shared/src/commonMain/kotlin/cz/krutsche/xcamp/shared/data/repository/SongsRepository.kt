@@ -22,11 +22,6 @@ class SongsRepository(
         queries.selectSongByNumber(number).executeAsOneOrNull()?.let(::mapToSong)
     }
 
-    suspend fun searchSongs(query: String): List<Song> = withDatabase {
-        val searchQuery = "%$query%"
-        queries.searchSongs(searchQuery, searchQuery).executeAsList().map(::mapToSong)
-    }
-
     suspend fun insertSongs(songs: List<Song>) = withDatabase {
         queries.transaction {
             queries.deleteAllSongs()

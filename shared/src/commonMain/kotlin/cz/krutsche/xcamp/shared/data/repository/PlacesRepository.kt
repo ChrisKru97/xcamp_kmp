@@ -1,6 +1,7 @@
 package cz.krutsche.xcamp.shared.data.repository
 
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
+import cz.krutsche.xcamp.shared.localization.Strings
 import cz.krutsche.xcamp.shared.data.firebase.StorageService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.data.local.EntityType
@@ -77,7 +78,7 @@ class PlacesRepository(
         },
         validateItems = { places ->
             if (places.isEmpty()) {
-                Result.failure(SyncError.ValidationError("No places received from Firestore"))
+                Result.failure(ValidationError)
             } else {
                 Result.success(Unit)
             }

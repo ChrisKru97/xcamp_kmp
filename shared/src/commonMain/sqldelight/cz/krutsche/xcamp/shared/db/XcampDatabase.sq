@@ -33,8 +33,7 @@ CREATE TABLE IF NOT EXISTS Speaker (
 
 -- News table
 CREATE TABLE IF NOT EXISTS News (
-    id INTEGER NOT NULL PRIMARY KEY,
-    uid TEXT NOT NULL CHECK (length(uid) > 0),
+    uid TEXT NOT NULL PRIMARY KEY CHECK (length(uid) > 0),
     title TEXT NOT NULL CHECK (length(title) > 0),
     text TEXT NOT NULL CHECK (length(text) > 0),
     time INTEGER NOT NULL CHECK (time > 0)
@@ -53,15 +52,6 @@ CREATE TABLE IF NOT EXISTS Section (
     leader TEXT,
     type TEXT NOT NULL CHECK (length(type) > 0),
     favorite INTEGER NOT NULL DEFAULT 0 CHECK (favorite IN (0, 1))
-);
-
--- Rating table
-CREATE TABLE IF NOT EXISTS Rating (
-    id INTEGER NOT NULL PRIMARY KEY,
-    category TEXT NOT NULL CHECK (length(category) > 0),
-    rating INTEGER CHECK (rating IS NULL OR (rating >= 1 AND rating <= 5)),
-    comment TEXT,
-    timestamp INTEGER NOT NULL CHECK (timestamp > 0)
 );
 
 -- Sync metadata table for tracking last sync times and versions
@@ -84,17 +74,9 @@ insertSpeaker:
 INSERT OR REPLACE INTO Speaker(uid, name, description, priority, image, imageUrl)
 VALUES (?, ?, ?, ?, ?, ?);
 
-insertNews:
-INSERT OR REPLACE INTO News(id, uid, title, text, time)
-VALUES (?, ?, ?, ?, ?);
-
 insertSection:
 INSERT OR REPLACE INTO Section(uid, name, description, days, startTime, endTime, place, speakers, leader, type, favorite)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
-
-insertRating:
-INSERT OR REPLACE INTO Rating(id, category, rating, comment, timestamp)
-VALUES (?, ?, ?, ?, ?);
 
 -- Select operations
 selectAllPlaces:
@@ -109,20 +91,11 @@ SELECT * FROM Song ORDER BY number;
 selectSongByNumber:
 SELECT * FROM Song WHERE number = ?;
 
-searchSongs:
-SELECT * FROM Song WHERE name LIKE ? OR text LIKE ? ORDER BY number;
-
 selectAllSpeakers:
 SELECT * FROM Speaker ORDER BY priority, name;
 
 selectSpeakerById:
 SELECT * FROM Speaker WHERE uid = ?;
-
-selectAllNews:
-SELECT * FROM News ORDER BY time DESC;
-
-selectRecentNews:
-SELECT * FROM News ORDER BY time DESC LIMIT ?;
 
 selectAllSections:
 SELECT * FROM Section ORDER BY uid;
@@ -133,24 +106,16 @@ SELECT * FROM Section WHERE uid = ?;
 selectSectionsByType:
 SELECT * FROM Section WHERE type = ? ORDER BY uid;
 
-selectFavoriteSections:
-SELECT * FROM Section WHERE favorite = 1 ORDER BY uid;
+selectSectionsByFavorite:
+SELECT * FROM Section WHERE favorite = ? ORDER BY uid;
 
-selectAllRatings:
-SELECT * FROM Rating ORDER BY category;
+selectSectionsByTypeAndFavorite:
+SELECT * FROM Section WHERE type = ? AND favorite = ? ORDER BY uid;
 
-selectRatingsByCategory:
-SELECT * FROM Rating WHERE category = ?;
 
 -- Update operations
 updateSectionFavorite:
 UPDATE Section SET favorite = ? WHERE uid = ?;
-
-updatePlaceImageUrl:
-UPDATE Place SET imageUrl = ? WHERE uid = ?;
-
-updateSpeakerImageUrl:
-UPDATE Speaker SET imageUrl = ? WHERE uid = ?;
 
 -- Delete operations
 deleteAllPlaces:
@@ -162,32 +127,14 @@ DELETE FROM Song;
 deleteAllSpeakers:
 DELETE FROM Speaker;
 
-deleteAllNews:
-DELETE FROM News;
-
 deleteAllSections:
 DELETE FROM Section;
 
-deleteAllRatings:
-DELETE FROM Rating;
-
-deletePlaceById:
-DELETE FROM Place WHERE uid = ?;
-
-deleteSongByNumber:
-DELETE FROM Song WHERE number = ?;
-
-deleteSpeakerById:
-DELETE FROM Speaker WHERE uid = ?;
-
-deleteNewsById:
-DELETE FROM News WHERE id = ?;
+deleteAllNews:
+DELETE FROM News;
 
 deleteSectionById:
 DELETE FROM Section WHERE uid = ?;
-
-deleteRatingById:
-DELETE FROM Rating WHERE id = ?;
 
 -- Count operations
 countPlaces:
@@ -207,26 +154,17 @@ SELECT COUNT(*) FROM Song;
 countSpeakers:
 SELECT COUNT(*) FROM Speaker;
 
-countNews:
-SELECT COUNT(*) FROM News;
-
 countSections:
 SELECT COUNT(*) FROM Section;
 
-countRatings:
-SELECT COUNT(*) FROM Rating;
+countNews:
+SELECT COUNT(*) FROM News;
 
 -- Indexes for query optimization
 CREATE INDEX IF NOT EXISTS idx_song_name ON Song(name);
 
-CREATE INDEX IF NOT EXISTS idx_section_type ON Section(type);
-
-CREATE INDEX IF NOT EXISTS idx_section_favorite ON Section(favorite);
+CREATE INDEX IF NOT EXISTS idx_section_type_favorite ON Section(type, favorite);
 
 CREATE INDEX IF NOT EXISTS idx_speaker_priority_name ON Speaker(priority, name);
 
 CREATE INDEX IF NOT EXISTS idx_place_priority_name ON Place(priority, name);
-
-CREATE INDEX IF NOT EXISTS idx_news_time ON News(time DESC);
-
-CREATE INDEX IF NOT EXISTS idx_song_text ON Song(text);

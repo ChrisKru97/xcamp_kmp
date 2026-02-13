@@ -24,7 +24,6 @@ class ConnectivityObserverIos : ConnectivityObserver {
         val monitor = nw_path_monitor_create()
         val queue = dispatch_get_main_queue()
 
-        // Emit initial status immediately when collector starts
         val initialStatus = when (nw_path_get_status(monitor)) {
             nw_path_status_satisfied -> ConnectivityStatus.ONLINE
             else -> ConnectivityStatus.OFFLINE

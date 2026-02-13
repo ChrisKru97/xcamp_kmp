@@ -3,8 +3,9 @@ package cz.krutsche.xcamp.shared.data.config
 import cz.krutsche.xcamp.shared.data.DEFAULT_STALENESS_MS
 import cz.krutsche.xcamp.shared.data.ServiceFactory
 import cz.krutsche.xcamp.shared.data.repository.PlacesRepository
-import cz.krutsche.xcamp.shared.data.repository.SyncError
+import cz.krutsche.xcamp.shared.data.repository.CacheEmptyError
 import cz.krutsche.xcamp.shared.domain.model.Place
+import cz.krutsche.xcamp.shared.localization.Strings
 
 /**
  * Service for managing Place entities.
@@ -48,7 +49,7 @@ class PlacesService : RepositoryService<PlacesRepository>() {
         return if (place != null) {
             Result.success(place)
         } else {
-            Result.failure(SyncError.EmptyCacheError)
+            Result.failure(CacheEmptyError)
         }
     }
 

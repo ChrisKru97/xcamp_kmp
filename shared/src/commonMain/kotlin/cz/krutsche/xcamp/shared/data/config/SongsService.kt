@@ -22,10 +22,6 @@ class SongsService : RepositoryService<SongsRepository>() {
         return repository.getSongByNumber(number)
     }
 
-    suspend fun searchSongs(query: String): List<Song> {
-        return repository.searchSongs(query)
-    }
-
     override suspend fun syncFromFirestore(): Result<Unit> {
         return repository.syncFromFirestore()
     }

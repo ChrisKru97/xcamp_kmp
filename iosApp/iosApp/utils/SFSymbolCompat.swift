@@ -1,6 +1,5 @@
 import SwiftUI
 
-/// Version-aware SF Symbol provider with iOS 15 fallbacks
 enum SFSymbolCompat {
     static func icon(for key: IconKey) -> String {
         if #available(iOS 16.0, *) {
@@ -10,9 +9,6 @@ enum SFSymbolCompat {
         }
     }
 
-    static func systemImage(_ key: IconKey) -> some View {
-        Image(systemName: icon(for: key))
-    }
 }
 
 enum IconKey {

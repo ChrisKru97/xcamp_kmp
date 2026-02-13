@@ -20,7 +20,6 @@ class DatabaseManager(driverFactory: DatabaseDriverFactory) {
                 queries.deleteAllSpeakers()
                 queries.deleteAllNews()
                 queries.deleteAllSections()
-                queries.deleteAllRatings()
             }
         }
     }
@@ -32,8 +31,8 @@ class DatabaseManager(driverFactory: DatabaseDriverFactory) {
             EntityType.SECTIONS -> queries.countSections().executeAsOne() > 0
             EntityType.SONGS -> queries.countSongs().executeAsOne() > 0
             EntityType.NEWS -> queries.countNews().executeAsOne() > 0
-            EntityType.RATINGS -> queries.countRatings().executeAsOne() > 0
-            EntityType.USERS -> false
+            EntityType.RATINGS -> false // Online-only feature
+            EntityType.USERS -> false // Not user oriented
         }
     }
 

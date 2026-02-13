@@ -1,6 +1,5 @@
 import Foundation
 
-/// A utility class to manage cancellable tasks in ViewModels
 final class TaskCanceller {
     private var _task: Task<Void, Never>?
 

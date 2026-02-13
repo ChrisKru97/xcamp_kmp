@@ -5,6 +5,7 @@ import cz.krutsche.xcamp.shared.data.DEFAULT_STALENESS_MS
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.data.local.EntityType
+import cz.krutsche.xcamp.shared.localization.Strings
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -70,11 +71,11 @@ abstract class BaseRepository<T : Any>(
                     Result.success(Unit)
                 },
                 onFailure = { error ->
-                    Result.failure(SyncError.NetworkError(error))
+                    Result.failure(NetworkError)
                 }
             )
         } catch (e: Exception) {
-            Result.failure(SyncError.NetworkError(e))
+            Result.failure(NetworkError)
         }
     }
 
