@@ -74,9 +74,40 @@ class ScheduleRepository(
 
     suspend fun getFavoriteSections(): List<Section> {
         return withDatabase {
-            queries.selectFavoriteSections().executeAsList().map { it.toDomain(json) }
+            queries.selectSectionsByFavorite(1).executeAsList().map { it.toDomain(json) }
         }
     }
+
+    suspend fun getSectionsByTypeAndFavorite(type: SectionType, favorite: Boolean): List<Section> {
+        return withDatabase {
+            queries.selectSectionsByTypeAndFavorite(type.name, if (favorite) 1 else 0)
+                .executeAsList()
+                .map { it.toDomain(json) }
+        }
+    }
+
+    suspend fun getSectionsByTypesAndFavorite(types: Set<SectionType>, favoritesOnly: Boolean): List<Section> {
+        return withDatabase {
+            if (types.size == 1 && favoritesOnly) {
+                val type = types.first()
+                getSectionsByTypeAndFavorite(type, true)
+            } else if (types.size == 1) {
+                queries.selectSectionsByType(types.first().name).executeAsList()
+                    .map { it.toDomain(json) }
+            } else if (favoritesOnly) {
+                queries.selectSectionsByFavorite(1).executeAsList()
+                    .map { it.toDomain(json) }
+                    .filter { it.type in types }
+            } else {
+                queries.selectAllSections().executeAsList()
+                    .map { it.toDomain(json) }
+                    .filter { it.type in types }
+            }
+        }
+    }
+
+    // TODO: Add SQL query for type + favorite combination to avoid loading all sections into memory
+    // Current implementation loads all sections when favoritesOnly=true with multiple types, then filters in Kotlin
 
     suspend fun getExpandedSections(dayNumber: Int, startDate: String = DEFAULT_START_DATE): List<ExpandedSection> {
         return withDatabase {
@@ -96,6 +127,25 @@ class ScheduleRepository(
         return withDatabase {
             getAllSections()
                 .flatMap { it.expand(startDate) }
+                .sortedBy { it.startTime }
+        }
+    }
+
+    suspend fun getExpandedSectionsByTypesAndFavorite(
+        dayNumber: Int,
+        types: Set<SectionType>,
+        favoritesOnly: Boolean,
+        startDate: String = DEFAULT_START_DATE
+    ): List<ExpandedSection> {
+        return withDatabase {
+            getSectionsByTypesAndFavorite(types, favoritesOnly)
+                .flatMap { section ->
+                    if (dayNumber in section.days) {
+                        section.expand(startDate).filter { it.day == dayNumber }
+                    } else {
+                        emptyList()
+                    }
+                }
                 .sortedBy { it.startTime }
         }
     }
@@ -130,9 +180,9 @@ class ScheduleRepository(
         insertItems = { sections ->
             withDatabase {
                 queries.transaction {
-                    val favoriteUids = queries.selectFavoriteSections()
+                    val favoriteUids = queries.selectSectionsByFavorite(1)
                         .executeAsList()
-                        .map { it.uid }
+                        .map { section -> section.uid }
                         .toSet()
 
                     queries.deleteAllSections()

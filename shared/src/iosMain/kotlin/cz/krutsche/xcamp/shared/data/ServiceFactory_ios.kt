@@ -31,7 +31,7 @@ actual object ServiceFactory {
     private val _scheduleRepository: ScheduleRepository by lazy {
         ScheduleRepository(_databaseManager, _firestoreService)
     }
-    private val _notificationService: NotificationService by lazy { NotificationService(_scheduleRepository) }
+    private val _notificationService: NotificationService by lazy { NotificationService() }
     private val _authService: AuthService by lazy { AuthService(getUsersRepository()) }
     private val _placesRepository: PlacesRepository by lazy {
         PlacesRepository(_databaseManager, _firestoreService, _storageService)

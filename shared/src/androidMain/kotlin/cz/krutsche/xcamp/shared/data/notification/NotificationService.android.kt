@@ -1,8 +1,13 @@
 package cz.krutsche.xcamp.shared.data.notification
 
+import android.Manifest.permission.POST_NOTIFICATIONS
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.core.content.ContextCompat
 import cz.krutsche.xcamp.shared.data.DEFAULT_TIMEOUT
 import cz.krutsche.xcamp.shared.data.config.AppPreferences
 import cz.krutsche.xcamp.shared.data.config.NotificationPreferences
+import cz.krutsche.xcamp.shared.data.repository.ScheduleRepository
 import cz.krutsche.xcamp.shared.domain.model.Section
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.messaging.messaging
@@ -13,6 +18,10 @@ actual class NotificationService {
     private var _currentPreferences: NotificationPreferences? = null
     private var fcmToken: String? = null
 
+    private val _scheduleRepository: ScheduleRepository by lazy {
+        cz.krutsche.xcamp.shared.data.ServiceFactory.getScheduleRepository()
+    }
+
     actual fun getPreferences(): NotificationPreferences {
         return _currentPreferences ?: AppPreferences.getNotificationPreferences().also {
             _currentPreferences = it
@@ -22,6 +31,33 @@ actual class NotificationService {
     actual suspend fun initialize() {
         _currentPreferences = AppPreferences.getNotificationPreferences()
         retrieveFCMToken()
+    }
+
+    actual suspend fun getPermissionStatus(): NotificationPermissionStatus {
+        return when {
+            Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU -> {
+                when {
+                    hasPermission() -> NotificationPermissionStatus.Authorized
+                    else -> NotificationPermissionStatus.Denied
+                }
+            }
+            else -> NotificationPermissionStatus.Authorized
+        }
+    }
+
+    actual suspend fun requestPermission(): Result<NotificationPermissionStatus> {
+        return Result.success(getPermissionStatus())
+    }
+
+    actual suspend fun hasPermission(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            val context = AppPreferences.context
+            return ContextCompat.checkSelfPermission(
+                context,
+                POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        }
+        return true
     }
 
     private suspend fun retrieveFCMToken() = withTimeout(DEFAULT_TIMEOUT) {
@@ -51,7 +87,7 @@ actual class NotificationService {
 
     actual suspend fun getFCMToken(): String? = fcmToken
 
-    fun updatePreferences(preferences: NotificationPreferences) {
+    actual fun updatePreferences(preferences: NotificationPreferences) {
         _currentPreferences = preferences
         AppPreferences.setNotificationPreferences(preferences)
     }

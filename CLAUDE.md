@@ -60,9 +60,12 @@ Use latest KMP-compatible APIs. For platform-specific guidance, see:
 
 ## Key Dependencies
 
-- Firebase GitLive SDK 2.4.0
-- SQLDelight 2.1.0
-- Kotlin 2.2.20 + Coroutines 1.10.2
+- Firebase GitLive SDK 2.4.0 (Auth, Firestore, Storage, Remote Config)
+- Firebase Crashlytics (platform-native, manual versioning)
+  - Android: firebase-crashlytics 19.5.1
+  - iOS: FirebaseCrashlytics (native SDK)
+- SQLDelight 2.2.1
+- Kotlin 2.3.10 + Coroutines 1.10.2
 
 ## App State & Navigation
 
@@ -80,11 +83,14 @@ Dynamic bottom tabs controlled by Remote Config `showAppData`:
 
 **Project**: `xcamp-dea26`
 
-- Auth: Anonymous on app start
-- Firestore: 5-second timeout protection
-- Storage: Photo uploads, speaker/place images
-- Remote Config: Feature flags, app state
-- Analytics & Crashlytics: Monitoring
+- Auth: Anonymous on app start (via Firebase GitLive SDK)
+- Firestore: 5-second timeout protection (via Firebase GitLive SDK)
+- Storage: Photo uploads, speaker/place images (via Firebase GitLive SDK)
+- Remote Config: Feature flags, app state (via Firebase GitLive SDK)
+- Crashlytics: Platform-native SDKs with expect/actual bridge
+  - Android: Firebase Crashlytics SDK
+  - iOS: FirebaseCrashlytics (native, wrapped in Kotlin)
+  - Shared: `CrashlyticsService` expect/actual interface for cross-platform error reporting
 
 **Collections**:
 - Persistent: `chrost`, `feedback`, `info`, `places`, `rating`, `songs`, `speakers`, `textRating`, `users`, `notifications`, `merch`

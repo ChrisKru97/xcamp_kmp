@@ -23,21 +23,12 @@ data class ScheduleFilterState(
     }
 }
 
-// TODO shouldn't be done rather by sqlite query?
+// Day filtering only - type and favorite filtering now done at SQL level
 object ScheduleFilter {
-    fun filterSections(
+    fun filterSectionsByDay(
         sections: List<ExpandedSection>,
-        selectedDay: Int,
-        filterState: ScheduleFilterState
+        selectedDay: Int
     ): List<ExpandedSection> {
-        return sections.filter { section ->
-            if (section.day != selectedDay) return@filter false
-
-            if (!filterState.visibleTypes.contains(section.type)) return@filter false
-
-            if (filterState.favoritesOnly && !section.favorite) return@filter false
-
-            true
-        }
+        return sections.filter { it.day == selectedDay }
     }
 }

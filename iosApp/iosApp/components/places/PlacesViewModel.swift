@@ -2,34 +2,97 @@ import SwiftUI
 import shared
 import Kingfisher
 
-enum PlacesState {
-    case loading
-    case loaded([Place])
-    case error
-}
-
 @MainActor
 class PlacesViewModel: ObservableObject {
-    @Published private(set) var state: PlacesState = .loading
+    @Published private(set) var state: ContentState<[Place]> = .loading
     @Published private(set) var arealImageURL: String? = nil
 
-    func loadPlaces(service: PlacesService) async {
-        state = .loading
-        do {
-            let places = try await service.getAllPlaces()
-            arealImageURL = try? await service.getArealImageURL()
-            state = .loaded(places)
-        } catch {
-            state = .error
+    var placesService: PlacesService { ServiceFactory.shared.getPlacesService() }
+
+    func loadPlaces(useCache: Bool = false) async {
+        if !useCache {
+            switch state {
+            case .loading:
+                break
+            default:
+                state = .loading
+            }
+        }
+
+        let hasCached = try? await placesService.hasCachedData()
+        let isStale = try? await placesService.isDataStale(maxAgeMs: 3600000).boolValue ?? true
+
+        if useCache, hasCached?.boolValue == true {
+            let places = (try? await placesService.getAllPlaces()) ?? []
+            let isStaleValue = isStale ?? true
+            await loadArealImage()
+            state = .loaded(places, isStale: isStaleValue)
+        } else {
+            await refreshAndHandleResult(isRefresh: false)
         }
     }
 
-    func refreshPlaces(service: PlacesService) async {
+    func refreshPlaces() async {
         KingfisherManager.shared.cache.clearMemoryCache()
+
+        switch state {
+        case .loaded(let places, _):
+            state = .refreshing(places)
+        default:
+            state = .loading
+        }
+
         do {
-            _ = try await service.refreshPlaces()
-            await loadPlaces(service: service)
+            let result = try await placesService.refreshPlacesWithFallback()
+            guard !Task.isCancelled else { return }
+            let places = result as? [Place] ?? []
+
+            await loadArealImage()
+            guard !Task.isCancelled else { return }
+            let isStale = (try? await placesService.isDataStale(maxAgeMs: 3600000))?.boolValue ?? true
+            guard !Task.isCancelled else { return }
+            state = .loaded(places, isStale: isStale)
         } catch {
+            guard !Task.isCancelled else { return }
+            if case .refreshing(let places) = state {
+                state = .loaded(places, isStale: true)
+            } else {
+                state = .error(error)
+            }
+        }
+    }
+
+    private func refreshAndHandleResult(isRefresh: Bool) async {
+        do {
+            let result = try await placesService.refreshPlacesWithFallback()
+            guard !Task.isCancelled else { return }
+            let places = result as? [Place] ?? []
+
+            await loadArealImage()
+
+            guard !Task.isCancelled else { return }
+            let isStale = (try? await placesService.isDataStale(maxAgeMs: 3600000))?.boolValue ?? true
+            guard !Task.isCancelled else { return }
+            state = .loaded(places, isStale: isStale)
+        } catch {
+            guard !Task.isCancelled else { return }
+            if isRefresh, case .refreshing(let places) = state {
+                state = .loaded(places, isStale: true)
+            } else {
+                state = .error(error)
+            }
+        }
+    }
+
+    private func loadArealImage() async {
+        do {
+            let result = try await placesService.getArealImageURL()
+            guard !Task.isCancelled else { return }
+            if let arealUrl = result as? String {
+                arealImageURL = arealUrl
+            }
+        } catch {
+            print("Failed to load areal image: \(error.localizedDescription)")
         }
     }
 }

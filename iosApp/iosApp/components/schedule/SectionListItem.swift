@@ -11,7 +11,7 @@ struct SectionListItem: View, Equatable {
     var body: some View {
             HStack(spacing: Spacing.md) {
                 VStack(alignment: .leading, spacing: Spacing.xs) {
-                    Text(formatTime(section.startTime.epochMillis))
+                    Text(formatTime(section.startTime.toEpochMilliseconds()))
                         .font(.caption)
                         .foregroundColor(.secondary)
                     Text(section.name)

@@ -1,4 +1,4 @@
-import SwiftUI
+import CoreGraphics
 
 struct Spacing {
     static let xs: CGFloat = 4

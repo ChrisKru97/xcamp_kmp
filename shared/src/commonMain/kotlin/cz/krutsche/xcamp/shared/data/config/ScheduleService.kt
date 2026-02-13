@@ -81,6 +81,22 @@ class ScheduleService : RepositoryService<ScheduleRepository>() {
         return repository.getAllExpandedSections(startDate)
     }
 
+    suspend fun getExpandedSectionsByTypesAndFavorite(
+        dayNumber: Int,
+        types: Set<SectionType>,
+        favoritesOnly: Boolean,
+        startDate: String = DEFAULT_START_DATE
+    ): List<ExpandedSection> {
+        return repository.getExpandedSectionsByTypesAndFavorite(dayNumber, types, favoritesOnly, startDate)
+    }
+
+    suspend fun getSectionsByTypesAndFavorite(
+        types: Set<SectionType>,
+        favoritesOnly: Boolean
+    ): List<Section> {
+        return repository.getSectionsByTypesAndFavorite(types, favoritesOnly)
+    }
+
     /**
      * Synchronizes section data from Firestore to the local database.
      *
@@ -98,15 +114,11 @@ class ScheduleService : RepositoryService<ScheduleRepository>() {
      * @return Result.Success containing the list of sections, or Result.Failure on error
      */
     suspend fun refreshSections(): Result<List<Section>> {
-        return try {
-            val syncResult = syncFromFirestore()
-            syncResult.fold(
-                onSuccess = { Result.success(getAllSections()) },
-                onFailure = { Result.failure(it) }
-            )
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+        val syncResult = syncFromFirestore()
+        return syncResult.fold(
+            onSuccess = { Result.success(getAllSections()) },
+            onFailure = { Result.failure(it) }
+        )
     }
 
     /**

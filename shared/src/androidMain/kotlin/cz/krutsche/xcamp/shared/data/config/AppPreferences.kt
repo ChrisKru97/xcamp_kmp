@@ -6,7 +6,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 actual object AppPreferences {
-    private lateinit var context: Context
+    lateinit var context: Context
     private val prefs: SharedPreferences by lazy {
         context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
     }

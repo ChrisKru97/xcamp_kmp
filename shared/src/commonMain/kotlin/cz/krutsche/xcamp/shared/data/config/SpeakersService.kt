@@ -62,19 +62,39 @@ class SpeakersService : RepositoryService<SpeakersRepository>() {
      * @return Result.Success containing the list of speakers, or Result.Failure on error
      */
     suspend fun refreshSpeakers(): Result<List<Speaker>> {
-        return try {
-            val syncResult = syncFromFirestore()
-            syncResult.fold(
-                onSuccess = {
-                    val speakers = getAllSpeakers()
+        val syncResult = syncFromFirestore()
+        return syncResult.fold(
+            onSuccess = {
+                val speakers = getAllSpeakers()
+                Result.success(speakers)
+            },
+            onFailure = {
+                Result.failure(it)
+            }
+        )
+    }
+
+    /**
+     * Refreshes speakers from Firestore with fallback to cached data.
+     *
+     * Attempts to sync from Firestore but always returns local data if available.
+     * This ensures the app remains functional even when offline.
+     *
+     * @return Result.Success containing the list of speakers (synced or cached), or Result.Failure if no cached data exists
+     */
+    suspend fun refreshSpeakersWithFallback(): Result<List<Speaker>> {
+        val syncResult = syncFromFirestore()
+        val speakers = getAllSpeakers()
+
+        return syncResult.fold(
+            onSuccess = { Result.success(speakers) },
+            onFailure = { error ->
+                if (speakers.isNotEmpty()) {
                     Result.success(speakers)
-                },
-                onFailure = {
-                    Result.failure(it)
+                } else {
+                    Result.failure(error)
                 }
-            )
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+            }
+        )
     }
 }

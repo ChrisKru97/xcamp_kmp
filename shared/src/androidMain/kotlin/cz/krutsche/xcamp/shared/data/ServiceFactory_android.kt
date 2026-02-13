@@ -25,7 +25,6 @@ actual object ServiceFactory {
     private val _firestoreService: FirestoreService by lazy { FirestoreService() }
     private val _storageService: StorageService by lazy { StorageService() }
     private val _remoteConfigService: RemoteConfigService by lazy { RemoteConfigService() }
-    private val _notificationService: NotificationService by lazy { NotificationService() }
     private val _connectivityObserver: ConnectivityObserver by lazy { createConnectivityObserver() }
     private val _appPreferences: AppPreferences by lazy { AppPreferences }
     private val _databaseManager: DatabaseManager by lazy { DatabaseFactory.getDatabaseManager() }
@@ -45,6 +44,7 @@ actual object ServiceFactory {
     private val _usersRepository: UsersRepository by lazy {
         UsersRepository(_firestoreService)
     }
+    private val _notificationService: NotificationService by lazy { NotificationService() }
     private val _appConfigService: AppConfigService by lazy { AppConfigService(_remoteConfigService) }
     private val _linksService: LinksService by lazy { LinksService(_remoteConfigService) }
     private val _scheduleService: ScheduleService by lazy { ScheduleService() }

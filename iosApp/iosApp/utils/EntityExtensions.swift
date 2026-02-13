@@ -1,4 +1,3 @@
-import SwiftUI
 import shared
 
 // MARK: - Entity Extensions for Image URL
