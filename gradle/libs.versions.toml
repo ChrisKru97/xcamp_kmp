@@ -43,7 +43,8 @@ firebase-config = { module = "dev.gitlive:firebase-config", version.ref = "fireb
 firebase-messaging = { module = "dev.gitlive:firebase-messaging", version.ref = "firebase-kotlin-sdk" }
 
 # Firebase Native Android
-firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics", version = "19.5.1" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics", version = "19.2.0" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics", version = "22.3.0" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

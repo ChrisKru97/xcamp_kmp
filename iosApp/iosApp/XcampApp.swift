@@ -58,7 +58,10 @@ struct XcampApp: App {
     }
 
     private func configureAnalytics() {
-        Analytics.setAnalyticsCollectionEnabled(true)
+        let hasConsent = AppPreferences.shared.getAnalyticsConsent()
+        Analytics.setAnalyticsCollectionEnabled(hasConsent)
+
+        guard hasConsent else { return }
 
         let platform = Platform()
 

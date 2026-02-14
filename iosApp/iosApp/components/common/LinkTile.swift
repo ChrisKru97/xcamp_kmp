@@ -7,7 +7,12 @@ struct LinkTile<T: LinkData>: View {
     var body: some View {
         Button {
             guard !item.url.isEmpty else { return }
-            UrlOpener.shared.openUrl(url: item.url)
+            // For address links, use MapOpener which has proper fallback logic -- TODO MOVE IT
+            if let infoLink = item as? InfoLink, infoLink.type == InfoLinkType.address {
+                MapOpener.shared.openMap(latitude: 49.7158, longitude: 18.5934, name: "Smilovice 79")
+            } else {
+                UrlOpener.shared.openUrl(url: item.url)
+            }
         } label: {
             tileContent
         }

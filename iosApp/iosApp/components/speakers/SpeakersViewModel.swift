@@ -14,10 +14,19 @@ class SpeakersViewModel: ObservableObject {
             let speakers = try await speakersService.getAllSpeakers()
             guard !Task.isCancelled else { return }
             state = .loaded(speakers)
+
+            logScreenView()
         } catch {
             guard !Task.isCancelled else { return }
             state = .error(error)
         }
+    }
+
+    private func logScreenView() {
+        AnalyticsHelper.shared.logEvent(name: "screen_view", parameters: [
+            "screen_name": "speakers",
+            "tab_name": "speakers"
+        ])
     }
 
     func refreshSpeakers() async {

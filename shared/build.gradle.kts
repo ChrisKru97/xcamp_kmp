@@ -38,6 +38,11 @@ kotlin {
                     freeCompilerArgs.add("-Xbinary=bundleId=com.krutsche.xcamp.shared")
                 }
             }
+            cinterops {
+                create("CrashlyticsBridge") {
+                    defFile(project.file("src/iosMain/cinterop/CrashlyticsBridge.def"))
+                }
+            }
         }
     }
 
@@ -68,6 +73,9 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.sqldelight.android.driver)
+            implementation(libs.firebase.common.ktx)
+            implementation(libs.firebase.analytics)
+            implementation(libs.firebase.crashlytics)
         }
 
         iosMain.dependencies {

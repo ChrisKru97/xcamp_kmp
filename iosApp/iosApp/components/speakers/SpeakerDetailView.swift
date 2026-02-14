@@ -3,20 +3,36 @@ import shared
 
 struct SpeakerDetailView: View {
     let speakerUid: String
-    @State private var speaker: Speaker?
+    @State private var state: ContentState<Speaker> = .loading
+
+    var speakersService: SpeakersService { ServiceFactory.shared.getSpeakersService() }
 
     var body: some View {
-        Group {
-            if let speaker {
+        EmptyView()
+            .switchingContent(state) { speaker, _ in
                 EntityDetailView(entity: speaker, config: .speaker)
-            } else {
-                ProgressView()
+            } error: { error in
+                ErrorView(error: error) {
+                    await loadSpeaker()
+                }
             }
-        }
-        .task {
-            let result = try? await ServiceFactory.shared.getSpeakersService().getSpeakerById(uid: speakerUid)
+            .task {
+                await loadSpeaker()
+            }
+    }
+
+    private func loadSpeaker() async {
+        do {
+            let result = try await speakersService.getSpeakerById(uid: speakerUid)
             guard !Task.isCancelled else { return }
-            speaker = result
+            if let speaker = result as? Speaker {
+                state = .loaded(speaker)
+            } else {
+                state = .error(AppError.notFound)
+            }
+        } catch {
+            guard !Task.isCancelled else { return }
+            state = .error(error)
         }
     }
 }

@@ -1,0 +1,9 @@
+// CrashlyticsBridge cinterop configuration
+language = Objective-C
+package = crashlytics.bridge
+
+headers = /Users/christiankrutsche/Documents/xcamp_kmp/shared/src/iosMain/cinterop/CrashlyticsBridge.h
+
+// Link to Foundation framework
+linkerOpts = -framework Foundation
+compilerOpts = -framework Foundation

@@ -95,4 +95,14 @@ actual object AppPreferences {
             apply()
         }
     }
+
+    actual fun getAnalyticsConsent(): Boolean {
+        if (!::context.isInitialized) return false
+        return prefs.getBoolean("analyticsConsent", false)
+    }
+
+    actual fun setAnalyticsConsent(consent: Boolean) {
+        if (!::context.isInitialized) return
+        prefs.edit().putBoolean("analyticsConsent", consent).apply()
+    }
 }

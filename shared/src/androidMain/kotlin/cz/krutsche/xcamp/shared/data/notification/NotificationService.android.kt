@@ -1,6 +1,7 @@
 package cz.krutsche.xcamp.shared.data.notification
 
 import android.Manifest.permission.POST_NOTIFICATIONS
+import cz.krutsche.xcamp.shared.data.ServiceFactory
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.content.ContextCompat
@@ -19,7 +20,7 @@ actual class NotificationService {
     private var fcmToken: String? = null
 
     private val _scheduleRepository: ScheduleRepository by lazy {
-        cz.krutsche.xcamp.shared.data.ServiceFactory.getScheduleRepository()
+        ServiceFactory.getScheduleRepository()
     }
 
     actual fun getPreferences(): NotificationPreferences {
