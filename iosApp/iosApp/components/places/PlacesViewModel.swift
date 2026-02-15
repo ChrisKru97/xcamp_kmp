@@ -11,12 +11,7 @@ class PlacesViewModel: ObservableObject {
 
     func loadPlaces(useCache: Bool = false) async {
         if !useCache {
-            switch state {
-            case .loading:
-                break
-            default:
-                state = .loading
-            }
+            state = .loading
         }
 
         let hasCached = try? await placesService.hasCachedData()
@@ -30,6 +25,15 @@ class PlacesViewModel: ObservableObject {
         } else {
             await refreshAndHandleResult(isRefresh: false)
         }
+
+        logScreenView()
+    }
+
+    private func logScreenView() {
+        AnalyticsHelper.shared.logEvent(name: "screen_view", parameters: [
+            "screen_name": "places",
+            "tab_name": "places"
+        ])
     }
 
     func refreshPlaces() async {

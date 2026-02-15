@@ -12,4 +12,7 @@ expect object AppPreferences {
 
     fun getRemoteConfigCache(): RemoteConfigCache?
     fun setRemoteConfigCache(cache: RemoteConfigCache?)
+
+    fun getAnalyticsConsent(): Boolean
+    fun setAnalyticsConsent(consent: Boolean)
 }

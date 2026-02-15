@@ -1,0 +1,6 @@
+language = Objective-C
+package = analytics.bridge
+headers = /Users/christiankrutsche/Documents/xcamp_kmp/shared/src/iosMain/cinterop/AnalyticsBridge.h
+
+linkerOpts = -framework Foundation
+compilerOpts = -framework Foundation

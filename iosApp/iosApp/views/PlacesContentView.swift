@@ -14,29 +14,23 @@ struct PlacesContentView: View {
     ]
 
     var body: some View {
-        Group {
-            switch viewModel.state {
-            case .loading:
-                LoadingView()
-            case .loaded(let places, let isStale):
+        EmptyView()
+            .switchingContent(viewModel.state) { places, isStale in
                 placesList(places, isStale: isStale)
-            case .refreshing(let places):
-                placesList(places, isStale: false)
-            case .error(let error):
-                ErrorView {
+            } error: { error in
+                ErrorView(error: error) {
                     await viewModel.loadPlaces()
                 }
             }
-        }
-        .sheet(isPresented: $showFullscreen) {
-            FullscreenImageView(
-                imageURL: viewModel.arealImageURL,
-                isPresented: $showFullscreen
-            )
-        }
-        .task {
-            await viewModel.loadPlaces()
-        }
+            .sheet(isPresented: $showFullscreen) {
+                FullscreenImageView(
+                    imageURL: viewModel.arealImageURL,
+                    isPresented: $showFullscreen
+                )
+            }
+            .task {
+                await viewModel.loadPlaces()
+            }
     }
 
     private func placesList(_ places: [Place], isStale: Bool) -> some View {
@@ -67,6 +61,7 @@ struct PlacesContentView: View {
         .refreshable {
             await viewModel.refreshPlaces()
         }
+        .background(Color.background)
     }
 }
 

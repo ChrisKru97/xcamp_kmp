@@ -9,6 +9,7 @@ actual object AppPreferences {
     private const val KEY_NOTIFICATION_PREFERENCES = "notificationPreferences"
     private const val KEY_DISMISSED_FORCE_UPDATE_VERSION = "dismissedForceUpdateVersion"
     private const val KEY_REMOTE_CONFIG_CACHE = "remoteConfigCache"
+    private const val KEY_ANALYTICS_CONSENT = "analyticsConsent"
 
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -73,5 +74,14 @@ actual object AppPreferences {
             val encoded = json.encodeToString(cache)
             NSUserDefaults.standardUserDefaults.setObject(encoded, KEY_REMOTE_CONFIG_CACHE)
         }
+    }
+
+    actual fun getAnalyticsConsent(): Boolean {
+        val value = NSUserDefaults.standardUserDefaults.stringForKey(KEY_ANALYTICS_CONSENT)
+        return value?.toBooleanStrictOrNull() ?: false
+    }
+
+    actual fun setAnalyticsConsent(consent: Boolean) {
+        NSUserDefaults.standardUserDefaults.setObject(consent.toString(), KEY_ANALYTICS_CONSENT)
     }
 }

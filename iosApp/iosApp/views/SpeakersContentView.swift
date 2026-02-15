@@ -7,20 +7,14 @@ struct SpeakersContentView: View {
     @StateObject private var viewModel = SpeakersViewModel()
 
     var body: some View {
-        Group {
-            switch viewModel.state {
-            case .loading:
-                LoadingView()
-            case .loaded(let speakers, _):
+        EmptyView()
+            .switchingContent(viewModel.state) { speakers, _ in
                 speakersList(speakers)
-            case .refreshing(let speakers):
-                speakersList(speakers)
-            case .error(let error):
-                ErrorView {
+            } error: { error in
+                ErrorView(error: error) {
                     await viewModel.loadSpeakers()
                 }
             }
-        }
         .task {
             await viewModel.loadSpeakers()
         }

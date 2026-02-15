@@ -42,6 +42,9 @@ kotlin {
                 create("CrashlyticsBridge") {
                     defFile(project.file("src/iosMain/cinterop/CrashlyticsBridge.def"))
                 }
+                create("AnalyticsBridge") {
+                    defFile(project.file("src/iosMain/cinterop/AnalyticsBridge.def"))
+                }
             }
         }
     }
@@ -73,7 +76,6 @@ kotlin {
         androidMain.dependencies {
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.sqldelight.android.driver)
-            implementation(libs.firebase.common.ktx)
             implementation(libs.firebase.analytics)
             implementation(libs.firebase.crashlytics)
         }

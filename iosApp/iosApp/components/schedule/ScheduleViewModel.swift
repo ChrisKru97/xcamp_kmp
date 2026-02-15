@@ -53,10 +53,19 @@ class ScheduleViewModel: ObservableObject {
             if !userHasSelectedDay {
                 selectCurrentDay(sections: sections)
             }
+
+            logScreenView()
         } catch {
             guard !Task.isCancelled else { return }
             state = .error(error)
         }
+    }
+
+    private func logScreenView() {
+        AnalyticsHelper.shared.logEvent(name: "screen_view", parameters: [
+            "screen_name": "schedule",
+            "tab_name": "schedule"
+        ])
     }
 
     func refreshSections() async {
@@ -81,11 +90,19 @@ class ScheduleViewModel: ObservableObject {
     }
 
     func toggleFavorite(section: shared.ExpandedSection) async {
+        let isAdding = !section.favorite
         do {
-            try await scheduleService.toggleFavorite(sectionUid: section.uid, favorite: !section.favorite)
+            try await scheduleService.toggleFavorite(sectionUid: section.uid, favorite: isAdding)
             guard !Task.isCancelled else { return }
             await reloadCurrentDayWithFilter()
             await refreshNotificationsIfNeeded()
+
+            let eventName = isAdding ? "favorite_add" : "favorite_remove"
+            AnalyticsHelper.shared.logEvent(name: eventName, parameters: [
+                "entity_type": "session",
+                "entity_id": section.uid,
+                "entity_name": section.name
+            ])
         } catch {
             guard !Task.isCancelled else { return }
             print("Failed to toggle favorite: \(error.localizedDescription)")
@@ -106,6 +123,12 @@ class ScheduleViewModel: ObservableObject {
     func selectDay(index: Int) {
         selectedDayIndex = index
         userHasSelectedDay = true
+
+        let dayNumber = eventDays[index]
+        AnalyticsHelper.shared.logEvent(name: "screen_view", parameters: [
+            "screen_name": "schedule_day",
+            "day_number": String(dayNumber)
+        ])
     }
 
     func reloadCurrentDayWithFilter() async {

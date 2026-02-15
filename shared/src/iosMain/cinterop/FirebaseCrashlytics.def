@@ -1,9 +1,0 @@
-// FirebaseCrashlytics cinterop configuration
-language = Objective-C
-package = firebase.crashlytics
-
-// Use module import for FirebaseCrashlytics
-modules = FirebaseCrashlytics
-
-// Link to FirebaseCrashlytics and Foundation frameworks
-compilerOpts = -framework FirebaseCrashlytics -framework Foundation

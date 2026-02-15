@@ -46,4 +46,12 @@ class SpeakersViewModel: ObservableObject {
             guard !Task.isCancelled else { return }
         }
     }
+
+    func logSpeakerDetailView(speakerId: String, speakerName: String) {
+        AnalyticsHelper.shared.logEvent(name: "content_view", parameters: [
+            "content_type": "speaker",
+            "content_id": speakerId,
+            "entity_name": speakerName
+        ])
+    }
 }

@@ -8,50 +8,35 @@ struct SectionDetailView: View {
     @State private var state: ContentState<shared.Section> = .loading
     @State private var isFavorite: Bool = false
 
+    var scheduleService: ScheduleService { ServiceFactory.shared.getScheduleService() }
+
     var body: some View {
-        Group {
-            switch state {
-            case .loading:
-                LoadingView()
-            case .loaded(let section, _):
+        EmptyView()
+            .switchingContent(state) { section, _ in
                 sectionContentView(section)
-            case .refreshing(let section):
-                sectionContentView(section)
-            case .error:
-                ErrorView {
+            } error: { error in
+                ErrorView(error: error) {
                     await loadSection()
                 }
             }
-        }
-        .task {
-            await loadSection()
-        }
+            .task {
+                await loadSection()
+            }
     }
 
     private func loadSection() async {
         do {
-            let result = try await ServiceFactory.shared.getScheduleService().getSectionById(uid: sectionUid)
+            let result = try await scheduleService.getSectionById(uid: sectionUid)
             guard !Task.isCancelled else { return }
             if let section = result as? shared.Section {
-                await MainActor.run {
-                    guard !Task.isCancelled else { return }
-                    state = .loaded(section)
-                    isFavorite = section.favorite
-                }
+                state = .loaded(section)
+                isFavorite = section.favorite
             } else {
-                await MainActor.run {
-                    guard !Task.isCancelled else { return }
-                    state = .error(NSError(domain: "SectionDetailView", code: 404, userInfo: [
-                        NSLocalizedDescriptionKey: Strings.Schedule.shared.NOT_FOUND
-                    ]))
-                }
+                state = .error(AppError.notFound)
             }
         } catch {
             guard !Task.isCancelled else { return }
-            await MainActor.run {
-                guard !Task.isCancelled else { return }
-                state = .error(error)
-            }
+            state = .error(error)
         }
     }
 
@@ -68,7 +53,7 @@ struct SectionDetailView: View {
                     Task {
                         isFavorite.toggle()
                         do {
-                            try await scheduleViewModel.toggleFavorite(sectionUid: section.uid, favorite: isFavorite)
+                            try await scheduleService.toggleFavorite(sectionUid: section.uid, favorite: isFavorite)
                             if isFavorite {
                                 UINotificationFeedbackGenerator().notificationOccurred(.success)
                             }
