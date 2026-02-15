@@ -6,6 +6,7 @@ import cz.krutsche.xcamp.shared.data.config.LinksService
 import cz.krutsche.xcamp.shared.data.config.PlacesService
 import cz.krutsche.xcamp.shared.data.config.ScheduleService
 import cz.krutsche.xcamp.shared.data.config.SpeakersService
+import cz.krutsche.xcamp.shared.data.firebase.AnalyticsService
 import cz.krutsche.xcamp.shared.data.firebase.AuthService
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
 import cz.krutsche.xcamp.shared.data.firebase.RemoteConfigService
@@ -24,6 +25,7 @@ actual object ServiceFactory {
     private val _firestoreService: FirestoreService by lazy { FirestoreService() }
     private val _storageService: StorageService by lazy { StorageService() }
     private val _remoteConfigService: RemoteConfigService by lazy { RemoteConfigService() }
+    private val _analyticsService: AnalyticsService by lazy { AnalyticsService }
     private val _connectivityObserver: ConnectivityObserver by lazy { createConnectivityObserver() }
     private val _appPreferences: AppPreferences by lazy { AppPreferences }
     private val _databaseManager: DatabaseManager by lazy { DatabaseFactory.getDatabaseManager() }
@@ -55,6 +57,7 @@ actual object ServiceFactory {
     actual fun getFirestoreService() = _firestoreService
     actual fun getStorageService() = _storageService
     actual fun getRemoteConfigService() = _remoteConfigService
+    actual fun getAnalyticsService() = _analyticsService
     actual fun getNotificationService() = _notificationService
     actual fun getConnectivityObserver() = _connectivityObserver
     actual fun getAppPreferences() = _appPreferences

@@ -12,6 +12,7 @@ class PlacesViewModel: ObservableObject {
     func loadPlaces(useCache: Bool = false) async {
         if !useCache {
             state = .loading
+            logContentState(state: "loading", error: nil)
         }
 
         let hasCached = try? await placesService.hasCachedData()
@@ -30,10 +31,25 @@ class PlacesViewModel: ObservableObject {
     }
 
     private func logScreenView() {
-        Analytics.Companion.logScreenView(screenName: "places")
+        Analytics().logScreenView(screenName: "places")
+    }
+
+    private func logContentState(state: String, error: Error?) {
+        var params: [String: String] = [
+            AnalyticsParameters.PARAM_SCREEN_NAME: "places",
+            AnalyticsParameters.PARAM_STATE: state
+        ]
+        if let error = error {
+            params[AnalyticsParameters.PARAM_ERROR_TYPE] = error.localizedDescription
+        }
+        Analytics().logEvent(name: AnalyticsEvents.CONTENT_STATE, parameters: params)
     }
 
     func refreshPlaces() async {
+        Analytics().logEvent(name: AnalyticsEvents.PULL_REFRESH, parameters: [
+            AnalyticsParameters.PARAM_SCREEN_NAME: "places"
+        ])
+
         KingfisherManager.shared.cache.clearMemoryCache()
 
         switch state {
@@ -59,6 +75,7 @@ class PlacesViewModel: ObservableObject {
                 state = .loaded(places, isStale: true)
             } else {
                 state = .error(error)
+                logContentState(state: "error", error: error)
             }
         }
     }
@@ -75,12 +92,14 @@ class PlacesViewModel: ObservableObject {
             let isStale = (try? await placesService.isDataStale(maxAgeMs: 3600000))?.boolValue ?? true
             guard !Task.isCancelled else { return }
             state = .loaded(places, isStale: isStale)
+            logContentState(state: "content", error: nil)
         } catch {
             guard !Task.isCancelled else { return }
             if isRefresh, case .refreshing(let places) = state {
                 state = .loaded(places, isStale: true)
             } else {
                 state = .error(error)
+                logContentState(state: "error", error: error)
             }
         }
     }
@@ -97,11 +116,17 @@ class PlacesViewModel: ObservableObject {
         }
     }
 
+    func logMapView() {
+        Analytics().logEvent(name: AnalyticsEvents.MAP_VIEW, parameters: [
+            AnalyticsParameters.PARAM_VIEW_TYPE: "area_map"
+        ])
+    }
+
     func logPlaceDetailView(placeId: String, placeName: String) {
-        Analytics.Companion.logEvent(name: AnalyticsEventsKt.CONTENT_VIEW, parameters: [
-            AnalyticsEventsKt.PARAM_CONTENT_TYPE: "place",
-            AnalyticsEventsKt.PARAM_CONTENT_ID: placeId,
-            AnalyticsEventsKt.PARAM_ENTITY_NAME: placeName
+        Analytics().logEvent(name: AnalyticsEvents.CONTENT_VIEW, parameters: [
+            AnalyticsParameters.PARAM_CONTENT_TYPE: "place",
+            AnalyticsParameters.PARAM_CONTENT_ID: placeId,
+            AnalyticsParameters.PARAM_ENTITY_NAME: placeName
         ])
     }
 }

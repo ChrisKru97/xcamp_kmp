@@ -2,6 +2,9 @@
 package cz.krutsche.xcamp.shared.data.repository
 
 import cz.krutsche.xcamp.shared.data.DEFAULT_STALENESS_MS
+import cz.krutsche.xcamp.shared.data.ServiceFactory
+import cz.krutsche.xcamp.shared.data.firebase.AnalyticsEvents
+import cz.krutsche.xcamp.shared.data.firebase.AnalyticsService
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.data.local.EntityType
@@ -21,6 +24,9 @@ abstract class BaseRepository<T : Any>(
     abstract val entityType: EntityType
     protected abstract val syncMutex: Mutex
 
+    protected val analyticsService: AnalyticsService
+        get() = ServiceFactory.getAnalyticsService()
+
     protected suspend fun <R> withDatabase(block: suspend () -> R): R {
         return withContext(Dispatchers.Default) {
             block()
@@ -28,7 +34,19 @@ abstract class BaseRepository<T : Any>(
     }
 
     internal suspend fun hasCachedData(): Boolean {
-        return databaseManager.hasCachedData(entityType)
+        val hasCached = databaseManager.hasCachedData(entityType)
+        logCacheHit(hit = hasCached)
+        return hasCached
+    }
+
+    protected fun logCacheHit(hit: Boolean) {
+        analyticsService.logEvent(
+            name = AnalyticsEvents.CACHE_HIT,
+            parameters = mapOf(
+                AnalyticsEvents.PARAM_ENTITY_TYPE to entityType.collectionName,
+                AnalyticsEvents.PARAM_HIT to hit.toString()
+            )
+        )
     }
 
     protected suspend fun getLastSyncTime(): Long? {
@@ -51,6 +69,7 @@ abstract class BaseRepository<T : Any>(
         insertItems: suspend (List<T>) -> Unit,
         validateItems: (suspend (List<T>) -> Result<Unit>)? = null
     ): Result<Unit> {
+        val startTime = now().toEpochMilliseconds()
         return try {
             val result = firestoreService.getCollectionWithIds(entityType.collectionName, deserializer)
             result.fold(
@@ -68,15 +87,34 @@ abstract class BaseRepository<T : Any>(
 
                     val currentTime = now().toEpochMilliseconds()
                     updateSyncMetadata(currentTime)
+
+                    val durationMs = currentTime - startTime
+                    logDataSync(success = true, durationMs = durationMs)
+
                     Result.success(Unit)
                 },
                 onFailure = { error ->
+                    val durationMs = now().toEpochMilliseconds() - startTime
+                    logDataSync(success = false, durationMs = durationMs)
                     Result.failure(NetworkError)
                 }
             )
         } catch (e: Exception) {
+            val durationMs = now().toEpochMilliseconds() - startTime
+            logDataSync(success = false, durationMs = durationMs)
             Result.failure(NetworkError)
         }
+    }
+
+    private fun logDataSync(success: Boolean, durationMs: Long) {
+        analyticsService.logEvent(
+            name = AnalyticsEvents.DATA_SYNC,
+            parameters = mapOf(
+                AnalyticsEvents.PARAM_ENTITY_TYPE to entityType.collectionName,
+                AnalyticsEvents.SUCCESS to success.toString(),
+                AnalyticsEvents.PARAM_DURATION_MS to durationMs.toString()
+            )
+        )
     }
 
     protected suspend fun <F : Any> syncFromFirestoreLocked(

@@ -25,6 +25,28 @@ class AppViewModel: ObservableObject {
         foregroundCanceller.cancel()
     }
 
+    func logTabSwitch(from: AppTab, to: AppTab) {
+        let tabName = tabName(for: to)
+        let previousTabName = tabName(for: from)
+        Analytics().logEvent(name: AnalyticsEvents.TAB_SWITCH, parameters: [
+            AnalyticsParameters.PARAM_TAB_NAME: tabName,
+            AnalyticsParameters.PARAM_PREVIOUS_TAB: previousTabName
+        ])
+    }
+
+    // TODO unify with navigationcontainer
+    private func tabName(for tab: AppTab) -> String {
+        switch tab {
+        case .home: return Strings.Tabs.shared.HOME
+        case .schedule: return Strings.Tabs.shared.SCHEDULE
+        case .speakersAndPlaces: return Strings.Tabs.shared.SPEAKERS_AND_PLACES
+        case .rating: return Strings.Tabs.shared.RATING
+        case .media: return Strings.Tabs.shared.MEDIA
+        case .aboutFestival: return Strings.Tabs.shared.ABOUT_FESTIVAL
+        default: return ""
+        }
+    }
+
     func initialize(notificationDelegate: NotificationDelegate) {
         notificationDelegate.registerForRemoteNotifications()
 

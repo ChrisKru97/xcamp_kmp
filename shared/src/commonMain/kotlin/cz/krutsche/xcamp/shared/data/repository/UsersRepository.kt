@@ -2,6 +2,9 @@
 package cz.krutsche.xcamp.shared.data.repository
 
 import Platform
+import cz.krutsche.xcamp.shared.data.ServiceFactory
+import cz.krutsche.xcamp.shared.data.firebase.AnalyticsEvents
+import cz.krutsche.xcamp.shared.data.firebase.AnalyticsService
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
 import cz.krutsche.xcamp.shared.data.local.EntityType
 import kotlinx.serialization.Serializable
@@ -46,23 +49,61 @@ class UsersRepository(
 ) {
     private val collectionName: String = EntityType.USERS.collectionName
 
+    private val analyticsService: AnalyticsService
+        get() = ServiceFactory.getAnalyticsService()
+
     suspend fun registerUser(
         userId: String,
         platform: Platform,
         fcmToken: String
     ): Result<Unit> {
+        val startTime = now().toEpochMilliseconds()
         val userInfo = UserInfo.fromPlatform(userId, fcmToken, platform)
-        return firestoreService.setDocument(collectionName, userId, userInfo)
+        val result = firestoreService.setDocument(collectionName, userId, userInfo)
+
+        var success = false
+        result.fold(
+            onSuccess = { success = true },
+            onFailure = { success = false }
+        )
+
+        val durationMs = now().toEpochMilliseconds() - startTime
+        logUserAction(actionType = "register", success = success, durationMs = durationMs)
+
+        return result
     }
 
     suspend fun updateFCMToken(
         userId: String,
         token: String
     ): Result<Unit> {
-        return firestoreService.updateDocument(
+        val startTime = now().toEpochMilliseconds()
+        val result = firestoreService.updateDocument(
             collectionName,
             userId,
             mapOf("token" to token)
+        )
+
+        var success = false
+        result.fold(
+            onSuccess = { success = true },
+            onFailure = { success = false }
+        )
+
+        val durationMs = now().toEpochMilliseconds() - startTime
+        logUserAction(actionType = "fcm_token_update", success = success, durationMs = durationMs)
+
+        return result
+    }
+
+    private fun logUserAction(actionType: String, success: Boolean, durationMs: Long) {
+        analyticsService.logEvent(
+            name = AnalyticsEvents.USER_ACTION,
+            parameters = mapOf(
+                AnalyticsEvents.PARAM_ACTION_TYPE to actionType,
+                AnalyticsEvents.SUCCESS to success.toString(),
+                AnalyticsEvents.PARAM_DURATION_MS to durationMs.toString()
+            )
         )
     }
 }

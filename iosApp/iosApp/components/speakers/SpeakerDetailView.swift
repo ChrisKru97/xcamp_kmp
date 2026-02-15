@@ -22,12 +22,12 @@ struct SpeakerDetailView: View {
             .trackScreen(screenName: "speaker_detail")
             .onAppear {
                 if case .loaded(let speaker) = state {
-                    Analytics.Companion.logEvent(
-                        name: AnalyticsEventsKt.CONTENT_VIEW,
+                    Analytics().logEvent(
+                        name: AnalyticsEvents.CONTENT_VIEW,
                         parameters: [
-                            AnalyticsEventsKt.PARAM_CONTENT_TYPE: "speaker",
-                            AnalyticsEventsKt.PARAM_CONTENT_ID: speaker.uid,
-                            AnalyticsEventsKt.PARAM_ENTITY_NAME: speaker.name
+                            AnalyticsParameters.PARAM_CONTENT_TYPE: "speaker",
+                            AnalyticsParameters.PARAM_CONTENT_ID: speaker.uid,
+                            AnalyticsParameters.PARAM_ENTITY_NAME: speaker.name
                         ]
                     )
                 }

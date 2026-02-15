@@ -6,6 +6,7 @@ import cz.krutsche.xcamp.shared.data.config.LinksService
 import cz.krutsche.xcamp.shared.data.config.PlacesService
 import cz.krutsche.xcamp.shared.data.config.ScheduleService
 import cz.krutsche.xcamp.shared.data.config.SpeakersService
+import cz.krutsche.xcamp.shared.data.firebase.AnalyticsService
 import cz.krutsche.xcamp.shared.data.firebase.AuthService
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
 import cz.krutsche.xcamp.shared.data.firebase.RemoteConfigService
@@ -24,6 +25,7 @@ expect object ServiceFactory {
     fun getFirestoreService(): FirestoreService
     fun getStorageService(): StorageService
     fun getRemoteConfigService(): RemoteConfigService
+    fun getAnalyticsService(): AnalyticsService
     fun getNotificationService(): NotificationService
     fun getConnectivityObserver(): ConnectivityObserver
     fun getAppPreferences(): AppPreferences

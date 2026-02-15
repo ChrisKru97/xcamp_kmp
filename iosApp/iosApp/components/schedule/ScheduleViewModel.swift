@@ -44,11 +44,13 @@ class ScheduleViewModel: ObservableObject {
 
     func loadSections() async {
         state = .loading
+        logContentState(state: "loading", error: nil)
         do {
             let startDate = remoteConfigService.getStartDate()
             let sections = try await scheduleService.getAllExpandedSections(startDate: startDate)
             guard !Task.isCancelled else { return }
             state = .loaded(sections)
+            logContentState(state: "content", error: nil)
 
             if !userHasSelectedDay {
                 selectCurrentDay(sections: sections)
@@ -58,14 +60,30 @@ class ScheduleViewModel: ObservableObject {
         } catch {
             guard !Task.isCancelled else { return }
             state = .error(error)
+            logContentState(state: "error", error: error)
         }
     }
 
     private func logScreenView() {
-        Analytics.Companion.logScreenView(screenName: "schedule")
+        Analytics().logScreenView(screenName: "schedule")
+    }
+
+    private func logContentState(state: String, error: Error?) {
+        var params: [String: String] = [
+            AnalyticsParameters.PARAM_SCREEN_NAME: "schedule",
+            AnalyticsParameters.PARAM_STATE: state
+        ]
+        if let error = error {
+            params[AnalyticsParameters.PARAM_ERROR_TYPE] = error.localizedDescription
+        }
+        Analytics().logEvent(name: AnalyticsEvents.CONTENT_STATE, parameters: params)
     }
 
     func refreshSections() async {
+        Analytics().logEvent(name: AnalyticsEvents.PULL_REFRESH, parameters: [
+            AnalyticsParameters.PARAM_SCREEN_NAME: "schedule"
+        ])
+
         switch state {
         case .loaded(let sections, _):
             state = .refreshing(sections)
@@ -94,11 +112,11 @@ class ScheduleViewModel: ObservableObject {
             await reloadCurrentDayWithFilter()
             await refreshNotificationsIfNeeded()
 
-            let eventName = isAdding ? AnalyticsEventsKt.FAVORITE_ADD : AnalyticsEventsKt.FAVORITE_REMOVE
-            Analytics.Companion.logEvent(name: eventName, parameters: [
-                AnalyticsEventsKt.PARAM_ENTITY_TYPE: "session",
-                AnalyticsEventsKt.PARAM_ENTITY_ID: section.uid,
-                AnalyticsEventsKt.PARAM_ENTITY_NAME: section.name
+            let eventName = isAdding ? AnalyticsEvents.FAVORITE_ADD : AnalyticsEvents.FAVORITE_REMOVE
+            Analytics().logEvent(name: eventName, parameters: [
+                AnalyticsParameters.PARAM_ENTITY_TYPE: "session",
+                AnalyticsParameters.PARAM_ENTITY_ID: section.uid,
+                AnalyticsParameters.PARAM_ENTITY_NAME: section.name
             ])
         } catch {
             guard !Task.isCancelled else { return }
@@ -122,9 +140,10 @@ class ScheduleViewModel: ObservableObject {
         userHasSelectedDay = true
 
         let dayNumber = eventDays[index]
-        Analytics.Companion.logEvent(name: AnalyticsEventsKt.SCREEN_VIEW, parameters: [
-            AnalyticsEventsKt.PARAM_SCREEN_NAME: "schedule_day",
-            AnalyticsEventsKt.PARAM_DAY_NUMBER: String(dayNumber)
+        let dayName = "Day \(dayNumber)"
+        Analytics().logEvent(name: AnalyticsEvents.DAY_SELECT, parameters: [
+            AnalyticsParameters.PARAM_DAY_NUMBER: String(dayNumber),
+            AnalyticsParameters.PARAM_DAY_NAME: dayName
         ])
     }
 
@@ -186,9 +205,9 @@ class ScheduleViewModel: ObservableObject {
     }
 
     func logContentView(sectionId: String, sectionName: String) {
-        Analytics.Companion.logEvent(name: AnalyticsEventsKt.CONTENT_VIEW, parameters: [
-            AnalyticsEventsKt.PARAM_CONTENT_TYPE: "session",
-            AnalyticsEventsKt.PARAM_CONTENT_ID: sectionId
+        Analytics().logEvent(name: AnalyticsEvents.CONTENT_VIEW, parameters: [
+            AnalyticsParameters.PARAM_CONTENT_TYPE: "session",
+            AnalyticsParameters.PARAM_CONTENT_ID: sectionId
         ])
     }
 }

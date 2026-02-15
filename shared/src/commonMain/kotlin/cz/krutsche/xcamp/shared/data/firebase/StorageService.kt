@@ -3,6 +3,7 @@ package cz.krutsche.xcamp.shared.data.firebase
 
 import cz.krutsche.xcamp.shared.data.DEFAULT_STALENESS_MS
 import cz.krutsche.xcamp.shared.data.DEFAULT_TIMEOUT
+import cz.krutsche.xcamp.shared.data.ServiceFactory
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.storage.FirebaseStorage
 import dev.gitlive.firebase.storage.storage
@@ -15,18 +16,33 @@ class StorageService {
 
     private val urlCache = mutableMapOf<String, Pair<String, Long>>()
 
+    private val analyticsService: AnalyticsService
+        get() = ServiceFactory.getAnalyticsService()
+
     suspend fun uploadFile(
         path: String,
         data: ByteArray,
         contentType: String? = null
     ): Result<String> {
-        return try {
+        val startTime = now().toEpochMilliseconds()
+        var success = false
+        val result: Result<String> = try {
             withTimeout(30.seconds) {
-                Result.failure(Exception("Storage upload not yet implemented"))
+                Result.failure<String>(Exception("Storage upload not yet implemented"))
             }
         } catch (e: Exception) {
             Result.failure(e)
         }
+
+        result.fold(
+            onSuccess = { success = true },
+            onFailure = { success = false }
+        )
+
+        val durationMs = now().toEpochMilliseconds() - startTime
+        logStorageAction(actionType = "file_upload", success = success, durationMs = durationMs)
+
+        return result
     }
 
     suspend fun getDownloadUrl(path: String, forceRefresh: Boolean = false): Result<String> {
@@ -54,7 +70,9 @@ class StorageService {
     }
 
     suspend fun deleteFile(path: String): Result<Unit> {
-        return try {
+        val startTime = now().toEpochMilliseconds()
+        var success = false
+        val result: Result<Unit> = try {
             withTimeout(DEFAULT_TIMEOUT) {
                 val storageRef = storage.reference.child(path)
                 storageRef.delete()
@@ -64,6 +82,16 @@ class StorageService {
         } catch (e: Exception) {
             Result.failure(e)
         }
+
+        result.fold(
+            onSuccess = { success = true },
+            onFailure = { success = false }
+        )
+
+        val durationMs = now().toEpochMilliseconds() - startTime
+        logStorageAction(actionType = "file_delete", success = success, durationMs = durationMs)
+
+        return result
     }
 
     suspend fun listFiles(path: String): Result<List<String>> {
@@ -81,5 +109,16 @@ class StorageService {
 
     fun clearCache() {
         urlCache.clear()
+    }
+
+    private fun logStorageAction(actionType: String, success: Boolean, durationMs: Long) {
+        analyticsService.logEvent(
+            name = AnalyticsEvents.USER_ACTION,
+            parameters = mapOf(
+                AnalyticsEvents.PARAM_ACTION_TYPE to actionType,
+                AnalyticsEvents.SUCCESS to success.toString(),
+                AnalyticsEvents.PARAM_DURATION_MS to durationMs.toString()
+            )
+        )
     }
 }
