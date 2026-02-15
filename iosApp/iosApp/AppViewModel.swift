@@ -26,10 +26,10 @@ class AppViewModel: ObservableObject {
     }
 
     func logTabSwitch(from: AppTab, to: AppTab) {
-        let tabName = tabName(for: to)
+        let currentTabName = tabName(for: to)
         let previousTabName = tabName(for: from)
         Analytics().logEvent(name: AnalyticsEvents.TAB_SWITCH, parameters: [
-            AnalyticsParameters.PARAM_TAB_NAME: tabName,
+            AnalyticsParameters.PARAM_TAB_NAME: currentTabName,
             AnalyticsParameters.PARAM_PREVIOUS_TAB: previousTabName
         ])
     }

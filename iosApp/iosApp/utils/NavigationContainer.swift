@@ -7,6 +7,7 @@ struct NavigationContainer: View {
     @EnvironmentObject var router: AppRouter
     @EnvironmentObject var appViewModel: AppViewModel
     @Environment(\.colorScheme) private var colorScheme
+    @State private var previousTab: AppTab = .home
 
     var body: some View {
         TabView(selection: $router.selectedTab) {
@@ -22,12 +23,15 @@ struct NavigationContainer: View {
         .animation(.easeInOut(duration: 0.2), value: router.selectedTab) // TODO do we need it? try it without it
         .onAppear {
             configureTabBarAppearance()
+            previousTab = router.selectedTab
         }
         .onChange(of: colorScheme) { _ in
             configureTabBarAppearance()
         }
-        .onChange(of: router.selectedTab) { _ in
+        .onChange(of: router.selectedTab) { newValue in
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            appViewModel.logTabSwitch(from: previousTab, to: newValue)
+            previousTab = newValue
         }
         .onReceive(NotificationCenter.default.publisher(for: .navigateToSection)) { notification in
             guard let userInfo = notification.userInfo,
