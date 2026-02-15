@@ -57,17 +57,21 @@ struct NavigationContainer: View {
 
     @ViewBuilder
     private func destinationView(destination: NavigationDestination) -> some View {
-        switch destination.type {
-        case .section:
-            SectionDetailView(sectionUid: destination.uid)
-        case .speaker:
-            SpeakerDetailView(speakerUid: destination.uid)
-        case .place:
-            PlaceDetailView(placeUid: destination.uid)
-        case .notificationSettings:
-            NotificationSettingsView()
-        case .none:
-            EmptyView()
+        ZStack {
+            MeshGradientBackground()
+
+            switch destination.type {
+            case .section:
+                SectionDetailView(sectionUid: destination.uid)
+            case .speaker:
+                SpeakerDetailView(speakerUid: destination.uid)
+            case .place:
+                PlaceDetailView(placeUid: destination.uid)
+            case .notificationSettings:
+                NotificationSettingsView()
+            case .none:
+                EmptyView()
+            }
         }
     }
 

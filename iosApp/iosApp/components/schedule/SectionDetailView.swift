@@ -22,6 +22,19 @@ struct SectionDetailView: View {
             .task {
                 await loadSection()
             }
+            .trackScreen(screenName: "session_detail")
+            .onAppear {
+                if case .loaded(let section) = state {
+                    Analytics.Companion.logEvent(
+                        name: AnalyticsEventsKt.CONTENT_VIEW,
+                        parameters: [
+                            AnalyticsEventsKt.PARAM_CONTENT_TYPE: "session",
+                            AnalyticsEventsKt.PARAM_CONTENT_ID: section.uid,
+                            AnalyticsEventsKt.PARAM_ENTITY_NAME: section.name
+                        ]
+                    )
+                }
+            }
     }
 
     private func loadSection() async {
@@ -46,7 +59,6 @@ struct SectionDetailView: View {
         }
         .navigationTitle(section.name)
         .navigationBarTitleDisplayMode(.inline)
-        .background(Color.background)
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
                 Button(action: {

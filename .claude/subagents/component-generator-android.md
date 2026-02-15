@@ -62,6 +62,8 @@ Ask clarifying questions:
 
 ### Step 4: Design Guidelines
 
+**Analytics Consideration**: When creating ViewModels for new features, add analytics logging for screen views and key user actions.
+
 #### Generic Composable Pattern (Recommended for Reusability)
 
 Use when: Same UI pattern appears 3+ times with >80% code similarity

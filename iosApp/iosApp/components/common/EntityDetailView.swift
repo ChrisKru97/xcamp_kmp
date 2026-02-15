@@ -15,7 +15,6 @@ struct EntityDetailView<T: EntityDetailRepresentable>: View {
         }
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
-        .background(Color.background)
     }
 
     private var heroImage: some View {

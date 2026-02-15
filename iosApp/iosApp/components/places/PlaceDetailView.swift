@@ -27,6 +27,19 @@ struct PlaceDetailView: View {
             .task {
                 await loadPlace()
             }
+            .trackScreen(screenName: "place_detail")
+            .onAppear {
+                if case .loaded(let place) = state {
+                    Analytics.Companion.logEvent(
+                        name: AnalyticsEventsKt.CONTENT_VIEW,
+                        parameters: [
+                            AnalyticsEventsKt.PARAM_CONTENT_TYPE: "place",
+                            AnalyticsEventsKt.PARAM_CONTENT_ID: place.uid,
+                            AnalyticsEventsKt.PARAM_ENTITY_NAME: place.name
+                        ]
+                    )
+                }
+            }
     }
 
     @ViewBuilder

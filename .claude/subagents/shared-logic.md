@@ -185,3 +185,4 @@ Json.decodeFromString<Example>(jsonString)
 - Pure functions where possible
 - Avoid platform-specific code in `commonMain`
 - Use `expect/actual` for platform differences
+- **Add analytics events** when adding new user-facing features via `AnalyticsService`

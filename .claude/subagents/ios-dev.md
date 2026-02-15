@@ -410,3 +410,8 @@ After implementing any iOS feature, use these MCP tools to verify:
 - [ ] Navigation flows work (tap through screens)
 - [ ] No runtime errors in logs
 - [ ] Edge cases handled (empty states, errors)
+
+### 4. Analytics Checklist
+- [ ] Add screen view logging to new screens
+- [ ] Add event logging for key user actions
+- [ ] Use existing `AnalyticsEvents.kt` constants when possible

@@ -61,7 +61,6 @@ struct PlacesContentView: View {
         .refreshable {
             await viewModel.refreshPlaces()
         }
-        .background(Color.background)
     }
 }
 

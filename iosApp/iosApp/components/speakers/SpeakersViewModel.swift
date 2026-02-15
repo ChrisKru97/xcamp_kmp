@@ -23,10 +23,7 @@ class SpeakersViewModel: ObservableObject {
     }
 
     private func logScreenView() {
-        AnalyticsHelper.shared.logEvent(name: "screen_view", parameters: [
-            "screen_name": "speakers",
-            "tab_name": "speakers"
-        ])
+        Analytics.Companion.logScreenView(screenName: "speakers")
     }
 
     func refreshSpeakers() async {
@@ -48,10 +45,10 @@ class SpeakersViewModel: ObservableObject {
     }
 
     func logSpeakerDetailView(speakerId: String, speakerName: String) {
-        AnalyticsHelper.shared.logEvent(name: "content_view", parameters: [
-            "content_type": "speaker",
-            "content_id": speakerId,
-            "entity_name": speakerName
+        Analytics.Companion.logEvent(name: AnalyticsEventsKt.CONTENT_VIEW, parameters: [
+            AnalyticsEventsKt.PARAM_CONTENT_TYPE: "speaker",
+            AnalyticsEventsKt.PARAM_CONTENT_ID: speakerId,
+            AnalyticsEventsKt.PARAM_ENTITY_NAME: speakerName
         ])
     }
 }

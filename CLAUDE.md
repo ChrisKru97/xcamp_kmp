@@ -100,6 +100,24 @@ Dynamic bottom tabs controlled by Remote Config `showAppData`:
 
 For Firebase implementation details, see `.claude/subagents/firebase-integration.md`
 
+## Analytics & Crashlytics
+
+**Analytics** tracks user behavior and feature usage. Use `Analytics.Companion.logEvent()` when implementing new features.
+
+**Available Events** (`AnalyticsEvents.kt`):
+- `SCREEN_VIEW` - Track screen navigation
+- `FAVORITE_ADD` / `FAVORITE_REMOVE` - Track favorites
+- `CONTENT_VIEW` - Track detail views (speakers, places, sessions)
+
+**Usage Pattern** (iOS ViewModels):
+```swift
+Analytics.Companion.logEvent(name: AnalyticsEventsKt.EVENT_NAME, parameters: [
+    AnalyticsEventsKt.PARAM_KEY: "value"
+])
+```
+
+**Consent**: Managed via `AppPreferences.analyticsConsent`.
+
 ## Key Features
 
 - **Schedule**: 8-day event, favorites, auto-navigation to current day, type filtering

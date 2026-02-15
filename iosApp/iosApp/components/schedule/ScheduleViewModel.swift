@@ -62,10 +62,7 @@ class ScheduleViewModel: ObservableObject {
     }
 
     private func logScreenView() {
-        AnalyticsHelper.shared.logEvent(name: "screen_view", parameters: [
-            "screen_name": "schedule",
-            "tab_name": "schedule"
-        ])
+        Analytics.Companion.logScreenView(screenName: "schedule")
     }
 
     func refreshSections() async {
@@ -97,11 +94,11 @@ class ScheduleViewModel: ObservableObject {
             await reloadCurrentDayWithFilter()
             await refreshNotificationsIfNeeded()
 
-            let eventName = isAdding ? "favorite_add" : "favorite_remove"
-            AnalyticsHelper.shared.logEvent(name: eventName, parameters: [
-                "entity_type": "session",
-                "entity_id": section.uid,
-                "entity_name": section.name
+            let eventName = isAdding ? AnalyticsEventsKt.FAVORITE_ADD : AnalyticsEventsKt.FAVORITE_REMOVE
+            Analytics.Companion.logEvent(name: eventName, parameters: [
+                AnalyticsEventsKt.PARAM_ENTITY_TYPE: "session",
+                AnalyticsEventsKt.PARAM_ENTITY_ID: section.uid,
+                AnalyticsEventsKt.PARAM_ENTITY_NAME: section.name
             ])
         } catch {
             guard !Task.isCancelled else { return }
@@ -125,9 +122,9 @@ class ScheduleViewModel: ObservableObject {
         userHasSelectedDay = true
 
         let dayNumber = eventDays[index]
-        AnalyticsHelper.shared.logEvent(name: "screen_view", parameters: [
-            "screen_name": "schedule_day",
-            "day_number": String(dayNumber)
+        Analytics.Companion.logEvent(name: AnalyticsEventsKt.SCREEN_VIEW, parameters: [
+            AnalyticsEventsKt.PARAM_SCREEN_NAME: "schedule_day",
+            AnalyticsEventsKt.PARAM_DAY_NUMBER: String(dayNumber)
         ])
     }
 
@@ -186,5 +183,12 @@ class ScheduleViewModel: ObservableObject {
                 }
             }
         }
+    }
+
+    func logContentView(sectionId: String, sectionName: String) {
+        Analytics.Companion.logEvent(name: AnalyticsEventsKt.CONTENT_VIEW, parameters: [
+            AnalyticsEventsKt.PARAM_CONTENT_TYPE: "session",
+            AnalyticsEventsKt.PARAM_CONTENT_ID: sectionId
+        ])
     }
 }

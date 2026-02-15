@@ -216,7 +216,17 @@ Button(Strings.Actions.JOIN) { ... }
 
 ## High Priority Issues (Should Fix)
 
-### 6. Result<T> Error Handling
+### 6. Missing Analytics Events
+
+**Problem**: New features without analytics make it hard to understand user behavior.
+
+**Detection**: New ViewModels without `Analytics.Companion.logEvent()` calls.
+
+**Reference**: `ScheduleViewModel.swift`, `SpeakersViewModel.swift` for examples
+
+---
+
+### 7. Result<T> Error Handling
 
 **Problem**: Throwing exceptions breaks the `Result<T>` pattern used elsewhere.
 
@@ -241,7 +251,7 @@ suspend fun getData(): Result<Data> = try {
 
 ---
 
-### 7. SwiftUI Preview Requirements
+### 8. SwiftUI Preview Requirements
 
 **Problem**: Missing previews make development slower.
 
@@ -262,7 +272,7 @@ suspend fun getData(): Result<Data> = try {
 
 ---
 
-### 8. Component Size Guidelines (iOS)
+### 9. Component Size Guidelines (iOS)
 
 **Problem**: Large files (>100 lines) are harder to understand and maintain.
 
@@ -276,7 +286,7 @@ suspend fun getData(): Result<Data> = try {
 
 ---
 
-### 9. Koin DI Configuration (Android)
+### 10. Koin DI Configuration (Android)
 
 **Problem**: Empty DI module indicates incomplete setup.
 
@@ -317,7 +327,7 @@ startKoin {
 
 ## Medium Priority Issues (Nice to Fix)
 
-### 10. @Serializable on Domain Models
+### 11. @Serializable on Domain Models
 
 **Check**: Domain models should have `@Serializable` annotation for JSON serialization.
 
@@ -334,7 +344,7 @@ data class Section(
 
 ---
 
-### 11. Design Token Usage (iOS)
+### 12. Design Token Usage (iOS)
 
 **Check**: Use `Spacing.*`, `CornerRadius.*`, `Color.*`, `Shadow.*`, `Gradient.*` instead of hardcoded values.
 
@@ -363,7 +373,7 @@ data class Section(
 
 ---
 
-### 12. Proper Coroutine Dispatchers (Kotlin)
+### 13. Proper Coroutine Dispatchers (Kotlin)
 
 **Check**: Database operations should use `withContext(Dispatchers.Default)` or `withDatabase`.
 
@@ -376,7 +386,7 @@ suspend fun getAllSections(): List<Section> = withDatabase {
 
 ---
 
-### 13. Missing Code Quality Tools
+### 14. Missing Code Quality Tools
 
 **Check**: Project lacks automated code quality enforcement.
 

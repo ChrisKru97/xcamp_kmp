@@ -19,6 +19,19 @@ struct SpeakerDetailView: View {
             .task {
                 await loadSpeaker()
             }
+            .trackScreen(screenName: "speaker_detail")
+            .onAppear {
+                if case .loaded(let speaker) = state {
+                    Analytics.Companion.logEvent(
+                        name: AnalyticsEventsKt.CONTENT_VIEW,
+                        parameters: [
+                            AnalyticsEventsKt.PARAM_CONTENT_TYPE: "speaker",
+                            AnalyticsEventsKt.PARAM_CONTENT_ID: speaker.uid,
+                            AnalyticsEventsKt.PARAM_ENTITY_NAME: speaker.name
+                        ]
+                    )
+                }
+            }
     }
 
     private func loadSpeaker() async {

@@ -30,10 +30,7 @@ class PlacesViewModel: ObservableObject {
     }
 
     private func logScreenView() {
-        AnalyticsHelper.shared.logEvent(name: "screen_view", parameters: [
-            "screen_name": "places",
-            "tab_name": "places"
-        ])
+        Analytics.Companion.logScreenView(screenName: "places")
     }
 
     func refreshPlaces() async {
@@ -98,5 +95,13 @@ class PlacesViewModel: ObservableObject {
         } catch {
             print("Failed to load areal image: \(error.localizedDescription)")
         }
+    }
+
+    func logPlaceDetailView(placeId: String, placeName: String) {
+        Analytics.Companion.logEvent(name: AnalyticsEventsKt.CONTENT_VIEW, parameters: [
+            AnalyticsEventsKt.PARAM_CONTENT_TYPE: "place",
+            AnalyticsEventsKt.PARAM_CONTENT_ID: placeId,
+            AnalyticsEventsKt.PARAM_ENTITY_NAME: placeName
+        ])
     }
 }
