@@ -10,18 +10,8 @@ struct ScheduleView: View {
     @StateObject private var viewModel = ScheduleViewModel()
     @State private var showingFilter = false
 
-    private var hasContentLoaded: Bool {
-        switch viewModel.state {
-        case .loaded, .refreshing:
-            return true
-        default:
-            return false
-        }
-    }
-
     var body: some View {
-        ZStack(alignment: .bottomTrailing) {
-            EmptyView()
+        EmptyView()
                 .switchingContent(viewModel.state) { sections, isStale in
                     scheduleContent(sections, isStale: isStale)
                 } error: { error in
@@ -29,18 +19,6 @@ struct ScheduleView: View {
                         await viewModel.loadSections()
                     }
                 }
-
-            if hasContentLoaded {
-                ScheduleFilterFab(
-                    filterState: viewModel.filterState
-                ) {
-                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
-                    showingFilter = true
-                }
-                .padding(.trailing, Spacing.lg)
-                .padding(.bottom, Spacing.md)
-            }
-        }
         .navigationTitle(dayTitle)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
@@ -61,18 +39,22 @@ struct ScheduleView: View {
                             }
                         }
                     }
+
+                    Divider()
+
+                    Button {
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                        showingFilter = true
+                    } label: {
+                        HStack {
+                            Image(systemName: "line.3.horizontal.decrease.circle")
+                            Text(Strings.Schedule.shared.FILTER_MENU)
+                        }
+                    }
                 } label: {
                     Image(systemName: "calendar")
-                        .font(.system(size: 18))
+                        .imageScale(.medium)
                         .foregroundStyle(.primary)
-                        .frame(width: 48, height: 48)
-                        .contentShape(Circle())
-                        .backport.glassEffect(
-                            .regular,
-                            in: Circle(),
-                            fallbackBackground: .thinMaterial
-                        )
-                        .fabShadow()
                 }
             }
         }

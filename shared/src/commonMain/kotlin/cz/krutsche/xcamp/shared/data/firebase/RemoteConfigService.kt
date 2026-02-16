@@ -42,34 +42,17 @@ class RemoteConfigService {
 
     private suspend fun updateCacheFromRemoteConfig() {
         cache = RemoteConfigCache(
-            _showAppData = tryGetBoolean("showAppData"),
-            _startDate = tryGetString("startDate"),
-            _qrResetPin = tryGetString("qrResetPin"),
-            _mainInfo = tryGetString("mainInfo"),
-            _mediaGallery = tryGetString("mediaGallery"),
-            _phone = tryGetString("phone"),
-            _registration = tryGetBoolean("registration"),
-            _youtubePlaylist = tryGetString("youtubePlaylist"),
-            _forceUpdateVersion = tryGetString("force_update_version")
+            _showAppData = runCatching { remoteConfig.getValue("showAppData").asBoolean() }.getOrNull(),
+            _startDate = runCatching { remoteConfig.getValue("startDate").asString().ifEmpty { null } }.getOrNull(),
+            _qrResetPin = runCatching { remoteConfig.getValue("qrResetPin").asString().ifEmpty { null } }.getOrNull(),
+            _mainInfo = runCatching { remoteConfig.getValue("mainInfo").asString().ifEmpty { null } }.getOrNull(),
+            _mediaGallery = runCatching { remoteConfig.getValue("mediaGallery").asString().ifEmpty { null } }.getOrNull(),
+            _phone = runCatching { remoteConfig.getValue("phone").asString().ifEmpty { null } }.getOrNull(),
+            _registration = runCatching { remoteConfig.getValue("registration").asBoolean() }.getOrNull(),
+            _youtubePlaylist = runCatching { remoteConfig.getValue("youtubePlaylist").asString().ifEmpty { null } }.getOrNull(),
+            _forceUpdateVersion = runCatching { remoteConfig.getValue("force_update_version").asString().ifEmpty { null } }.getOrNull()
         )
         AppPreferences.setRemoteConfigCache(cache)
-    }
-
-    private fun tryGetBoolean(key: String): Boolean? {
-        return try {
-            remoteConfig.getValue(key).asBoolean()
-        } catch (e: Exception) {
-            null
-        }
-    }
-
-    private fun tryGetString(key: String): String? {
-        return try {
-            val value = remoteConfig.getValue(key).asString()
-            value.ifEmpty { null }
-        } catch (e: Exception) {
-            null
-        }
     }
 
     val showAppData: Boolean get() = cache.showAppData

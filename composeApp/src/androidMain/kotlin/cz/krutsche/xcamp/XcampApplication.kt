@@ -21,8 +21,11 @@ class XcampApplication : Application() {
     }
 
     private fun configureCrashlytics() {
+        val enabled = AppPreferences.getDataCollectionEnabled()
         val crashlytics = Firebase.crashlytics
-        crashlytics.setCrashlyticsCollectionEnabled(true)
+        crashlytics.setCrashlyticsCollectionEnabled(enabled)
+
+        if (!enabled) return
 
         val platform = Platform()
 
@@ -43,10 +46,10 @@ class XcampApplication : Application() {
     }
 
     private fun configureAnalytics() {
-        val hasConsent = AppPreferences.getAnalyticsConsent()
-        Analytics.initializeAnalytics(hasConsent)
+        val enabled = AppPreferences.getDataCollectionEnabled()
+        Analytics.initializeAnalytics(enabled)
 
-        if (!hasConsent) return
+        if (!enabled) return
 
         val platform = Platform()
 

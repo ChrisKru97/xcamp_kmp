@@ -36,8 +36,11 @@ struct XcampApp: App {
     }
 
     private func configureCrashlytics() {
+        let enabled = AppPreferences.shared.getDataCollectionEnabled()
         let crashlytics = Crashlytics.crashlytics()
-        crashlytics.setCrashlyticsCollectionEnabled(true)
+        crashlytics.setCrashlyticsCollectionEnabled(enabled)
+
+        guard enabled else { return }
 
         let platform = Platform()
 
@@ -57,10 +60,10 @@ struct XcampApp: App {
     }
 
     private func configureAnalytics() {
-        let hasConsent = AppPreferences.shared.getAnalyticsConsent()
-        Analytics.shared.initializeAnalytics(hasConsent: hasConsent)
+        let enabled = AppPreferences.shared.getDataCollectionEnabled()
+        Analytics.setAnalyticsCollectionEnabled(enabled)
 
-        guard hasConsent else { return }
+        guard enabled else { return }
 
         let platform = Platform()
 
