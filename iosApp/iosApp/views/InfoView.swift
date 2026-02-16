@@ -1,15 +1,19 @@
 import SwiftUI
 import shared
+import Firebase
+import FirebaseCrashlytics
 
 struct InfoView: View {
     @EnvironmentObject var appViewModel: AppViewModel
     @EnvironmentObject var router: AppRouter
+    @State private var dataCollectionEnabled = AppPreferences.shared.getDataCollectionEnabled()
 
     var body: some View {
         ScrollView {
             VStack(spacing: Spacing.lg) {
                 emergencySection
                 notificationsSection
+                dataCollectionSection
                 contactSection
 
                 // TODO comment out for release
@@ -75,6 +79,34 @@ struct InfoView: View {
             .padding()
         }
         .glassButton()
+    }
+
+    private var dataCollectionSection: some View {
+        Toggle(isOn: $dataCollectionEnabled) {
+            VStack(alignment: .leading, spacing: Spacing.xs) {
+                Text(Strings.DataCollection.shared.TOGGLE_TITLE)
+                    .font(.body)
+                Text(Strings.DataCollection.shared.SECTION_FOOTER)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .onChange(of: dataCollectionEnabled) { newValue in
+            AppPreferences.shared.setDataCollectionEnabled(enabled: newValue)
+            configureFirebaseWithConsent(newValue)
+
+            Analytics.shared.logEvent(
+                name: "data_collection_changed",
+                parameters: ["enabled": String(newValue)]
+            )
+        }
+        .padding()
+        .card()
+    }
+
+    private func configureFirebaseWithConsent(_ enabled: Bool) {
+        Analytics.setAnalyticsCollectionEnabled(enabled)
+        Crashlytics.crashlytics().setCrashlyticsCollectionEnabled(enabled)
     }
 
     private var contactSection: some View {

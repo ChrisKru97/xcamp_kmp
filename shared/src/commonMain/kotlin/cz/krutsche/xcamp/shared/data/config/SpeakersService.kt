@@ -1,5 +1,6 @@
 package cz.krutsche.xcamp.shared.data.config
 
+import cz.krutsche.xcamp.shared.data.DEFAULT_STALENESS_MS
 import cz.krutsche.xcamp.shared.data.ServiceFactory
 import cz.krutsche.xcamp.shared.data.repository.SpeakersRepository
 import cz.krutsche.xcamp.shared.domain.model.Speaker
@@ -96,5 +97,24 @@ class SpeakersService : RepositoryService<SpeakersRepository>() {
                 }
             }
         )
+    }
+
+    /**
+     * Checks if the speakers data is stale (older than maxAgeMs).
+     *
+     * @param maxAgeMs Maximum age in milliseconds (default: 24 hours)
+     * @return true if data is stale or doesn't exist, false otherwise
+     */
+    suspend fun isDataStale(maxAgeMs: Long = DEFAULT_STALENESS_MS): Boolean {
+        return repository.isDataStale(maxAgeMs)
+    }
+
+    /**
+     * Checks if there is cached speakers data available.
+     *
+     * @return true if cached data exists, false otherwise
+     */
+    suspend fun hasCachedData(): Boolean {
+        return repository.hasCachedData()
     }
 }

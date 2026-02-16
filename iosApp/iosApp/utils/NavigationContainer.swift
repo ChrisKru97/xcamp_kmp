@@ -126,10 +126,11 @@ struct NavigationContainer: View {
     @MainActor
     private func configureTabBarAppearance() {
         let appearance = UITabBarAppearance()
-        appearance.configureWithDefaultBackground()
-        appearance.backgroundColor = .tabBarBackground
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundEffect = UIBlurEffect(style: .systemMaterial)
+        appearance.backgroundColor = .tabBarBackground.withAlphaComponent(0.3)
         appearance.stackedLayoutAppearance.normal.iconColor = UIColor.label
-        
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.label]
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
     }
