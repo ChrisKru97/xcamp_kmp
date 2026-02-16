@@ -8,8 +8,6 @@ extension Color {
     static let accent = Color("designAccent")
     static let accentSecondary = Color("designAccentSecondary")
 
-    static let text = Color(UIColor.label)
-
     struct Section {
         static let main = Color("sectionMain")
         static let `internal` = Color("sectionInternal")
@@ -31,4 +29,8 @@ extension Color {
         static let iconSelectedDark = UIColor(red: 0.65, green: 0.95, blue: 1.0, alpha: 1.0)
         static let iconNormalDark = UIColor(red: 1.0, green: 1.0, blue: 1.0, alpha: 0.70)
     }
+}
+
+extension UIColor {
+    static let tabBarBackground = UIColor(Color("tabBarBackground"))    
 }

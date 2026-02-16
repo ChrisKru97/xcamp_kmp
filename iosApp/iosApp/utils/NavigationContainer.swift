@@ -127,33 +127,10 @@ struct NavigationContainer: View {
     private func configureTabBarAppearance() {
         let appearance = UITabBarAppearance()
         appearance.configureWithDefaultBackground()
-
-        appearance.shadowColor = colorScheme == .dark
-            ? Color.TabBar.shadowDark
-            : Color.TabBar.shadowLight
-
-        if colorScheme == .dark {
-            appearance.backgroundColor = Color.TabBar.backgroundDark
-        } else {
-            appearance.backgroundColor = Color.TabBar.backgroundLight
-        }
-
-        configureTabIconColors(for: appearance)
-
+        appearance.backgroundColor = .tabBarBackground
+        appearance.stackedLayoutAppearance.normal.iconColor = UIColor.label
+        
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
-    }
-
-    private func configureTabIconColors(for appearance: UITabBarAppearance) {
-        if colorScheme == .dark {
-            appearance.stackedLayoutAppearance.selected.iconColor = Color.TabBar.iconSelectedDark
-            appearance.stackedLayoutAppearance.normal.iconColor = Color.TabBar.iconNormalDark
-        } else {
-            appearance.stackedLayoutAppearance.selected.iconColor = Color.TabBar.iconSelectedLight
-            appearance.stackedLayoutAppearance.normal.iconColor = Color.TabBar.iconNormalLight
-        }
-
-        appearance.inlineLayoutAppearance.selected.iconColor = appearance.stackedLayoutAppearance.selected.iconColor
-        appearance.inlineLayoutAppearance.normal.iconColor = appearance.stackedLayoutAppearance.normal.iconColor
     }
 }

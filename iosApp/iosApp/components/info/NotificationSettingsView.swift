@@ -88,11 +88,13 @@ struct NotificationSettingsView: View {
 
     private var scheduleNotificationSection: some View {
         VStack(alignment: .leading, spacing: Spacing.md) {
-            Text(Strings.Notifications.shared.SCHEDULE_NOTIFICATIONS)
-                .font(.subheadline)
-                .fontWeight(.medium)
-                .foregroundStyle(.primary)
-                .padding(.horizontal, Spacing.xs)
+            VStack(alignment: .leading, spacing: Spacing.xs) {
+                Text(Strings.Notifications.shared.SCHEDULE_NOTIFICATIONS)
+                    .font(.body)
+                Text("Upozorníme vás 15 minut předem")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
                 
             Picker("", selection: $scheduleMode) {
                 Text(Strings.Notifications.shared.MODE_OFF).tag(ScheduleNotificationMode.off)

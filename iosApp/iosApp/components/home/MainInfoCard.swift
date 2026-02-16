@@ -10,10 +10,8 @@ struct MainInfoCard: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: 20, height: 20)
-                .foregroundStyle(.primary)
 
             Text(infoText)
-                .foregroundColor(.secondary)
                 .lineSpacing(2)
                 .multilineTextAlignment(.leading)
         }.padding(Spacing.md)

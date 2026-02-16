@@ -106,11 +106,11 @@ class AppViewModel: ObservableObject {
     }
 
     private func syncAllDataInBackground() async {
-        async let places = syncPlaces()
-        async let speakers = syncSpeakers()
-        async let schedule = syncSchedule()
+        async let places: () = syncPlaces()
+        async let speakers: () = syncSpeakers()
+        async let schedule: () = syncSchedule()
 
-        await (places, speakers, schedule)
+        _ = await (places, speakers, schedule)
     }
 
     private func syncPlaces() async {

@@ -16,7 +16,7 @@ struct EmergencyPill: View {
         } label: {
             pillContent
         }
-        .buttonStyle(.plain)
+        .glassButton()
     }
 
     @ViewBuilder
@@ -50,8 +50,8 @@ struct EmergencyPill: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(Spacing.md)
-            .card()
+            .contentShape(Rectangle())
+            .padding()
     }
 }
 
