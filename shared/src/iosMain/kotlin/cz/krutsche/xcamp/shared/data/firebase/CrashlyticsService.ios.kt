@@ -21,8 +21,4 @@ actual object CrashlyticsService {
         val message = "Non-fatal error: ${throwable.message}\n${throwable.stackTraceToString()}"
         bridge?.recordException(message)
     }
-
-    actual fun log(message: String) {
-        bridge?.log(message)
-    }
 }

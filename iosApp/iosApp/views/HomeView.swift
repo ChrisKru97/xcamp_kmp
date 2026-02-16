@@ -31,7 +31,7 @@ struct HomeView: View {
     }
 
     private var mainInfo: String {
-        return overrideMainInfo ?? appViewModel.remoteConfigService.getMainInfo()
+        return overrideMainInfo ?? appViewModel.remoteConfigService.mainInfo
     }
 
     private var showCountdown: Bool {

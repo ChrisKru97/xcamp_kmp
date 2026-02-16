@@ -86,7 +86,7 @@ class AppViewModel: ObservableObject {
     }
 
     func checkForceUpdate(currentVersion: String) async {
-        let forceUpdateVersion = remoteConfigService.getForceUpdateVersion()
+        let forceUpdateVersion = remoteConfigService.forceUpdateVersion
         let dismissedVersion = AppPreferences.shared.getDismissedForceUpdateVersion()
         if VersionUtilsKt.needsForceUpdate(currentVersion: currentVersion, requiredVersion: forceUpdateVersion),
            dismissedVersion != forceUpdateVersion {
@@ -156,7 +156,7 @@ class AppViewModel: ObservableObject {
             return
         }
 
-        let startDate = remoteConfigService.getStartDate()
+        let startDate = remoteConfigService.startDate
         try? await notificationService.schedulePrayerNotifications(startDate: startDate)
     }
 }

@@ -46,7 +46,7 @@ class ScheduleViewModel: ObservableObject {
         state = .loading
         logContentState(state: "loading", error: nil)
         do {
-            let startDate = remoteConfigService.getStartDate()
+            let startDate = remoteConfigService.startDate
             let sections = try await scheduleService.getAllExpandedSections(startDate: startDate)
             guard !Task.isCancelled else { return }
             state = .loaded(sections)
@@ -162,7 +162,7 @@ class ScheduleViewModel: ObservableObject {
         }
 
         let dayNumber = eventDays[dayIndex]
-        let startDate = remoteConfigService.getStartDate()
+        let startDate = remoteConfigService.startDate
 
         do {
             let types = filterState.visibleTypes

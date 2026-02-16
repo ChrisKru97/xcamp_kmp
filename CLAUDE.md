@@ -116,7 +116,7 @@ Analytics.Companion.logEvent(name: AnalyticsEventsKt.EVENT_NAME, parameters: [
 ])
 ```
 
-**Consent**: Managed via `AppPreferences.analyticsConsent`.
+**Consent**: Managed via `AppPreferences.dataCollectionEnabled`.
 
 ## Key Features
 

@@ -17,8 +17,4 @@ actual object CrashlyticsService {
     actual fun logNonFatalError(throwable: Throwable) {
         crashlytics.recordException(throwable)
     }
-
-    actual fun log(message: String) {
-        crashlytics.log(message)
-    }
 }

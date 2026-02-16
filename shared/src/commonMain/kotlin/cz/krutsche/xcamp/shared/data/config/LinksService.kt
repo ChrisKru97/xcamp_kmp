@@ -13,8 +13,8 @@ class LinksService(
     private val remoteConfigService: RemoteConfigService
 ) {
     fun getMediaLinks(): List<MediaLink> {
-        val youtubePlaylist = remoteConfigService.getYoutubeLink()
-        val mediaGallery = remoteConfigService.getGalleryLink()
+        val youtubePlaylist = remoteConfigService.youtubeLink
+        val mediaGallery = remoteConfigService.galleryLink
 
         return mediaLinkOrder.map { type ->
             MediaLink(
@@ -30,7 +30,7 @@ class LinksService(
     }
 
     fun getInfoLinks(): List<InfoLink> = LinkUtils.getInfoItems(
-        phone = remoteConfigService.getContactPhone(),
-        showRegistration = remoteConfigService.getShowRegistration()
+        phone = remoteConfigService.contactPhone,
+        showRegistration = remoteConfigService.showRegistration
     )
 }

@@ -22,8 +22,4 @@ public class CrashlyticsBridgeImpl: NSObject {
         let error = NSError(domain: "CzKrutscheXcamp", code: 0, userInfo: [NSLocalizedDescriptionKey: message])
         Crashlytics.crashlytics().record(error: error)
     }
-
-    @objc public func log(_ message: String) {
-        Crashlytics.crashlytics().log(message)
-    }
 }

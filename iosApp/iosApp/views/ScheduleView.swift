@@ -21,18 +21,14 @@ struct ScheduleView: View {
 
     var body: some View {
         ZStack(alignment: .bottomTrailing) {
-            switch viewModel.state {
-            case .loading:
-                LoadingView()
-            case .loaded(let sections, let isStale):
-                scheduleContent(sections, isStale: isStale)
-            case .refreshing(let sections):
-                scheduleContent(sections, isStale: false)
-            case .error(let error):
-                ErrorView {
-                    await viewModel.loadSections()
+            EmptyView()
+                .switchingContent(viewModel.state) { sections, isStale in
+                    scheduleContent(sections, isStale: isStale)
+                } error: { error in
+                    ErrorView(error: error) {
+                        await viewModel.loadSections()
+                    }
                 }
-            }
 
             if hasContentLoaded {
                 ScheduleFilterFab(

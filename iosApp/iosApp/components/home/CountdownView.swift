@@ -9,7 +9,7 @@ struct CountdownView: View {
     @State private var seconds: Int = 0
 
     private func updateCountdown() {
-        let targetDateString = appViewModel.remoteConfigService.getStartDate()
+        let targetDateString = appViewModel.remoteConfigService.startDate
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         formatter.timeZone = TimeZone.current

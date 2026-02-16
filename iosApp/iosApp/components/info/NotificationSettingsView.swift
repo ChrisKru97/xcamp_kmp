@@ -164,7 +164,7 @@ struct NotificationSettingsView: View {
             return
         }
 
-        let startDate = appViewModel.remoteConfigService.getStartDate()
+        let startDate = appViewModel.remoteConfigService.startDate
         try? await notificationService.schedulePrayerNotifications(startDate: startDate)
     }
 

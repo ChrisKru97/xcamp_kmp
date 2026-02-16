@@ -96,13 +96,13 @@ actual object AppPreferences {
         }
     }
 
-    actual fun getAnalyticsConsent(): Boolean {
-        if (!::context.isInitialized) return false
-        return prefs.getBoolean("analyticsConsent", false)
+    actual fun getDataCollectionEnabled(): Boolean {
+        if (!::context.isInitialized) return true
+        return prefs.getBoolean("dataCollectionEnabled", true)
     }
 
-    actual fun setAnalyticsConsent(consent: Boolean) {
+    actual fun setDataCollectionEnabled(enabled: Boolean) {
         if (!::context.isInitialized) return
-        prefs.edit().putBoolean("analyticsConsent", consent).apply()
+        prefs.edit().putBoolean("dataCollectionEnabled", enabled).apply()
     }
 }

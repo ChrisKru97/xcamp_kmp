@@ -9,7 +9,7 @@ actual object AppPreferences {
     private const val KEY_NOTIFICATION_PREFERENCES = "notificationPreferences"
     private const val KEY_DISMISSED_FORCE_UPDATE_VERSION = "dismissedForceUpdateVersion"
     private const val KEY_REMOTE_CONFIG_CACHE = "remoteConfigCache"
-    private const val KEY_ANALYTICS_CONSENT = "analyticsConsent"
+    private const val KEY_DATA_COLLECTION_ENABLED = "dataCollectionEnabled"
 
     private val json = Json { ignoreUnknownKeys = true }
 
@@ -76,12 +76,15 @@ actual object AppPreferences {
         }
     }
 
-    actual fun getAnalyticsConsent(): Boolean {
-        val value = NSUserDefaults.standardUserDefaults.stringForKey(KEY_ANALYTICS_CONSENT)
-        return value?.toBooleanStrictOrNull() ?: false
+    actual fun getDataCollectionEnabled(): Boolean {
+        return if (NSUserDefaults.standardUserDefaults.objectForKey(KEY_DATA_COLLECTION_ENABLED) == null) {
+            true
+        } else {
+            NSUserDefaults.standardUserDefaults.boolForKey(KEY_DATA_COLLECTION_ENABLED)
+        }
     }
 
-    actual fun setAnalyticsConsent(consent: Boolean) {
-        NSUserDefaults.standardUserDefaults.setObject(consent.toString(), KEY_ANALYTICS_CONSENT)
+    actual fun setDataCollectionEnabled(enabled: Boolean) {
+        NSUserDefaults.standardUserDefaults.setBool(enabled, KEY_DATA_COLLECTION_ENABLED)
     }
 }

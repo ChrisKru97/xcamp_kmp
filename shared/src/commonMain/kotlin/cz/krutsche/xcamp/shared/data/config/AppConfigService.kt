@@ -17,7 +17,7 @@ class AppConfigService(
     }
 
     private fun parseStartDate(): Instant {
-        val startDateStr = remoteConfigService.getStartDate()
+        val startDateStr = remoteConfigService.startDate
         // Remote Config returns date in format "YYYY-MM-DD" but Instant.parse() requires full ISO-8601
         // Append time component if missing
         val fullDateTimeStr = if (startDateStr.length == 10) {
@@ -53,7 +53,7 @@ class AppConfigService(
     fun getAppStateOverride(): AppState? = AppPreferences.getAppStateOverride()
 
     private fun getAppStateComputed(): AppState {
-        val showAppData = remoteConfigService.shouldShowAppData()
+        val showAppData = remoteConfigService.showAppData
 
         return when {
             !showAppData -> AppState.LIMITED
@@ -91,12 +91,12 @@ class AppConfigService(
     }
 
     fun getEventYear(): String {
-        val startDate = remoteConfigService.getStartDate()
+        val startDate = remoteConfigService.startDate
         return startDate.take(4)
     }
 
     fun getEventDays(): List<Int> {
-        val startDay = remoteConfigService.getStartDate().split("-")[2].toInt()
+        val startDay = remoteConfigService.startDate.split("-")[2].toInt()
         return List(EventLength) { startDay + it }
     }
 }
