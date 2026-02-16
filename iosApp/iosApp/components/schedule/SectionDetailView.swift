@@ -24,13 +24,13 @@ struct SectionDetailView: View {
             }
             .trackScreen(screenName: "session_detail")
             .onAppear {
-                if case .loaded(let section) = state {
+                if case .loaded(let section, _) = state {
                     Analytics().logEvent(
-                        name: AnalyticsEvents.CONTENT_VIEW,
+                        name: AnalyticsEvents.shared.CONTENT_VIEW,
                         parameters: [
-                            AnalyticsParameters.PARAM_CONTENT_TYPE: "session",
-                            AnalyticsParameters.PARAM_CONTENT_ID: section.uid,
-                            AnalyticsParameters.PARAM_ENTITY_NAME: section.name
+                            AnalyticsEvents.shared.PARAM_CONTENT_TYPE: "session",
+                            AnalyticsEvents.shared.PARAM_CONTENT_ID: section.uid,
+                            AnalyticsEvents.shared.PARAM_ENTITY_NAME: section.name
                         ]
                     )
                 }
@@ -41,7 +41,7 @@ struct SectionDetailView: View {
         do {
             let result = try await scheduleService.getSectionById(uid: sectionUid)
             guard !Task.isCancelled else { return }
-            if let section = result as? shared.Section {
+            if let section = result {
                 state = .loaded(section)
                 isFavorite = section.favorite
             } else {

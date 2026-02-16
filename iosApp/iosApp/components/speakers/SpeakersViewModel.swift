@@ -31,18 +31,18 @@ class SpeakersViewModel: ObservableObject {
 
     private func logContentState(state: String, error: Error?) {
         var params: [String: String] = [
-            AnalyticsParameters.PARAM_SCREEN_NAME: "speakers",
-            AnalyticsParameters.PARAM_STATE: state
+            AnalyticsEvents.shared.PARAM_SCREEN_NAME: "speakers",
+            AnalyticsEvents.shared.PARAM_STATE: state
         ]
         if let error = error {
-            params[AnalyticsParameters.PARAM_ERROR_TYPE] = error.localizedDescription
+            params[AnalyticsEvents.shared.PARAM_ERROR_TYPE] = error.localizedDescription
         }
-        Analytics().logEvent(name: AnalyticsEvents.CONTENT_STATE, parameters: params)
+        Analytics().logEvent(name: AnalyticsEvents.shared.CONTENT_STATE, parameters: params)
     }
 
     func refreshSpeakers() async {
-        Analytics().logEvent(name: AnalyticsEvents.PULL_REFRESH, parameters: [
-            AnalyticsParameters.PARAM_SCREEN_NAME: "speakers"
+        Analytics().logEvent(name: AnalyticsEvents.shared.PULL_REFRESH, parameters: [
+            AnalyticsEvents.shared.PARAM_SCREEN_NAME: "speakers"
         ])
 
         KingfisherManager.shared.cache.clearMemoryCache()
@@ -63,10 +63,10 @@ class SpeakersViewModel: ObservableObject {
     }
 
     func logSpeakerDetailView(speakerId: String, speakerName: String) {
-        Analytics().logEvent(name: AnalyticsEvents.CONTENT_VIEW, parameters: [
-            AnalyticsParameters.PARAM_CONTENT_TYPE: "speaker",
-            AnalyticsParameters.PARAM_CONTENT_ID: speakerId,
-            AnalyticsParameters.PARAM_ENTITY_NAME: speakerName
+        Analytics().logEvent(name: AnalyticsEvents.shared.CONTENT_VIEW, parameters: [
+            AnalyticsEvents.shared.PARAM_CONTENT_TYPE: "speaker",
+            AnalyticsEvents.shared.PARAM_CONTENT_ID: speakerId,
+            AnalyticsEvents.shared.PARAM_ENTITY_NAME: speakerName
         ])
     }
 }

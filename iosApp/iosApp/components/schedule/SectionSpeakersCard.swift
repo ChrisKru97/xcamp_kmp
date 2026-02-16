@@ -7,17 +7,13 @@ struct SectionSpeakersCard: View {
     var speakersService: SpeakersService { ServiceFactory.shared.getSpeakersService() }
 
     @EnvironmentObject var router: AppRouter
-    @State private var speakers: [Speaker] = []
+    @State private var state: ContentState<[Speaker]> = .loading
 
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.sm) {
             labelSection
 
-            if speakers.isEmpty {
-                ProgressView()
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical)
-            } else {
+            switchingContent(state, loading: { CardLoadingView() }) { speakers, _ in
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: Spacing.sm) {
                         ForEach(speakers, id: \.uid) { speaker in
@@ -31,6 +27,8 @@ struct SectionSpeakersCard: View {
                     }
                     .padding(.horizontal, Spacing.sm)
                 }
+            } error: { _ in
+                CardUnavailableView(message: "Speakers Not Available")
             }
         }.padding(Spacing.md)
         .card()
@@ -48,7 +46,7 @@ struct SectionSpeakersCard: View {
             }
         }
         guard !Task.isCancelled else { return }
-        speakers = loaded
+        state = .loaded(loaded)
     }
 
     private func speakerChip(_ speaker: Speaker) -> some View {

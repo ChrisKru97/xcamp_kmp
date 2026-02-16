@@ -70,18 +70,18 @@ class ScheduleViewModel: ObservableObject {
 
     private func logContentState(state: String, error: Error?) {
         var params: [String: String] = [
-            AnalyticsParameters.PARAM_SCREEN_NAME: "schedule",
-            AnalyticsParameters.PARAM_STATE: state
+            AnalyticsEvents.shared.PARAM_SCREEN_NAME: "schedule",
+            AnalyticsEvents.shared.PARAM_STATE: state
         ]
         if let error = error {
-            params[AnalyticsParameters.PARAM_ERROR_TYPE] = error.localizedDescription
+            params[AnalyticsEvents.shared.PARAM_ERROR_TYPE] = error.localizedDescription
         }
-        Analytics().logEvent(name: AnalyticsEvents.CONTENT_STATE, parameters: params)
+        Analytics().logEvent(name: AnalyticsEvents.shared.CONTENT_STATE, parameters: params)
     }
 
     func refreshSections() async {
-        Analytics().logEvent(name: AnalyticsEvents.PULL_REFRESH, parameters: [
-            AnalyticsParameters.PARAM_SCREEN_NAME: "schedule"
+        Analytics().logEvent(name: AnalyticsEvents.shared.PULL_REFRESH, parameters: [
+            AnalyticsEvents.shared.PARAM_SCREEN_NAME: "schedule"
         ])
 
         switch state {
@@ -112,11 +112,11 @@ class ScheduleViewModel: ObservableObject {
             await reloadCurrentDayWithFilter()
             await refreshNotificationsIfNeeded()
 
-            let eventName = isAdding ? AnalyticsEvents.FAVORITE_ADD : AnalyticsEvents.FAVORITE_REMOVE
+            let eventName = isAdding ? AnalyticsEvents.shared.FAVORITE_ADD : AnalyticsEvents.shared.FAVORITE_REMOVE
             Analytics().logEvent(name: eventName, parameters: [
-                AnalyticsParameters.PARAM_ENTITY_TYPE: "session",
-                AnalyticsParameters.PARAM_ENTITY_ID: section.uid,
-                AnalyticsParameters.PARAM_ENTITY_NAME: section.name
+                AnalyticsEvents.shared.PARAM_ENTITY_TYPE: "session",
+                AnalyticsEvents.shared.PARAM_ENTITY_ID: section.uid,
+                AnalyticsEvents.shared.PARAM_ENTITY_NAME: section.name
             ])
         } catch {
             guard !Task.isCancelled else { return }
@@ -141,9 +141,9 @@ class ScheduleViewModel: ObservableObject {
 
         let dayNumber = eventDays[index]
         let dayName = "Day \(dayNumber)"
-        Analytics().logEvent(name: AnalyticsEvents.DAY_SELECT, parameters: [
-            AnalyticsParameters.PARAM_DAY_NUMBER: String(dayNumber),
-            AnalyticsParameters.PARAM_DAY_NAME: dayName
+        Analytics().logEvent(name: AnalyticsEvents.shared.DAY_SELECT, parameters: [
+            AnalyticsEvents.shared.PARAM_DAY_NUMBER: String(dayNumber),
+            AnalyticsEvents.shared.PARAM_DAY_NAME: dayName
         ])
     }
 
@@ -205,9 +205,9 @@ class ScheduleViewModel: ObservableObject {
     }
 
     func logContentView(sectionId: String, sectionName: String) {
-        Analytics().logEvent(name: AnalyticsEvents.CONTENT_VIEW, parameters: [
-            AnalyticsParameters.PARAM_CONTENT_TYPE: "session",
-            AnalyticsParameters.PARAM_CONTENT_ID: sectionId
+        Analytics().logEvent(name: AnalyticsEvents.shared.CONTENT_VIEW, parameters: [
+            AnalyticsEvents.shared.PARAM_CONTENT_TYPE: "session",
+            AnalyticsEvents.shared.PARAM_CONTENT_ID: sectionId
         ])
     }
 }
