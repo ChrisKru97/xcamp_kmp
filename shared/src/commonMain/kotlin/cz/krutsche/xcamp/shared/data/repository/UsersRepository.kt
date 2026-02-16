@@ -3,8 +3,8 @@ package cz.krutsche.xcamp.shared.data.repository
 
 import Platform
 import cz.krutsche.xcamp.shared.data.ServiceFactory
+import cz.krutsche.xcamp.shared.data.firebase.Analytics
 import cz.krutsche.xcamp.shared.data.firebase.AnalyticsEvents
-import cz.krutsche.xcamp.shared.data.firebase.AnalyticsService
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
 import cz.krutsche.xcamp.shared.data.local.EntityType
 import kotlinx.serialization.Serializable
@@ -48,9 +48,6 @@ class UsersRepository(
     private val firestoreService: FirestoreService
 ) {
     private val collectionName: String = EntityType.USERS.collectionName
-
-    private val analyticsService: AnalyticsService
-        get() = ServiceFactory.getAnalyticsService()
 
     suspend fun registerUser(
         userId: String,
@@ -97,7 +94,7 @@ class UsersRepository(
     }
 
     private fun logUserAction(actionType: String, success: Boolean, durationMs: Long) {
-        analyticsService.logEvent(
+        Analytics.logEvent(
             name = AnalyticsEvents.USER_ACTION,
             parameters = mapOf(
                 AnalyticsEvents.PARAM_ACTION_TYPE to actionType,

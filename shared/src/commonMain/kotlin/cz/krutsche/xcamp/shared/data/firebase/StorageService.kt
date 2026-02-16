@@ -4,6 +4,8 @@ package cz.krutsche.xcamp.shared.data.firebase
 import cz.krutsche.xcamp.shared.data.DEFAULT_STALENESS_MS
 import cz.krutsche.xcamp.shared.data.DEFAULT_TIMEOUT
 import cz.krutsche.xcamp.shared.data.ServiceFactory
+import cz.krutsche.xcamp.shared.data.firebase.Analytics
+import cz.krutsche.xcamp.shared.data.firebase.AnalyticsEvents
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.storage.FirebaseStorage
 import dev.gitlive.firebase.storage.storage
@@ -15,9 +17,6 @@ class StorageService {
     private val storage: FirebaseStorage = Firebase.storage
 
     private val urlCache = mutableMapOf<String, Pair<String, Long>>()
-
-    private val analyticsService: AnalyticsService
-        get() = ServiceFactory.getAnalyticsService()
 
     suspend fun uploadFile(
         path: String,
@@ -112,7 +111,7 @@ class StorageService {
     }
 
     private fun logStorageAction(actionType: String, success: Boolean, durationMs: Long) {
-        analyticsService.logEvent(
+        Analytics.logEvent(
             name = AnalyticsEvents.USER_ACTION,
             parameters = mapOf(
                 AnalyticsEvents.PARAM_ACTION_TYPE to actionType,

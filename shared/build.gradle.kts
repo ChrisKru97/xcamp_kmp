@@ -42,9 +42,6 @@ kotlin {
                 create("CrashlyticsBridge") {
                     defFile(project.file("src/iosMain/cinterop/CrashlyticsBridge.def"))
                 }
-                create("AnalyticsBridge") {
-                    defFile(project.file("src/iosMain/cinterop/AnalyticsBridge.def"))
-                }
             }
         }
     }
@@ -71,6 +68,7 @@ kotlin {
             implementation(libs.firebase.storage)
             implementation(libs.firebase.config)
             implementation(libs.firebase.messaging)
+            implementation(libs.firebase.analytics.gitlive)
         }
 
         androidMain.dependencies {

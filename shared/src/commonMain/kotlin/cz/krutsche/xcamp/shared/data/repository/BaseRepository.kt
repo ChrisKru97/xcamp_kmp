@@ -3,8 +3,8 @@ package cz.krutsche.xcamp.shared.data.repository
 
 import cz.krutsche.xcamp.shared.data.DEFAULT_STALENESS_MS
 import cz.krutsche.xcamp.shared.data.ServiceFactory
+import cz.krutsche.xcamp.shared.data.firebase.Analytics
 import cz.krutsche.xcamp.shared.data.firebase.AnalyticsEvents
-import cz.krutsche.xcamp.shared.data.firebase.AnalyticsService
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.data.local.EntityType
@@ -24,9 +24,6 @@ abstract class BaseRepository<T : Any>(
     abstract val entityType: EntityType
     protected abstract val syncMutex: Mutex
 
-    protected val analyticsService: AnalyticsService
-        get() = ServiceFactory.getAnalyticsService()
-
     protected suspend fun <R> withDatabase(block: suspend () -> R): R {
         return withContext(Dispatchers.Default) {
             block()
@@ -40,7 +37,7 @@ abstract class BaseRepository<T : Any>(
     }
 
     protected fun logCacheHit(hit: Boolean) {
-        analyticsService.logEvent(
+        Analytics.logEvent(
             name = AnalyticsEvents.CACHE_HIT,
             parameters = mapOf(
                 AnalyticsEvents.PARAM_ENTITY_TYPE to entityType.collectionName,
@@ -107,7 +104,7 @@ abstract class BaseRepository<T : Any>(
     }
 
     private fun logDataSync(success: Boolean, durationMs: Long) {
-        analyticsService.logEvent(
+        Analytics.logEvent(
             name = AnalyticsEvents.DATA_SYNC,
             parameters = mapOf(
                 AnalyticsEvents.PARAM_ENTITY_TYPE to entityType.collectionName,
