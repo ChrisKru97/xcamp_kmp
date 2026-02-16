@@ -5,6 +5,7 @@ import Platform
 import cz.krutsche.xcamp.shared.data.ServiceFactory
 import cz.krutsche.xcamp.shared.data.firebase.Analytics
 import cz.krutsche.xcamp.shared.data.firebase.AnalyticsEvents
+import cz.krutsche.xcamp.shared.data.firebase.CrashlyticsService
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
 import cz.krutsche.xcamp.shared.data.local.EntityType
 import kotlinx.serialization.Serializable
@@ -61,7 +62,12 @@ class UsersRepository(
         var success = false
         result.fold(
             onSuccess = { success = true },
-            onFailure = { success = false }
+            onFailure = {
+                CrashlyticsService.logNonFatalError(it)
+                CrashlyticsService.setCustomKey("registration_phase", "firebase_firestore")
+                CrashlyticsService.setCustomKey("user_id", userId)
+                success = false
+            }
         )
 
         val durationMs = now().toEpochMilliseconds() - startTime
@@ -84,7 +90,12 @@ class UsersRepository(
         var success = false
         result.fold(
             onSuccess = { success = true },
-            onFailure = { success = false }
+            onFailure = {
+                CrashlyticsService.logNonFatalError(it)
+                CrashlyticsService.setCustomKey("registration_phase", "fcm_token_update")
+                CrashlyticsService.setCustomKey("user_id", userId)
+                success = false
+            }
         )
 
         val durationMs = now().toEpochMilliseconds() - startTime

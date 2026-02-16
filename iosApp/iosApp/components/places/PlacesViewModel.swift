@@ -31,7 +31,7 @@ class PlacesViewModel: ObservableObject {
     }
 
     private func logScreenView() {
-        Analytics().logScreenView(screenName: "places")
+        Analytics.shared.logScreenView(screenName: "places")
     }
 
     private func logContentState(state: String, error: Error?) {
@@ -42,11 +42,11 @@ class PlacesViewModel: ObservableObject {
         if let error = error {
             params[AnalyticsEvents.shared.PARAM_ERROR_TYPE] = error.localizedDescription
         }
-        Analytics().logEvent(name: AnalyticsEvents.shared.CONTENT_STATE, parameters: params)
+        Analytics.shared.logEvent(name: AnalyticsEvents.shared.CONTENT_STATE, parameters: params)
     }
 
     func refreshPlaces() async {
-        Analytics().logEvent(name: AnalyticsEvents.shared.PULL_REFRESH, parameters: [
+        Analytics.shared.logEvent(name: AnalyticsEvents.shared.PULL_REFRESH, parameters: [
             AnalyticsEvents.shared.PARAM_SCREEN_NAME: "places"
         ])
 
@@ -117,13 +117,13 @@ class PlacesViewModel: ObservableObject {
     }
 
     func logMapView() {
-        Analytics().logEvent(name: AnalyticsEvents.shared.MAP_VIEW, parameters: [
+        Analytics.shared.logEvent(name: AnalyticsEvents.shared.MAP_VIEW, parameters: [
             AnalyticsEvents.shared.PARAM_VIEW_TYPE: "area_map"
         ])
     }
 
     func logPlaceDetailView(placeId: String, placeName: String) {
-        Analytics().logEvent(name: AnalyticsEvents.shared.CONTENT_VIEW, parameters: [
+        Analytics.shared.logEvent(name: AnalyticsEvents.shared.CONTENT_VIEW, parameters: [
             AnalyticsEvents.shared.PARAM_CONTENT_TYPE: "place",
             AnalyticsEvents.shared.PARAM_CONTENT_ID: placeId,
             AnalyticsEvents.shared.PARAM_ENTITY_NAME: placeName

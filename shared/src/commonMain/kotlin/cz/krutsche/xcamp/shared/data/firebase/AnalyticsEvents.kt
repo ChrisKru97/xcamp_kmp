@@ -1,10 +1,8 @@
 package cz.krutsche.xcamp.shared.data.firebase
 
 object AnalyticsEvents {
-    // Navigation events
     const val SCREEN_VIEW = "screen_view"
     const val PARAM_SCREEN_NAME = "screen_name"
-    const val PARAM_APP_STATE = "app_state"
     const val PARAM_TAB_NAME = "tab_name"
 
     // Tab switching
@@ -36,11 +34,6 @@ object AnalyticsEvents {
 
     // Refresh
     const val PULL_REFRESH = "pull_refresh"
-
-    // Search
-    const val SEARCH_QUERY = "search_query"
-    const val PARAM_QUERY_LENGTH = "query_length"
-    const val PARAM_HAS_RESULTS = "has_results"
 
     // Notifications
     const val NOTIFICATION_PREF_CHANGE = "notification_pref_change"

@@ -6,6 +6,7 @@ import cz.krutsche.xcamp.shared.data.DEFAULT_TIMEOUT
 import cz.krutsche.xcamp.shared.data.ServiceFactory
 import cz.krutsche.xcamp.shared.data.firebase.Analytics
 import cz.krutsche.xcamp.shared.data.firebase.AnalyticsEvents
+import cz.krutsche.xcamp.shared.data.firebase.CrashlyticsService
 import dev.gitlive.firebase.Firebase
 import dev.gitlive.firebase.storage.FirebaseStorage
 import dev.gitlive.firebase.storage.storage
@@ -30,6 +31,10 @@ class StorageService {
                 Result.failure<String>(Exception("Storage upload not yet implemented"))
             }
         } catch (e: Exception) {
+            CrashlyticsService.logNonFatalError(e)
+            CrashlyticsService.setCustomKey("upload_type", "file")
+            CrashlyticsService.setCustomKey("upload_path", path)
+            CrashlyticsService.setCustomKey("file_size_bytes", data.size.toString())
             Result.failure(e)
         }
 
@@ -79,6 +84,9 @@ class StorageService {
                 Result.success(Unit)
             }
         } catch (e: Exception) {
+            CrashlyticsService.logNonFatalError(e)
+            CrashlyticsService.setCustomKey("storage_operation", "delete")
+            CrashlyticsService.setCustomKey("storage_path", path)
             Result.failure(e)
         }
 
@@ -102,6 +110,9 @@ class StorageService {
                 Result.success(filePaths)
             }
         } catch (e: Exception) {
+            CrashlyticsService.logNonFatalError(e)
+            CrashlyticsService.setCustomKey("storage_operation", "list")
+            CrashlyticsService.setCustomKey("storage_path", path)
             Result.failure(e)
         }
     }

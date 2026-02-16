@@ -37,6 +37,10 @@ object Analytics {
         analytics.setAnalyticsCollectionEnabled(enabled)
     }
 
+    fun initializeAnalytics(hasConsent: Boolean) {
+        setAnalyticsCollectionEnabled(hasConsent)
+    }
+
     fun setConsent(
         analyticsStorage: ConsentStatus = ConsentStatus.GRANTED,
         adStorage: ConsentStatus = ConsentStatus.DENIED,

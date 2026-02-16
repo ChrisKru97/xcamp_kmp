@@ -26,7 +26,7 @@ class SpeakersViewModel: ObservableObject {
     }
 
     private func logScreenView() {
-        Analytics().logScreenView(screenName: "speakers")
+        Analytics.shared.logScreenView(screenName: "speakers")
     }
 
     private func logContentState(state: String, error: Error?) {
@@ -37,11 +37,11 @@ class SpeakersViewModel: ObservableObject {
         if let error = error {
             params[AnalyticsEvents.shared.PARAM_ERROR_TYPE] = error.localizedDescription
         }
-        Analytics().logEvent(name: AnalyticsEvents.shared.CONTENT_STATE, parameters: params)
+        Analytics.shared.logEvent(name: AnalyticsEvents.shared.CONTENT_STATE, parameters: params)
     }
 
     func refreshSpeakers() async {
-        Analytics().logEvent(name: AnalyticsEvents.shared.PULL_REFRESH, parameters: [
+        Analytics.shared.logEvent(name: AnalyticsEvents.shared.PULL_REFRESH, parameters: [
             AnalyticsEvents.shared.PARAM_SCREEN_NAME: "speakers"
         ])
 
@@ -63,7 +63,7 @@ class SpeakersViewModel: ObservableObject {
     }
 
     func logSpeakerDetailView(speakerId: String, speakerName: String) {
-        Analytics().logEvent(name: AnalyticsEvents.shared.CONTENT_VIEW, parameters: [
+        Analytics.shared.logEvent(name: AnalyticsEvents.shared.CONTENT_VIEW, parameters: [
             AnalyticsEvents.shared.PARAM_CONTENT_TYPE: "speaker",
             AnalyticsEvents.shared.PARAM_CONTENT_ID: speakerId,
             AnalyticsEvents.shared.PARAM_ENTITY_NAME: speakerName

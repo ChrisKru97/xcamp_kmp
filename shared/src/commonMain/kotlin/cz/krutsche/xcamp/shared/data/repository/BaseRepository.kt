@@ -5,6 +5,7 @@ import cz.krutsche.xcamp.shared.data.DEFAULT_STALENESS_MS
 import cz.krutsche.xcamp.shared.data.ServiceFactory
 import cz.krutsche.xcamp.shared.data.firebase.Analytics
 import cz.krutsche.xcamp.shared.data.firebase.AnalyticsEvents
+import cz.krutsche.xcamp.shared.data.firebase.CrashlyticsService
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.data.local.EntityType
@@ -99,6 +100,7 @@ abstract class BaseRepository<T : Any>(
         } catch (e: Exception) {
             val durationMs = now().toEpochMilliseconds() - startTime
             logDataSync(success = false, durationMs = durationMs)
+            logRepositoryError(e, "syncFromFirestore")
             Result.failure(NetworkError)
         }
     }
@@ -112,6 +114,12 @@ abstract class BaseRepository<T : Any>(
                 AnalyticsEvents.PARAM_DURATION_MS to durationMs.toString()
             )
         )
+    }
+
+    protected fun logRepositoryError(throwable: Throwable, operation: String) {
+        CrashlyticsService.logNonFatalError(throwable)
+        CrashlyticsService.setCustomKey("repo_operation", operation)
+        CrashlyticsService.setCustomKey("entity_type", entityType.collectionName)
     }
 
     protected suspend fun <F : Any> syncFromFirestoreLocked(

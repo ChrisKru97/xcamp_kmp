@@ -30,7 +30,7 @@ struct PlaceDetailView: View {
             .trackScreen(screenName: "place_detail")
             .onAppear {
                 if case .loaded(let place, _) = state {
-                    Analytics().logEvent(
+                    Analytics.shared.logEvent(
                         name: AnalyticsEvents.shared.CONTENT_VIEW,
                         parameters: [
                             AnalyticsEvents.shared.PARAM_CONTENT_TYPE: "place",

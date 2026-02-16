@@ -1,14 +1,13 @@
 package cz.krutsche.xcamp
 
 import android.app.Application
-import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.analytics.ktx.analytics
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import cz.krutsche.xcamp.shared.data.DatabaseFactory
 import cz.krutsche.xcamp.shared.data.config.AppPreferences
 import cz.krutsche.xcamp.shared.data.ServiceFactory
+import cz.krutsche.xcamp.shared.data.firebase.Analytics
 import Platform
 
 class XcampApplication : Application() {
@@ -44,21 +43,20 @@ class XcampApplication : Application() {
     }
 
     private fun configureAnalytics() {
-        val analytics = Firebase.analytics
         val hasConsent = AppPreferences.getAnalyticsConsent()
-        analytics.setAnalyticsCollectionEnabled(hasConsent)
+        Analytics.initializeAnalytics(hasConsent)
 
         if (!hasConsent) return
 
         val platform = Platform()
 
-        analytics.setUserProperty("app_version", platform.appVersion)
-        analytics.setUserProperty("build_type", platform.buildType)
-        analytics.setUserProperty("locale", platform.locale)
+        Analytics.setUserProperty("app_version", platform.appVersion)
+        Analytics.setUserProperty("build_type", platform.buildType)
+        Analytics.setUserProperty("locale", platform.locale)
 
         val auth = ServiceFactory.getAuthService()
         auth.currentUserId?.let { userId ->
-            analytics.setUserId(userId)
+            Analytics.setUserId(userId)
         }
     }
 }

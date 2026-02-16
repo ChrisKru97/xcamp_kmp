@@ -3,7 +3,6 @@ import shared
 import Firebase
 import FirebaseAuth
 import FirebaseCrashlytics
-import FirebaseAnalytics
 import Kingfisher
 
 @main
@@ -59,18 +58,18 @@ struct XcampApp: App {
 
     private func configureAnalytics() {
         let hasConsent = AppPreferences.shared.getAnalyticsConsent()
-        Analytics.setAnalyticsCollectionEnabled(hasConsent)
+        Analytics.shared.initializeAnalytics(hasConsent: hasConsent)
 
         guard hasConsent else { return }
 
         let platform = Platform()
 
-        Analytics.setUserProperty(platform.appVersion, forName: "app_version")
-        Analytics.setUserProperty(platform.buildType, forName: "build_type")
-        Analytics.setUserProperty(platform.locale, forName: "locale")
+        Analytics.shared.setUserProperty(name: "app_version", value: platform.appVersion)
+        Analytics.shared.setUserProperty(name: "build_type", value: platform.buildType)
+        Analytics.shared.setUserProperty(name: "locale", value: platform.locale)
 
         if let userID = Auth.auth().currentUser?.uid {
-            Analytics.setUserID(userID)
+            Analytics.shared.setUserId(userId: userID)
         }
     }
 

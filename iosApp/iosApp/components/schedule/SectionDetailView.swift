@@ -25,7 +25,7 @@ struct SectionDetailView: View {
             .trackScreen(screenName: "session_detail")
             .onAppear {
                 if case .loaded(let section, _) = state {
-                    Analytics().logEvent(
+                    Analytics.shared.logEvent(
                         name: AnalyticsEvents.shared.CONTENT_VIEW,
                         parameters: [
                             AnalyticsEvents.shared.PARAM_CONTENT_TYPE: "session",

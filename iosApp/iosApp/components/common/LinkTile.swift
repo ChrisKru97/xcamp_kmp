@@ -7,6 +7,7 @@ struct LinkTile<T: LinkData>: View {
     var body: some View {
         Button {
             guard !item.url.isEmpty else { return }
+            logMediaLinkClick()
             // For address links, use MapOpener which has proper fallback logic -- TODO MOVE IT
             if let infoLink = item as? InfoLink, infoLink.type == InfoLinkType.address {
                 MapOpener.shared.openMap(latitude: 49.7158, longitude: 18.5934, name: "Smilovice 79")
@@ -17,6 +18,22 @@ struct LinkTile<T: LinkData>: View {
             tileContent
         }
         .glassButton()
+    }
+
+    private func logMediaLinkClick() {
+        let linkType: String
+        if let infoLink = item as? InfoLink {
+            linkType = infoLink.type.name
+        } else if let mediaLink = item as? MediaLink {
+            linkType = mediaLink.type.name
+        } else {
+            linkType = "unknown"
+        }
+
+        Analytics.shared.logEvent(name: AnalyticsEvents.shared.MEDIA_LINK_CLICK, parameters: [
+            AnalyticsEvents.shared.PARAM_LINK_TYPE: linkType,
+            AnalyticsEvents.shared.PARAM_URL: item.url
+        ])
     }
 
     @ViewBuilder

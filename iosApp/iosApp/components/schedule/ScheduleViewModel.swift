@@ -65,7 +65,7 @@ class ScheduleViewModel: ObservableObject {
     }
 
     private func logScreenView() {
-        Analytics().logScreenView(screenName: "schedule")
+        Analytics.shared.logScreenView(screenName: "schedule")
     }
 
     private func logContentState(state: String, error: Error?) {
@@ -76,11 +76,11 @@ class ScheduleViewModel: ObservableObject {
         if let error = error {
             params[AnalyticsEvents.shared.PARAM_ERROR_TYPE] = error.localizedDescription
         }
-        Analytics().logEvent(name: AnalyticsEvents.shared.CONTENT_STATE, parameters: params)
+        Analytics.shared.logEvent(name: AnalyticsEvents.shared.CONTENT_STATE, parameters: params)
     }
 
     func refreshSections() async {
-        Analytics().logEvent(name: AnalyticsEvents.shared.PULL_REFRESH, parameters: [
+        Analytics.shared.logEvent(name: AnalyticsEvents.shared.PULL_REFRESH, parameters: [
             AnalyticsEvents.shared.PARAM_SCREEN_NAME: "schedule"
         ])
 
@@ -113,7 +113,7 @@ class ScheduleViewModel: ObservableObject {
             await refreshNotificationsIfNeeded()
 
             let eventName = isAdding ? AnalyticsEvents.shared.FAVORITE_ADD : AnalyticsEvents.shared.FAVORITE_REMOVE
-            Analytics().logEvent(name: eventName, parameters: [
+            Analytics.shared.logEvent(name: eventName, parameters: [
                 AnalyticsEvents.shared.PARAM_ENTITY_TYPE: "session",
                 AnalyticsEvents.shared.PARAM_ENTITY_ID: section.uid,
                 AnalyticsEvents.shared.PARAM_ENTITY_NAME: section.name
@@ -141,7 +141,7 @@ class ScheduleViewModel: ObservableObject {
 
         let dayNumber = eventDays[index]
         let dayName = "Day \(dayNumber)"
-        Analytics().logEvent(name: AnalyticsEvents.shared.DAY_SELECT, parameters: [
+        Analytics.shared.logEvent(name: AnalyticsEvents.shared.DAY_SELECT, parameters: [
             AnalyticsEvents.shared.PARAM_DAY_NUMBER: String(dayNumber),
             AnalyticsEvents.shared.PARAM_DAY_NAME: dayName
         ])
@@ -205,7 +205,7 @@ class ScheduleViewModel: ObservableObject {
     }
 
     func logContentView(sectionId: String, sectionName: String) {
-        Analytics().logEvent(name: AnalyticsEvents.shared.CONTENT_VIEW, parameters: [
+        Analytics.shared.logEvent(name: AnalyticsEvents.shared.CONTENT_VIEW, parameters: [
             AnalyticsEvents.shared.PARAM_CONTENT_TYPE: "session",
             AnalyticsEvents.shared.PARAM_CONTENT_ID: sectionId
         ])
