@@ -19,8 +19,8 @@ struct SpeakerDetailView: View {
             .task {
                 await loadSpeaker()
             }
-            .trackScreen(screenName: "speaker_detail")
             .onAppear {
+                Analytics.shared.logScreenView(screenName: "speaker_detail")
                 if case .loaded(let speaker, _) = state {
                     Analytics.shared.logEvent(
                         name: AnalyticsEvents.shared.CONTENT_VIEW,

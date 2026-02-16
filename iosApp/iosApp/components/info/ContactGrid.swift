@@ -12,7 +12,8 @@ struct ContactGrid: View {
     var body: some View {
         VStack(alignment: .leading, spacing: Spacing.md) {
             Text(Strings.Info.shared.CONTACT_US)
-                .font(.headline)
+                .font(.subheadline)
+                .fontWeight(.medium)
                 .foregroundStyle(.primary)
                 .padding(.horizontal, Spacing.xs)
 

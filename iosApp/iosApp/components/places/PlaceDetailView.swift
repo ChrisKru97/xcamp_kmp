@@ -27,8 +27,8 @@ struct PlaceDetailView: View {
             .task {
                 await loadPlace()
             }
-            .trackScreen(screenName: "place_detail")
             .onAppear {
+                Analytics.shared.logScreenView(screenName: "place_detail")
                 if case .loaded(let place, _) = state {
                     Analytics.shared.logEvent(
                         name: AnalyticsEvents.shared.CONTENT_VIEW,

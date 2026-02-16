@@ -10,5 +10,4 @@ struct Spacing {
 
 struct CornerRadius {
     static let medium: CGFloat = 12
-    static let large: CGFloat = 16
 }

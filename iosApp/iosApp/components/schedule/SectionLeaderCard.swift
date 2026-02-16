@@ -7,27 +7,41 @@ struct SectionLeaderCard: View {
     var speakersService: SpeakersService { ServiceFactory.shared.getSpeakersService() }
 
     @EnvironmentObject var router: AppRouter
-    @State private var leader: Speaker?
+    @State private var state: ContentState<Speaker> = .loading
 
     var body: some View {
-        Group {
-            if let leader = leader {
-                Button {
-                    router.push(leader.uid, type: .speaker)
-                } label: {
-                    cardContent(leader.name)
-                }
-                .glassButton()
-            } else {
-                ProgressView()
-                    .frame(maxWidth: .infinity)
-                    .padding()
+        bodyContent
+            .task {
+                await loadLeader()
             }
+    }
+
+    @ViewBuilder
+    private var bodyContent: some View {
+        switchingContent(state, loading: { CardLoadingView() }) { leader, _ in
+            Button {
+                router.push(leader.uid, type: .speaker)
+            } label: {
+                cardContent(leader.name)
+            }
+            .glassButton()
+        } error: { _ in
+            CardUnavailableView(message: "Leader Not Available")
         }
-        .task {
-            let result = try? await speakersService.getSpeakerById(uid: leaderUid)
+    }
+
+    private func loadLeader() async {
+        do {
+            let result = try await speakersService.getSpeakerById(uid: leaderUid)
             guard !Task.isCancelled else { return }
-            leader = result
+            if let leader = result {
+                state = .loaded(leader)
+            } else {
+                state = .error(AppError.notFound)
+            }
+        } catch {
+            guard !Task.isCancelled else { return }
+            state = .error(AppError.notFound)
         }
     }
 

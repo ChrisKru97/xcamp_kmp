@@ -27,8 +27,7 @@ struct InfoView: View {
         VStack(alignment: .leading, spacing: Spacing.md) {
             Text(Strings.Info.shared.IMPORTANT_INFO)
                 .font(.subheadline)
-                .fontWeight(.medium)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary)
                 .padding(.horizontal, Spacing.xs)
 
             VStack(spacing: Spacing.sm) {
@@ -72,6 +71,7 @@ struct InfoView: View {
                     .font(.caption)
                     .foregroundStyle(.tertiary)
             }
+            .contentShape(Rectangle())
             .padding()
         }
         .glassButton()

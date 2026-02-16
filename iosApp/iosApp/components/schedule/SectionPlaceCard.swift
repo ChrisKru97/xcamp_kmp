@@ -1,59 +1,37 @@
 import SwiftUI
 import shared
 
-enum SectionPlaceCardState {
-    case loading
-    case loaded(Place)
-    case error
-    case notFound
-}
-
 struct SectionPlaceCard: View {
     let placeUid: String
 
     var placesService: PlacesService { ServiceFactory.shared.getPlacesService() }
 
     @EnvironmentObject var router: AppRouter
-    @State private var state: SectionPlaceCardState = .loading
+    @State private var state: ContentState<Place?> = .loading
 
     var body: some View {
-        Group {
-            switch state {
-            case .loading:
-                ProgressView()
-                    .frame(maxWidth: .infinity)
-                    .padding()
-            case .loaded(let place):
+        bodyContent
+            .task {
+                await loadPlace()
+            }
+    }
+
+    @ViewBuilder
+    private var bodyContent: some View {
+        switchingContent(state, loading: { CardLoadingView() }) { place, _ in
+            if let place = place {
                 Button {
                     router.push(place.uid, type: .place)
                 } label: {
                     cardContent(place.name)
                 }
                 .glassButton()
-            case .error, .notFound:
-                placeholderCard
+            } else {
+                CardUnavailableView(message: "Place Not Available")
             }
+        } error: { _ in
+            CardUnavailableView(message: "Unknown Place")
         }
-        .task {
-            await loadPlace()
-        }
-    }
-
-    @ViewBuilder
-    private var placeholderCard: some View {
-        HStack {
-            labelSection
-            Spacer()
-            Text(Strings.ScheduleDetail.shared.PLACE_UNKNOWN)
-                .font(.body)
-                .foregroundColor(.secondary)
-            Image(systemName: "chevron.right")
-                .font(.caption)
-                .foregroundColor(.secondary)
-        }
-        .padding(Spacing.md)
-        .card()
-        .opacity(0.6)
     }
 
     private func cardContent(_ placeName: String) -> some View {
@@ -84,22 +62,13 @@ struct SectionPlaceCard: View {
             let result = try await placesService.getPlaceById(uid: placeUid)
             guard !Task.isCancelled else { return }
             if let place = result as? Place {
-                await MainActor.run {
-                    guard !Task.isCancelled else { return }
-                    state = .loaded(place)
-                }
+                state = .loaded(place)
             } else {
-                await MainActor.run {
-                    guard !Task.isCancelled else { return }
-                    state = .notFound
-                }
+                state = .error(AppError.notFound)
             }
         } catch {
             guard !Task.isCancelled else { return }
-            await MainActor.run {
-                guard !Task.isCancelled else { return }
-                state = .notFound
-            }
+            state = .error(error)
         }
     }
 }

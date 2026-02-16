@@ -22,8 +22,8 @@ struct SectionDetailView: View {
             .task {
                 await loadSection()
             }
-            .trackScreen(screenName: "session_detail")
             .onAppear {
+                Analytics.shared.logScreenView(screenName: "session_detail")
                 if case .loaded(let section, _) = state {
                     Analytics.shared.logEvent(
                         name: AnalyticsEvents.shared.CONTENT_VIEW,
