@@ -1,1 +1,0 @@
-Look at the ios part (swiftui) of the project, go through it thoroughly and focus on performance, lazy-loading, app-size, startup time. Also focus on ios standards when it comes to design and development and make sure the app fulfills them!
