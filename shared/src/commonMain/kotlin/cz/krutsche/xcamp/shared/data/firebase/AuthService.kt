@@ -1,6 +1,6 @@
 package cz.krutsche.xcamp.shared.data.firebase
 
-import Platform
+import cz.krutsche.xcamp.shared.Platform
 import cz.krutsche.xcamp.shared.data.DEFAULT_TIMEOUT
 import cz.krutsche.xcamp.shared.data.repository.UsersRepository
 import dev.gitlive.firebase.Firebase

@@ -1,9 +1,7 @@
-@file:OptIn(kotlin.time.ExperimentalTime::class)
 package cz.krutsche.xcamp.shared.data.firebase
 
 import cz.krutsche.xcamp.shared.data.DEFAULT_STALENESS_MS
 import cz.krutsche.xcamp.shared.data.DEFAULT_TIMEOUT
-import cz.krutsche.xcamp.shared.data.ServiceFactory
 import cz.krutsche.xcamp.shared.data.firebase.Analytics
 import cz.krutsche.xcamp.shared.data.firebase.AnalyticsEvents
 import cz.krutsche.xcamp.shared.data.firebase.CrashlyticsService

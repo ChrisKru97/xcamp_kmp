@@ -1,7 +1,6 @@
 package cz.krutsche.xcamp.shared.data.repository
 
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
-import cz.krutsche.xcamp.shared.localization.Strings
 import cz.krutsche.xcamp.shared.data.firebase.StorageService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.data.local.EntityType
@@ -9,12 +8,7 @@ import cz.krutsche.xcamp.shared.consts.StoragePaths
 import cz.krutsche.xcamp.shared.domain.model.FirestorePlace
 import cz.krutsche.xcamp.shared.domain.model.Place
 import cz.krutsche.xcamp.shared.domain.model.toDbPlace
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.withTimeout
-import kotlin.time.Duration.Companion.seconds
 
 class PlacesRepository(
     databaseManager: DatabaseManager,
@@ -60,21 +54,7 @@ class PlacesRepository(
             Place.fromFirestoreData(documentId, firestorePlace)
         },
         insertItems = { places ->
-            val placesWithUrls = withTimeout(30.seconds) {
-                coroutineScope {
-                    places.map { place ->
-                        async {
-                            if (place.image != null) {
-                                val urlResult = storageService.getDownloadUrl(place.image)
-                                place.copy(imageUrl = urlResult.getOrNull())
-                            } else {
-                                place
-                            }
-                        }
-                    }.awaitAll()
-                }
-            }
-            insertPlaces(placesWithUrls)
+            insertPlaces(places)
         },
         validateItems = { places ->
             if (places.isEmpty()) {
@@ -93,8 +73,7 @@ class PlacesRepository(
             priority = dbPlace.priority,
             latitude = dbPlace.latitude,
             longitude = dbPlace.longitude,
-            image = dbPlace.image,
-            imageUrl = dbPlace.imageUrl
+            image = dbPlace.image
         )
     }
 

@@ -6,6 +6,6 @@ enum class EntityType(val collectionName: String) {
     SECTIONS("schedule"),
     SONGS("songs"),
     NEWS("news"),
-    RATINGS("ratings"), // TODO remove, online - only feature
-    USERS("users") // TODO remove, not user oriented
+    RATINGS("ratings"),
+    USERS("users")
 }

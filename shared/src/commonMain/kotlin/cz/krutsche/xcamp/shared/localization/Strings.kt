@@ -28,7 +28,6 @@ object Strings {
         const val ERROR_STORAGE = "Chyba úložiště. Zkuste to znovu."
         const val ERROR_VALIDATION = "Ověření dat selhalo."
         const val ERROR_NOT_FOUND = "Položka nebyla nalezena."
-        const val ERROR_CACHE_EMPTY = "Žádná data v mezipaměti."
         const val ERROR_NOTIFICATION_PERMISSION = "Chyba oprávnění oznámení."
         const val ERROR_NOTIFICATION_SCHEDULE = "Chyba plánování oznámení."
         const val ERROR_NOTIFICATION_DISABLED = "Oznámení jsou zakázána."

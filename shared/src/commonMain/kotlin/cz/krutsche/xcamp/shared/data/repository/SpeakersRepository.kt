@@ -1,19 +1,13 @@
 package cz.krutsche.xcamp.shared.data.repository
 
 import cz.krutsche.xcamp.shared.data.firebase.FirestoreService
-import cz.krutsche.xcamp.shared.localization.Strings
 import cz.krutsche.xcamp.shared.data.firebase.StorageService
 import cz.krutsche.xcamp.shared.data.local.DatabaseManager
 import cz.krutsche.xcamp.shared.data.local.EntityType
 import cz.krutsche.xcamp.shared.domain.model.FirestoreSpeaker
 import cz.krutsche.xcamp.shared.domain.model.Speaker
 import cz.krutsche.xcamp.shared.domain.model.toDbSpeaker
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.withTimeout
-import kotlin.time.Duration.Companion.seconds
 
 class SpeakersRepository(
     databaseManager: DatabaseManager,
@@ -56,21 +50,7 @@ class SpeakersRepository(
             Speaker.fromFirestoreData(documentId, firestoreSpeaker)
         },
         insertItems = { speakers ->
-            val speakersWithUrls = withTimeout(30.seconds) {
-                coroutineScope {
-                    speakers.map { speaker ->
-                        async {
-                            if (speaker.image != null) {
-                                val urlResult = storageService.getDownloadUrl(speaker.image)
-                                speaker.copy(imageUrl = urlResult.getOrNull())
-                            } else {
-                                speaker
-                            }
-                        }
-                    }.awaitAll()
-                }
-            }
-            insertSpeakers(speakersWithUrls)
+            insertSpeakers(speakers)
         },
         validateItems = { speakers ->
             if (speakers.isEmpty()) {
@@ -87,7 +67,6 @@ class SpeakersRepository(
             name = dbSpeaker.name,
             description = dbSpeaker.description,
             priority = dbSpeaker.priority,
-            image = dbSpeaker.image,
-            imageUrl = dbSpeaker.imageUrl
+            image = dbSpeaker.image
         )
 }

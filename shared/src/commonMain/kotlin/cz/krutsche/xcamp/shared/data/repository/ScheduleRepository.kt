@@ -1,4 +1,3 @@
-@file:OptIn(kotlin.time.ExperimentalTime::class)
 package cz.krutsche.xcamp.shared.data.repository
 
 import cz.krutsche.xcamp.shared.data.config.DEFAULT_START_DATE
@@ -15,7 +14,6 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import cz.krutsche.xcamp.shared.db.XcampDatabaseQueries
 import cz.krutsche.xcamp.shared.db.Section as DbSection
-import kotlin.time.Duration.Companion.seconds
 
 private fun DbSection.toDomain(json: Json): Section = Section(
     uid = uid,
@@ -105,9 +103,6 @@ class ScheduleRepository(
             }
         }
     }
-
-    // TODO: Add SQL query for type + favorite combination to avoid loading all sections into memory
-    // Current implementation loads all sections when favoritesOnly=true with multiple types, then filters in Kotlin
 
     suspend fun getExpandedSections(dayNumber: Int, startDate: String = DEFAULT_START_DATE): List<ExpandedSection> {
         return withDatabase {

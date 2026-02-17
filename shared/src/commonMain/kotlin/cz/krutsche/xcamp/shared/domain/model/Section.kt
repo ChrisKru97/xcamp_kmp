@@ -1,6 +1,9 @@
 package cz.krutsche.xcamp.shared.domain.model
 
-import kotlin.time.Instant
+import kotlinx.datetime.LocalDateTime
+import kotlinx.datetime.LocalTime
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toInstant
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -34,7 +37,7 @@ data class Section(
                 place = data.place,
                 speakers = data.speakers?.let { json.decodeFromString<List<String>>(it) },
                 leader = data.leader,
-                type = SectionType.valueOf(data.type.uppercase()),
+                type = SectionType.valueOf(data.type?.uppercase() ?: SectionType.MAIN.name),
                 favorite = data.favorite
             )
         }
@@ -54,22 +57,13 @@ data class Section(
         }
     }
 
-    private fun parseDateTime(year: Int, month: Int, day: Int, time: String): Instant {
-        val (hour, minute) = time.split(":").map { it.toInt() }
-        val daysInMonth = listOf(0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
-        val isLeapYear = (year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)
-        val febDays = if (isLeapYear) 29 else 28
-
-        var totalDays = (year - 1970) * 365
-        totalDays += (year - 1969) / 4 - (year - 1901) / 100 + (year - 1601) / 400
-
-        for (m in 1 until month) {
-            totalDays += if (m == 2) febDays else daysInMonth[m]
-        }
-        totalDays += day - 1
-
-        val seconds = totalDays * 86400L + hour * 3600L + minute * 60L
-        return Instant.fromEpochSeconds(seconds)
+    private fun parseDateTime(year: Int, month: Int, day: Int, time: String): kotlinx.datetime.Instant {
+        val parsedTime = LocalTime.parse(time)
+        val localDateTime = LocalDateTime(
+            year, month, day,
+            parsedTime.hour, parsedTime.minute, 0, 0
+        )
+        return localDateTime.toInstant(TimeZone.UTC)
     }
 }
 
@@ -77,8 +71,8 @@ data class Section(
 data class ExpandedSection(
     val base: Section,
     val dayIndex: Int,
-    val startTime: Instant,
-    val endTime: Instant
+    val startTime: kotlinx.datetime.Instant,
+    val endTime: kotlinx.datetime.Instant
 ) {
     val uid: String get() = base.uid
     val name: String get() = base.name

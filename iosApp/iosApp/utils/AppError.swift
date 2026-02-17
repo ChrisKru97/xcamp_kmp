@@ -6,7 +6,6 @@ enum AppError: LocalizedError {
     case network
     case storage
     case validation
-    case cacheEmpty
     case notificationPermission
     case notificationSchedule
     case notificationDisabled
@@ -22,8 +21,6 @@ enum AppError: LocalizedError {
             return Strings.Common.shared.ERROR_STORAGE
         case .validation:
             return Strings.Common.shared.ERROR_VALIDATION
-        case .cacheEmpty:
-            return Strings.Common.shared.ERROR_CACHE_EMPTY
         case .notificationPermission:
             return Strings.Common.shared.ERROR_NOTIFICATION_PERMISSION
         case .notificationSchedule:
@@ -45,7 +42,6 @@ enum AppError: LocalizedError {
         if error is NetworkError { return .network }
         if error is StorageError { return .storage }
         if error is ValidationError { return .validation }
-        if error is CacheEmptyError { return .cacheEmpty }
         if error is NotificationPermissionError { return .notificationPermission }
         if error is NotificationScheduleError { return .notificationSchedule }
         if error is NotificationDisabledError { return .notificationDisabled }

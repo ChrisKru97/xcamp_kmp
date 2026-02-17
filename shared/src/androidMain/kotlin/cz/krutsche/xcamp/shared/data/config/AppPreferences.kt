@@ -11,15 +11,17 @@ actual object AppPreferences {
         context.getSharedPreferences("AppPreferences", Context.MODE_PRIVATE)
     }
 
-    private val json = Json { ignoreUnknownKeys = true }
+    private const val KEY_APP_STATE_OVERRIDE = "appStateOverride"
+    private const val KEY_NOTIFICATION_PREFERENCES = "notificationPreferences"
+    private const val KEY_DISMISSED_FORCE_UPDATE_VERSION = "dismissedForceUpdateVersion"
+    private const val KEY_REMOTE_CONFIG_CACHE = "remoteConfigCache"
+    private const val KEY_DATA_COLLECTION_ENABLED = "dataCollectionEnabled"
 
-    fun init(context: Context) {
-        this.context = context
-    }
+    private val json = Json { ignoreUnknownKeys = true }
 
     actual fun getAppStateOverride(): AppState? {
         if (!::context.isInitialized) return null
-        val value = prefs.getString("appStateOverride", null)
+        val value = prefs.getString(KEY_APP_STATE_OVERRIDE, null)
         return value?.let { AppState.valueOf(it) }
     }
 
@@ -27,9 +29,9 @@ actual object AppPreferences {
         if (!::context.isInitialized) return
         prefs.edit().apply {
             if (state == null) {
-                remove("appStateOverride")
+                remove(KEY_APP_STATE_OVERRIDE)
             } else {
-                putString("appStateOverride", state.name)
+                putString(KEY_APP_STATE_OVERRIDE, state.name)
             }
             apply()
         }
@@ -37,12 +39,12 @@ actual object AppPreferences {
 
     actual fun getNotificationPreferences(): NotificationPreferences {
         if (!::context.isInitialized) return NotificationPreferences()
-        val value = prefs.getString("notificationPreferences", null)
+        val value = prefs.getString(KEY_NOTIFICATION_PREFERENCES, null)
         return value?.let {
             try {
                 json.decodeFromString<NotificationPreferences>(it)
             } catch (e: Exception) {
-                prefs.edit().remove("notificationPreferences").apply()
+                prefs.edit().remove(KEY_NOTIFICATION_PREFERENCES).apply()
                 NotificationPreferences()
             }
         } ?: NotificationPreferences()
@@ -51,21 +53,21 @@ actual object AppPreferences {
     actual fun setNotificationPreferences(preferences: NotificationPreferences) {
         if (!::context.isInitialized) return
         val encoded = json.encodeToString(preferences)
-        prefs.edit().putString("notificationPreferences", encoded).apply()
+        prefs.edit().putString(KEY_NOTIFICATION_PREFERENCES, encoded).apply()
     }
 
     actual fun getDismissedForceUpdateVersion(): String? {
         if (!::context.isInitialized) return null
-        return prefs.getString("dismissedForceUpdateVersion", null)
+        return prefs.getString(KEY_DISMISSED_FORCE_UPDATE_VERSION, null)
     }
 
     actual fun setDismissedForceUpdateVersion(version: String?) {
         if (!::context.isInitialized) return
         prefs.edit().apply {
             if (version == null) {
-                remove("dismissedForceUpdateVersion")
+                remove(KEY_DISMISSED_FORCE_UPDATE_VERSION)
             } else {
-                putString("dismissedForceUpdateVersion", version)
+                putString(KEY_DISMISSED_FORCE_UPDATE_VERSION, version)
             }
             apply()
         }
@@ -73,12 +75,12 @@ actual object AppPreferences {
 
     actual fun getRemoteConfigCache(): RemoteConfigCache? {
         if (!::context.isInitialized) return null
-        val value = prefs.getString("remoteConfigCache", null)
+        val value = prefs.getString(KEY_REMOTE_CONFIG_CACHE, null)
         return value?.let {
             try {
                 json.decodeFromString<RemoteConfigCache>(it)
             } catch (e: Exception) {
-                prefs.edit().remove("remoteConfigCache").apply()
+                prefs.edit().remove(KEY_REMOTE_CONFIG_CACHE).apply()
                 null
             }
         }
@@ -88,9 +90,9 @@ actual object AppPreferences {
         if (!::context.isInitialized) return
         prefs.edit().apply {
             if (cache == null) {
-                remove("remoteConfigCache")
+                remove(KEY_REMOTE_CONFIG_CACHE)
             } else {
-                putString("remoteConfigCache", json.encodeToString(cache))
+                putString(KEY_REMOTE_CONFIG_CACHE, json.encodeToString(cache))
             }
             apply()
         }
@@ -98,11 +100,11 @@ actual object AppPreferences {
 
     actual fun getDataCollectionEnabled(): Boolean {
         if (!::context.isInitialized) return true
-        return prefs.getBoolean("dataCollectionEnabled", true)
+        return prefs.getBoolean(KEY_DATA_COLLECTION_ENABLED, true)
     }
 
     actual fun setDataCollectionEnabled(enabled: Boolean) {
         if (!::context.isInitialized) return
-        prefs.edit().putBoolean("dataCollectionEnabled", enabled).apply()
+        prefs.edit().putBoolean(KEY_DATA_COLLECTION_ENABLED, enabled).apply()
     }
 }

@@ -1,3 +1,5 @@
+package cz.krutsche.xcamp.shared
+
 expect class Platform {
     val version: String
     val type: PlatformType

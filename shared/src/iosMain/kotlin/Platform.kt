@@ -1,3 +1,5 @@
+package cz.krutsche.xcamp.shared
+
 import platform.Foundation.NSBundle
 import platform.UIKit.UIDevice
 import platform.UIKit.UIScreen

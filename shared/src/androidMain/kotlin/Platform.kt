@@ -1,3 +1,5 @@
+package cz.krutsche.xcamp.shared
+
 import android.content.res.Resources
 import android.os.Build
 import android.content.pm.PackageManager

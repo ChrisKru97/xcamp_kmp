@@ -8,8 +8,7 @@ data class Speaker(
     val name: String,
     val description: String? = null,
     val priority: Long,
-    val image: String? = null,
-    val imageUrl: String? = null
+    val image: String? = null
 ) {
     companion object {
         fun fromFirestoreData(documentId: String, data: FirestoreSpeaker): Speaker {
@@ -20,8 +19,7 @@ data class Speaker(
                 name = data.name,
                 description = data.description,
                 priority = data.priority,
-                image = data.image,
-                imageUrl = null
+                image = data.image
             )
         }
     }
@@ -42,6 +40,6 @@ fun Speaker.toDbSpeaker(): cz.krutsche.xcamp.shared.db.Speaker {
         description = this.description,
         priority = this.priority,
         image = this.image,
-        imageUrl = this.imageUrl
+        imageUrl = null
     )
 }

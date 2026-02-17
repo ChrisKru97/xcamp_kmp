@@ -1,9 +1,18 @@
 package cz.krutsche.xcamp.shared.data.config
 
 import cz.krutsche.xcamp.shared.data.firebase.RemoteConfigService
-import kotlin.time.Clock.System.now
-import kotlin.time.Duration.Companion.days
-import kotlin.time.Instant
+import kotlinx.datetime.DateTimePeriod
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.atStartOfDayIn
+import kotlinx.datetime.plus
+import kotlin.time.Clock.System.now as kotlinNow
+
+private fun now(): kotlinx.datetime.Instant {
+    val kotlinInstant = kotlinNow()
+    return kotlinx.datetime.Instant.fromEpochMilliseconds(kotlinInstant.toEpochMilliseconds())
+}
 
 const val EventLength = 8
 const val DEFAULT_START_DATE = "2026-07-18"
@@ -18,19 +27,13 @@ class AppConfigService(
 
     private fun parseStartDate(): Instant {
         val startDateStr = remoteConfigService.startDate
-        // Remote Config returns date in format "YYYY-MM-DD" but Instant.parse() requires full ISO-8601
-        // Append time component if missing
-        val fullDateTimeStr = if (startDateStr.length == 10) {
-            "${startDateStr}T00:00:00Z"
-        } else {
-            startDateStr
-        }
-        return Instant.parse(fullDateTimeStr)
+        val parsedDate = LocalDate.parse(startDateStr)
+        return parsedDate.atStartOfDayIn(TimeZone.UTC)
     }
 
     private fun getEndOfEvent(): Instant {
         val startDate = parseStartDate()
-        return startDate + EventLength.days
+        return startDate.plus(DateTimePeriod(days = EventLength), TimeZone.UTC)
     }
 
     private fun isEventActive(): Boolean {
@@ -45,9 +48,6 @@ class AppConfigService(
         return today >= endDate
     }
 
-    /**
-     * Determines current app state based on event dates and showAppData flag
-     */
     fun getAppState(): AppState = AppPreferences.getAppStateOverride() ?: getAppStateComputed()
 
     fun getAppStateOverride(): AppState? = AppPreferences.getAppStateOverride()
@@ -72,9 +72,6 @@ class AppConfigService(
         return state == AppState.LIMITED || state == AppState.PRE_EVENT
     }
 
-    /**
-     * Get available bottom navigation tabs based on current app state
-     */
     fun getAvailableTabs(): List<AppTab> {
         val state = getAppState()
         return when (state) {
@@ -102,10 +99,10 @@ class AppConfigService(
 }
 
 enum class AppState {
-    LIMITED,      // showAppData = false: Only Home, Media, Info
-    PRE_EVENT,    // Before event starts: Full navigation
-    ACTIVE_EVENT, // During event: Full navigation
-    POST_EVENT    // After event: Home, Schedule, Rating, Media, Info
+    LIMITED,
+    PRE_EVENT,
+    ACTIVE_EVENT,
+    POST_EVENT
 }
 
 enum class AppTab {

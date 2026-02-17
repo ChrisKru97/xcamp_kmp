@@ -16,8 +16,9 @@ struct InfoView: View {
                 dataCollectionSection
                 contactSection
 
-                // TODO comment out for release
+                #if DEBUG
                 debugSection
+                #endif
             }
             .padding(.horizontal, Spacing.md)
             .padding(.top, Spacing.md)

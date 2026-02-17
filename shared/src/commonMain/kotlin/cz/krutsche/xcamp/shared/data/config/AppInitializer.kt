@@ -1,8 +1,9 @@
 package cz.krutsche.xcamp.shared.data.config
 
-import Platform
+import cz.krutsche.xcamp.shared.Platform
 import cz.krutsche.xcamp.shared.data.DEFAULT_TIMEOUT
 import cz.krutsche.xcamp.shared.data.ServiceFactory
+import cz.krutsche.xcamp.shared.data.local.EntityType
 import dev.gitlive.firebase.firestore.firestore
 import kotlinx.coroutines.withTimeout
 import kotlin.time.Duration.Companion.seconds
@@ -13,7 +14,6 @@ class AppInitializer(
 ) {
     private val authService = ServiceFactory.getAuthService()
     private val notificationService = ServiceFactory.getNotificationService()
-    private val databaseManager = ServiceFactory.getDatabaseManager()
 
     suspend fun initialize(): Result<Unit> = try {
         initializeRemoteConfig()
@@ -44,7 +44,7 @@ class AppInitializer(
     private suspend fun verifyFirestoreAccess() {
         try {
             withTimeout(DEFAULT_TIMEOUT) {
-                dev.gitlive.firebase.Firebase.firestore.collection("speakers").limit(1).get()
+                dev.gitlive.firebase.Firebase.firestore.collection(EntityType.SPEAKERS.collectionName).limit(1).get()
             }
         } catch (e: Exception) {
             println("Firestore access verification failed: ${e.message}")

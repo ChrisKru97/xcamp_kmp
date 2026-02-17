@@ -1,4 +1,3 @@
-@file:OptIn(kotlin.time.ExperimentalTime::class)
 package cz.krutsche.xcamp.shared.domain.model
 
 import kotlin.time.Instant

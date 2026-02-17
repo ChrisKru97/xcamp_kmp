@@ -2,8 +2,6 @@ package cz.krutsche.xcamp.shared.data.config
 
 import cz.krutsche.xcamp.shared.domain.model.ExpandedSection
 import cz.krutsche.xcamp.shared.domain.model.SectionType
-import kotlin.native.ObjCName
-import kotlin.experimental.ExperimentalObjCName
 
 data class ScheduleFilterState(
     val visibleTypes: Set<SectionType> = SectionType.entries.toSet(),

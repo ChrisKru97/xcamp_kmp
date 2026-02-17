@@ -13,11 +13,12 @@ class ScheduleViewModel: ObservableObject {
 
     var scheduleService: ScheduleService { ServiceFactory.shared.getScheduleService() }
     var remoteConfigService: RemoteConfigService { ServiceFactory.shared.getRemoteConfigService() }
+    var appConfigService: AppConfigService { ServiceFactory.shared.getAppConfigService() }
     var notificationService: NotificationService { ServiceFactory.shared.getNotificationService() }
     private var userHasSelectedDay: Bool = false
 
     private var eventDays: [Int] {
-        Array(AppConfigService(remoteConfigService: remoteConfigService).getEventDays())
+        Array(appConfigService.getEventDays())
             .map { $0.intValue }
     }
 

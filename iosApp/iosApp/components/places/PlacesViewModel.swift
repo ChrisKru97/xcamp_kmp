@@ -7,6 +7,8 @@ class PlacesViewModel: ObservableObject {
     @Published private(set) var state: ContentState<[Place]> = .loading
     @Published private(set) var arealImageURL: String? = nil
 
+    private static let staleDataMaxAgeMs: Int32 = 3600000
+
     var placesService: PlacesService { ServiceFactory.shared.getPlacesService() }
 
     func loadPlaces(useCache: Bool = false) async {
@@ -16,7 +18,7 @@ class PlacesViewModel: ObservableObject {
         }
 
         let hasCached = try? await placesService.hasCachedData()
-        let isStale = try? await placesService.isDataStale(maxAgeMs: 3600000).boolValue ?? true
+        let isStale = try? await placesService.isDataStale(maxAgeMs: Self.staleDataMaxAgeMs).boolValue ?? true
 
         if useCache, hasCached?.boolValue == true {
             let places = (try? await placesService.getAllPlaces()) ?? []
@@ -66,7 +68,7 @@ class PlacesViewModel: ObservableObject {
 
             await loadArealImage()
             guard !Task.isCancelled else { return }
-            let isStale = (try? await placesService.isDataStale(maxAgeMs: 3600000))?.boolValue ?? true
+            let isStale = (try? await placesService.isDataStale(maxAgeMs: Self.staleDataMaxAgeMs))?.boolValue ?? true
             guard !Task.isCancelled else { return }
             state = .loaded(places, isStale: isStale)
         } catch {
@@ -89,7 +91,7 @@ class PlacesViewModel: ObservableObject {
             await loadArealImage()
 
             guard !Task.isCancelled else { return }
-            let isStale = (try? await placesService.isDataStale(maxAgeMs: 3600000))?.boolValue ?? true
+            let isStale = (try? await placesService.isDataStale(maxAgeMs: Self.staleDataMaxAgeMs))?.boolValue ?? true
             guard !Task.isCancelled else { return }
             state = .loaded(places, isStale: isStale)
             logContentState(state: "content", error: nil)

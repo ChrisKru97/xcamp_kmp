@@ -2,18 +2,6 @@ package cz.krutsche.xcamp.shared.domain.model
 
 import kotlinx.serialization.Serializable
 
-/**
- * Place domain model
- *
- * Matches Firestore structure where:
- * - uid (String): Firestore document ID - used as primary key
- * - name (String): Place name
- * - description (String?): Optional description text
- * - priority (Long): Sorting priority (lower = higher priority)
- * - latitude (Double?): Optional GPS coordinate
- * - longitude (Double?): Optional GPS coordinate
- * - image (String?): Optional Firebase Storage reference
- */
 @Serializable
 data class Place(
     val uid: String,
@@ -22,8 +10,7 @@ data class Place(
     val priority: Long,
     val latitude: Double? = null,
     val longitude: Double? = null,
-    val image: String? = null,
-    val imageUrl: String? = null
+    val image: String? = null
 ) {
     companion object {
         fun fromFirestoreData(documentId: String, data: FirestorePlace): Place {
@@ -36,8 +23,7 @@ data class Place(
                 priority = data.priority,
                 latitude = data.latitude,
                 longitude = data.longitude,
-                image = data.image,
-                imageUrl = null
+                image = data.image
             )
         }
     }
@@ -62,6 +48,6 @@ fun Place.toDbPlace(): cz.krutsche.xcamp.shared.db.Place {
         latitude = this.latitude,
         longitude = this.longitude,
         image = this.image,
-        imageUrl = this.imageUrl
+        imageUrl = null
     )
 }

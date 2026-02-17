@@ -14,7 +14,11 @@ struct CountdownView: View {
         formatter.dateFormat = "yyyy-MM-dd"
         formatter.timeZone = TimeZone.current
         guard let targetDate = formatter.date(from: targetDateString) else {
-            days = 0; hours = 0; minutes = 0; seconds = 0; return
+            days = 0
+            hours = 0
+            minutes = 0
+            seconds = 0
+            return
         }
         let now = Date()
         let components = Calendar.current.dateComponents([.day, .hour, .minute, .second], from: now, to: targetDate)
@@ -51,7 +55,7 @@ struct CountdownView: View {
     }
 
     @ViewBuilder
-    private func AnimatedNumberText(value: Int,) -> some View {
+    private func AnimatedNumberText(value: Int) -> some View {
         Text(String(format: "%02d", value))
             .backport.contentTransition(.numericText(value: Double(value)))
             .monospacedDigit()

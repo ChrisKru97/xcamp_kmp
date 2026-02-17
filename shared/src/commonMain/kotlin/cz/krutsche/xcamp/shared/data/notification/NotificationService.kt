@@ -1,8 +1,6 @@
 package cz.krutsche.xcamp.shared.data.notification
 
 import cz.krutsche.xcamp.shared.data.config.NotificationPreferences
-import cz.krutsche.xcamp.shared.data.repository.ScheduleRepository
-import cz.krutsche.xcamp.shared.domain.model.Section
 
 expect class NotificationService {
 

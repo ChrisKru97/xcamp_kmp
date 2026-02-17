@@ -5,20 +5,7 @@ import cz.krutsche.xcamp.shared.data.ServiceFactory
 import cz.krutsche.xcamp.shared.data.repository.SpeakersRepository
 import cz.krutsche.xcamp.shared.domain.model.Speaker
 
-/**
- * Service for managing Speaker entities.
- *
- * Provides access to Speaker data from both local database and remote Firestore.
- * Extends [RepositoryService] for common repository initialization and sync functionality.
- *
- * @property repository The lazily initialized SpeakersRepository instance
- */
 class SpeakersService : RepositoryService<SpeakersRepository>() {
-    /**
-     * Creates a new SpeakersRepository instance.
-     *
-     * @return A new SpeakersRepository with all required dependencies injected
-     */
     override fun createRepository(): SpeakersRepository {
         return SpeakersRepository(
             databaseManager = databaseManager,
@@ -27,41 +14,18 @@ class SpeakersService : RepositoryService<SpeakersRepository>() {
         )
     }
 
-    /**
-     * Retrieves all speakers from the local database.
-     *
-     * @return List of all speakers, empty list if none exist
-     */
     suspend fun getAllSpeakers(): List<Speaker> {
         return repository.getAllSpeakers()
     }
 
-    /**
-     * Retrieves a specific speaker by its uid.
-     *
-     * @param uid The uid of the speaker (Firebase document ID)
-     * @return The speaker if found, null otherwise
-     */
     suspend fun getSpeakerById(uid: String): Speaker? {
         return repository.getSpeakerById(uid)
     }
 
-    /**
-     * Synchronizes speaker data from Firestore to the local database.
-     *
-     * @return Result.Success on success, Result.Failure on error
-     */
     override suspend fun syncFromFirestore(): Result<Unit> {
         return repository.syncFromFirestore()
     }
 
-    /**
-     * Refreshes speakers from Firestore and returns the updated list.
-     *
-     * Performs a sync from Firestore and returns all speakers from the local database.
-     *
-     * @return Result.Success containing the list of speakers, or Result.Failure on error
-     */
     suspend fun refreshSpeakers(): Result<List<Speaker>> {
         val syncResult = syncFromFirestore()
         return syncResult.fold(
@@ -75,14 +39,6 @@ class SpeakersService : RepositoryService<SpeakersRepository>() {
         )
     }
 
-    /**
-     * Refreshes speakers from Firestore with fallback to cached data.
-     *
-     * Attempts to sync from Firestore but always returns local data if available.
-     * This ensures the app remains functional even when offline.
-     *
-     * @return Result.Success containing the list of speakers (synced or cached), or Result.Failure if no cached data exists
-     */
     suspend fun refreshSpeakersWithFallback(): Result<List<Speaker>> {
         val syncResult = syncFromFirestore()
         val speakers = getAllSpeakers()
@@ -99,21 +55,10 @@ class SpeakersService : RepositoryService<SpeakersRepository>() {
         )
     }
 
-    /**
-     * Checks if the speakers data is stale (older than maxAgeMs).
-     *
-     * @param maxAgeMs Maximum age in milliseconds (default: 24 hours)
-     * @return true if data is stale or doesn't exist, false otherwise
-     */
     suspend fun isDataStale(maxAgeMs: Long = DEFAULT_STALENESS_MS): Boolean {
         return repository.isDataStale(maxAgeMs)
     }
 
-    /**
-     * Checks if there is cached speakers data available.
-     *
-     * @return true if cached data exists, false otherwise
-     */
     suspend fun hasCachedData(): Boolean {
         return repository.hasCachedData()
     }
