@@ -38,7 +38,7 @@ struct SpeakerDetailView: View {
         do {
             let result = try await speakersService.getSpeakerById(uid: speakerUid)
             guard !Task.isCancelled else { return }
-            if let speaker = result as? Speaker {
+            if let speaker = result {
                 state = .loaded(speaker)
             } else {
                 state = .error(AppError.notFound)

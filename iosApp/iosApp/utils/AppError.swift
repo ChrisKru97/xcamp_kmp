@@ -47,9 +47,9 @@ enum AppError: LocalizedError {
         if error is NotificationDisabledError { return .notificationDisabled }
 
         // Fallback for NSError (404 not found)
-        if let nsError = error as? NSError {
-            if nsError.code == 404 { return .notFound }
-        }
+        let nsError = error as NSError
+        if nsError.code == 404 { return .notFound }
+
         return .unknown
     }
 }

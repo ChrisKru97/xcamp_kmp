@@ -104,6 +104,9 @@ class ScheduleRepository(
         }
     }
 
+    // TODO: Add SQL query for type + favorite combination to avoid loading all sections into memory
+    // Current implementation loads all sections when favoritesOnly=true with multiple types, then filters in Kotlin
+
     suspend fun getExpandedSections(dayNumber: Int, startDate: String = DEFAULT_START_DATE): List<ExpandedSection> {
         return withDatabase {
             getAllSections()

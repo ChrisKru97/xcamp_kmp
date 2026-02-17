@@ -10,7 +10,8 @@ data class Place(
     val priority: Long,
     val latitude: Double? = null,
     val longitude: Double? = null,
-    val image: String? = null
+    val image: String? = null,
+    val imageUrl: String? = null
 ) {
     companion object {
         fun fromFirestoreData(documentId: String, data: FirestorePlace): Place {
@@ -23,7 +24,8 @@ data class Place(
                 priority = data.priority,
                 latitude = data.latitude,
                 longitude = data.longitude,
-                image = data.image
+                image = data.image,
+                imageUrl = null
             )
         }
     }
@@ -48,6 +50,6 @@ fun Place.toDbPlace(): cz.krutsche.xcamp.shared.db.Place {
         latitude = this.latitude,
         longitude = this.longitude,
         image = this.image,
-        imageUrl = null
+        imageUrl = this.imageUrl
     )
 }

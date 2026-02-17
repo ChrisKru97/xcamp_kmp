@@ -183,15 +183,14 @@ xcodebuild -project iosApp/iosApp.xcodeproj -scheme iosApp -sdk iphonesimulator 
 
 **Web Content & Search**:
 - NEVER use the built-in `webReader`, `webSearchPrime` or `webfetch` tools
-- ALWAYS use the Playwright MCP (`mcp__playwright__*`) for fetching or reading web content
-- ALWAYS use the Web Search MCP (`mcp__web-search__*`) for searching the internet
+- ALWAYS use the Fetch Page MCP (`mcp__web-search__fetch_page`) for fetching or reading web content
+- ALWAYS use the Web Search MCP (`mcp__web-search__search_web`) for searching the internet
 - If a tool returns a 429 error, do not retry with the same tool; switch immediately to the alternative MCP tools mentioned above
 
 ### Web & Browser MCP Tools
 
 For web searching and fetching:
-- `web-search` - Search the web using DuckDuckGo
-- `playwright` - Browser automation for scraping and testing and fetching web pages
+- `web-search` - Search the web using DuckDuckGo and fetch page details
 
 ## Development Agents
 

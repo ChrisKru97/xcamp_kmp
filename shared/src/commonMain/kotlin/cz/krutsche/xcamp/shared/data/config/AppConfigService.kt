@@ -7,12 +7,7 @@ import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.atStartOfDayIn
 import kotlinx.datetime.plus
-import kotlin.time.Clock.System.now as kotlinNow
-
-private fun now(): kotlinx.datetime.Instant {
-    val kotlinInstant = kotlinNow()
-    return kotlinx.datetime.Instant.fromEpochMilliseconds(kotlinInstant.toEpochMilliseconds())
-}
+import kotlin.time.Clock.System.now
 
 const val EventLength = 8
 const val DEFAULT_START_DATE = "2026-07-18"
