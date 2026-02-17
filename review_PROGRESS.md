@@ -217,7 +217,7 @@ Per plan requirements:
 
 ### Phase 1: Kotlin Shared - commonMain (52 files)
 
-- [ ] 1. Review & fix: Platform.kt
+- [x] 1. Review & fix: Platform.kt
 - [ ] 2. Review & fix: DatabaseDriverFactory.kt
 - [ ] 3. Review & fix: News.kt
 - [ ] 4. Review & fix: Place.kt
@@ -375,9 +375,32 @@ Per plan requirements:
 - [ ] 135. Review & fix: AppViewModel.swift
 - [ ] 136. Review & fix: XcampApp.swift
 
+## Completed This Iteration
+
+- Task 1 (Platform.kt expect/actual): Fixed hardcoded values, deprecated APIs, and TODO comments
+
 ## Notes
 
 - Review order follows dependencies: models → utils → services → repositories → views
 - Platform-specific implementations (androidMain/iosMain) reviewed after commonMain
 - Skills to use per language: kotlin-multiplatform-reviewer, ios-reviewer
 - Each task is: read file → review → apply fixes → check off
+
+### Platform.kt Review Fixes (Task 1)
+
+**Android (Platform.android.kt)**:
+- Changed `Build.VERSION.BASE_OS` to `Build.VERSION.RELEASE_OR_CODENAME` (more reliable API)
+- Replaced hardcoded `appVersion`/`buildNumber` with dynamic values from `PackageInfo` via `AppPreferences.context`
+- Replaced hardcoded `buildType: "release"` with runtime debug flag detection using `ApplicationInfo.FLAG_DEBUGGABLE`
+- Fixed deprecated `configuration.locales[0]` API - added version check for API 24+ (`Configuration.locales`)
+- Updated `systemName` to include Android version: `"Android ${Build.VERSION.RELEASE}"`
+- Removed TODO comments
+
+**iOS (Platform.ios.kt)**:
+- Replaced hardcoded `locale: "en_US"` with `NSLocale.currentLocale.toString()`
+- Improved `buildType` detection to check both device name AND `DTPlatformName` from Info.plist
+- Made properties consistent (using `get()` for all computed properties)
+- Removed TODO comments
+
+**Common (Platform.kt)**:
+- No changes needed - clean expect/actual declaration
