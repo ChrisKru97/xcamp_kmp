@@ -38,7 +38,7 @@ actual class Platform {
 
     @OptIn(ExperimentalForeignApi::class)
     actual val locale: String
-        get() = NSLocale.currentLocale.toString()
+        get() = NSLocale.currentLocale.languageCode ?: "en"
 
     @OptIn(ExperimentalForeignApi::class)
     actual val screenSize: String

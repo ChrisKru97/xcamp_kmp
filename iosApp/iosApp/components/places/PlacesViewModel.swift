@@ -62,9 +62,9 @@ class PlacesViewModel: ObservableObject {
         }
 
         do {
-            let result = try await placesService.refreshPlacesWithFallback()
+            _ = try await placesService.refreshPlacesWithFallback()
             guard !Task.isCancelled else { return }
-            let places = result as? [Place] ?? []
+            let places = try await placesService.getAllPlaces()
 
             await loadArealImage()
             guard !Task.isCancelled else { return }
@@ -84,9 +84,9 @@ class PlacesViewModel: ObservableObject {
 
     private func refreshAndHandleResult(isRefresh: Bool) async {
         do {
-            let result = try await placesService.refreshPlacesWithFallback()
+            _ = try await placesService.refreshPlacesWithFallback()
             guard !Task.isCancelled else { return }
-            let places = result as? [Place] ?? []
+            let places = try await placesService.getAllPlaces()
 
             await loadArealImage()
 

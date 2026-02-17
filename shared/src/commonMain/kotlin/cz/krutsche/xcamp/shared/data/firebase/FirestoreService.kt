@@ -53,8 +53,12 @@ class FirestoreService {
             val querySnapshot = firestore.collection(collection).get()
             querySnapshot.documents.mapNotNull { document ->
                 if (document.exists) {
-                    val data = document.data(deserializer)
-                    document.id to data
+                    try {
+                        val data = document.data(deserializer)
+                        document.id to data
+                    } catch (e: Exception) {
+                        null
+                    }
                 } else null
             }
         }

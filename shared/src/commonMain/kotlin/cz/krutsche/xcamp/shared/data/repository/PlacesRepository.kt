@@ -73,7 +73,8 @@ class PlacesRepository(
             priority = dbPlace.priority,
             latitude = dbPlace.latitude,
             longitude = dbPlace.longitude,
-            image = dbPlace.image
+            image = dbPlace.image,
+            imageUrl = dbPlace.imageUrl
         )
     }
 

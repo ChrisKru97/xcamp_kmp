@@ -67,6 +67,7 @@ class SpeakersRepository(
             name = dbSpeaker.name,
             description = dbSpeaker.description,
             priority = dbSpeaker.priority,
-            image = dbSpeaker.image
+            image = dbSpeaker.image,
+            imageUrl = dbSpeaker.imageUrl
         )
 }

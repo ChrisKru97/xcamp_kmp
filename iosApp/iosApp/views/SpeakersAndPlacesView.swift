@@ -36,8 +36,6 @@ struct SpeakersAndPlacesView: View {
                 PlacesContentView()
             }
         }
-        .navigationTitle(Strings.Tabs.shared.SPEAKERS_AND_PLACES)
-        .navigationBarTitleDisplayMode(.inline)
     }
 }
 
