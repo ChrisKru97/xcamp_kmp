@@ -43,11 +43,7 @@ class AppConfigService(
         return today >= endDate
     }
 
-    fun getAppState(): AppState = AppPreferences.getAppStateOverride() ?: getAppStateComputed()
-
-    fun getAppStateOverride(): AppState? = AppPreferences.getAppStateOverride()
-
-    private fun getAppStateComputed(): AppState {
+    fun getAppState(): AppState {
         val showAppData = remoteConfigService.showAppData
 
         return when {
@@ -56,10 +52,6 @@ class AppConfigService(
             isEventActive() -> AppState.ACTIVE_EVENT
             else -> AppState.PRE_EVENT
         }
-    }
-
-    fun setAppStateOverride(state: AppState?) {
-        AppPreferences.setAppStateOverride(state)
     }
 
     fun shouldShowCountdown(): Boolean {

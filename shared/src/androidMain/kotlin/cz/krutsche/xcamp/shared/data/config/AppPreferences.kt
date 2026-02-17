@@ -19,12 +19,6 @@ actual object AppPreferences {
 
     private val json = Json { ignoreUnknownKeys = true }
 
-    actual fun getAppStateOverride(): AppState? {
-        if (!::context.isInitialized) return null
-        val value = prefs.getString(KEY_APP_STATE_OVERRIDE, null)
-        return value?.let { AppState.valueOf(it) }
-    }
-
     actual fun setAppStateOverride(state: AppState?) {
         if (!::context.isInitialized) return
         prefs.edit().apply {

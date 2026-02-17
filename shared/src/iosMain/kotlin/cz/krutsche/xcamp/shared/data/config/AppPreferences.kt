@@ -5,26 +5,12 @@ import kotlinx.serialization.json.Json
 import platform.Foundation.NSUserDefaults
 
 actual object AppPreferences {
-    private const val KEY_APP_STATE_OVERRIDE = "appStateOverride"
     private const val KEY_NOTIFICATION_PREFERENCES = "notificationPreferences"
     private const val KEY_DISMISSED_FORCE_UPDATE_VERSION = "dismissedForceUpdateVersion"
     private const val KEY_REMOTE_CONFIG_CACHE = "remoteConfigCache"
     private const val KEY_DATA_COLLECTION_ENABLED = "dataCollectionEnabled"
 
     private val json = Json { ignoreUnknownKeys = true }
-
-    actual fun getAppStateOverride(): AppState? {
-        val value = NSUserDefaults.standardUserDefaults.stringForKey(KEY_APP_STATE_OVERRIDE)
-        return value?.let { AppState.valueOf(it) }
-    }
-
-    actual fun setAppStateOverride(state: AppState?) {
-        if (state == null) {
-            NSUserDefaults.standardUserDefaults.removeObjectForKey(KEY_APP_STATE_OVERRIDE)
-        } else {
-            NSUserDefaults.standardUserDefaults.setObject(state.name, KEY_APP_STATE_OVERRIDE)
-        }
-    }
 
     actual fun getNotificationPreferences(): NotificationPreferences {
         val value = NSUserDefaults.standardUserDefaults.stringForKey(KEY_NOTIFICATION_PREFERENCES)
